@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Resilient Path</string>
+    <string name="title_activity_main">Resilient Path</string>
+    <string name="package_name">com.resilientpath.app</string>
+    <string name="custom_url_scheme">com.resilientpath.app</string>
+</resources>
