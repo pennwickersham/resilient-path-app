@@ -10,7 +10,15 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+dist-electron
+release
 *.local
+*.ipa
+ios_certificates/
+docx_extract.txt
+pdf_extract.txt
+workbook_utf8.md
+upload_to_apple.bat
 
 # Editor directories and files
 .vscode/*

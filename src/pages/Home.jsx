@@ -8,7 +8,7 @@ const Home = () => {
       {/* Book Cover / Hero Section */}
       <section className="relative w-full h-72 rounded-3xl overflow-hidden shadow-md flex items-center justify-center bg-black group">
         <img 
-          src="/book-cover.jpg" 
+          src="./book-cover.jpg" 
           alt="The Resilient Path Book Cover" 
           className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
           onError={(e) => {

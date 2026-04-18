@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { App as CapacitorApp } from '@capacitor/app';
+import { Capacitor } from '@capacitor/core';
 
 const BackButtonHandler = () => {
   const navigate = useNavigate();
@@ -8,6 +9,7 @@ const BackButtonHandler = () => {
   const [showExitDialog, setShowExitDialog] = useState(false);
 
   useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
     let handler;
     const registerListener = async () => {
       handler = await CapacitorApp.addListener('backButton', () => {

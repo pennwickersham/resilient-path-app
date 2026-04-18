@@ -1,0 +1,14 @@
+{
+  "expo": {
+    "name": "Resilient Path",
+    "slug": "resilient-path-app",
+    "ios": {
+      "bundleIdentifier": "com.resilientpath.app"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "865704a0-abe4-46e1-9f6f-1b752a99767a"
+      }
+    }
+  }
+}
