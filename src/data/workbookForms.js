@@ -2,6 +2,7 @@ export const workbookData = [
   {
     moduleId: 1,
     title: "Module 1: Redefining Your Pain Experience",
+    summary: "Welcome to the first step in transforming your understanding of pain. This module introduces the modern, holistic definition of pain: it is a personal sensory and emotional experience influenced by biological, psychological, and social factors. Validating your experience is the foundation for your resilient path forward.",
     exerciseTitle: "My Biopsychosocial Pain Map",
     sections: [
       {
@@ -38,6 +39,7 @@ export const workbookData = [
   {
     moduleId: 2,
     title: "Module 2: The Science of Your Hurt",
+    summary: "Understanding how you hurt helps move from fearing pain to managing it. This module explores how your nervous system can become over-reactive (central sensitization), turning up the 'volume' on signals even without new damage. Understanding 'hurt vs. harm' is a powerful shift in perspective.",
     exerciseTitle: "Translating the Science to You",
     sections: [
       {
@@ -76,6 +78,7 @@ export const workbookData = [
   {
     moduleId: 3,
     title: "Module 3: When Your Alarm System Goes Wrong",
+    summary: "Chronic pain can become a self-perpetuating vicious cycle, where initial pain leads to muscle guarding (splinting), which then creates more pain. This module helps you identify and interrupt these patterns, preventing your nervous system from remaining stuck on high alert.",
     exerciseTitle: "Identifying Your Vicious Cycles",
     sections: [
       {
@@ -99,6 +102,7 @@ export const workbookData = [
   {
     moduleId: 4,
     title: "Module 4: Naming Your Pain",
+    summary: "Pain isn't just one thing—it has different 'flavors' (nociceptive, neuropathic, and nociplastic). Understanding the specific type of pain you are experiencing is crucial for choosing the most effective treatments and communicating clearly with your healthcare team.",
     exerciseTitle: "Your Pain's Vocabulary",
     sections: [
       {
@@ -136,6 +140,7 @@ export const workbookData = [
   {
     moduleId: 5,
     title: "Module 5: The Physical Toll",
+    summary: "Chronic pain often carries a heavy physical burden beyond the pain itself, including profound fatigue and sleep disruption. This module helps you track the interconnected patterns of pain, sleep, and activity to find ways to break these exhausting physical cycles.",
     exerciseTitle: "The Weekly Symptom and Activity Tracker",
     sections: [
       {
@@ -176,6 +181,7 @@ export const workbookData = [
   {
     moduleId: 6,
     title: "Module 6: Navigating the Emotional Storm",
+    summary: "Emotions like fear, sadness, and frustration are normal responses to pain. This module uses CBT principles to show how your thoughts can trigger cycles of emotional and physical suffering, helping you build more helpful, balanced ways of thinking.",
     exerciseTitle: "The 'Thoughts-Feelings-Body-Actions' Cycle",
     sections: [
       {
@@ -201,6 +207,7 @@ export const workbookData = [
   {
     moduleId: 7,
     title: "Module 7: Clearing the 'Pain Fog'",
+    summary: "'Pain fog' is a real physiological consequence of your brain's limited resources being consumed by pain. This module identifies your specific cognitive challenges and helps you build a practical toolkit of strategies to manage them effectively.",
     exerciseTitle: "My Cognitive Tool Kit",
     sections: [
       {
@@ -229,6 +236,7 @@ export const workbookData = [
   {
     moduleId: 8,
     title: "Module 8: Pain in Your World",
+    summary: "Chronic pain ripples through your relationships, work, and identity. Acknowledging what has changed is the first step toward forging a new, meaningful identity that incorporates the reality of pain and expresses your core values in adapted ways.",
     exerciseTitle: "Relationship and Role Mapping",
     sections: [
       {
@@ -252,6 +260,7 @@ export const workbookData = [
   {
     moduleId: 9,
     title: "Module 9: Building Your Healthcare Alliance",
+    summary: "You are the captain of your professional care team. This module provides tools to organize your medical information and make every appointment more productive through clear preparation and assertive, prepared communication.",
     exerciseTitle: "Appointment Preparation Kit",
     sections: [
       {
@@ -269,6 +278,7 @@ export const workbookData = [
   {
     moduleId: 10,
     title: "Module 10: Your Medication Tool Kit",
+    summary: "Medications are just one tool in your management plan. This module helps you track your prescriptions and supplements accurately, focusing on finding the right balance of benefit and functional improvement while identifying potential side effects.",
     exerciseTitle: "Medication Reflection",
     sections: [
       {
@@ -295,6 +305,7 @@ export const workbookData = [
   {
     moduleId: 11,
     title: "Module 11: Exploring Interventional Options",
+    summary: "Procedures like injections or implanted devices can target the source of pain more directly. This module helps you approach these options with realistic expectations and ensures you have all the information needed for shared decision-making with your specialist.",
     exerciseTitle: "Shared Decision-Making",
     sections: [
       {
@@ -325,6 +336,7 @@ export const workbookData = [
   {
     moduleId: 12,
     title: "Module 12: Movement as Your Medicine",
+    summary: "Appropriate movement is a potent medicine for chronic pain. Understanding the difference between 'hurt' and 'harm' helps you use pacing and graded activity to gradually teach your body and brain that movement is safe and beneficial for long-term health.",
     exerciseTitle: "Overcoming Fear of Movement",
     sections: [
       {
@@ -366,6 +378,7 @@ export const workbookData = [
   {
     moduleId: 13,
     title: "Module 13: Fueling Your Body for Resilience",
+    summary: "Your nutrition can either fuel the flames of inflammation or help to tame them. This module explores the gut-brain axis and helps you build an anti-inflammatory diet that supports your overall well-being and long-term health.",
     exerciseTitle: "Food and Symptom Diary",
     sections: [
       {
@@ -393,6 +406,7 @@ export const workbookData = [
   {
     moduleId: 14,
     title: "Module 14: Harnessing Your Mind's Power",
+    summary: "Your mind is a powerful ally in managing pain. This module introduces evidence-based psychological tools like Cognitive Behavioral Therapy (CBT) and Acceptance and Commitment Therapy (ACT) to help you build a life guided by your core values.",
     exerciseTitle: "Psychological Approaches",
     sections: [
       {
@@ -436,6 +450,7 @@ export const workbookData = [
   {
     moduleId: 15,
     title: "Module 15: Reclaiming Your Nights",
+    summary: "Sleep is a biological superpower for healing and pain management. This module focuses on improving your sleep hygiene—the essential habits and environmental factors that can break the cycle of sleep disruption and increased pain.",
     exerciseTitle: "Sleep Hygiene Checklist",
     sections: [
       {
@@ -473,6 +488,7 @@ export const workbookData = [
   {
     moduleId: 16,
     title: "Module 16: Beyond the Clinic: Complementary Therapies",
+    summary: "Complementary and integrative therapies, such as acupuncture, massage, or yoga, can be valuable additions to your health plan. This module helps you be an informed consumer by providing a structured way to research and evaluate these options safely and effectively.",
     exerciseTitle: "My Complementary Therapy Evaluation",
     sections: [
       {
@@ -490,6 +506,7 @@ export const workbookData = [
   {
     moduleId: 17,
     title: "Module 17: The Art of Pacing and Planning",
+    summary: "Escaping the 'boom-bust' cycle requires active management of your energy. This module teaches the principles of pacing—breaking down tasks and scheduling proactive rest—to help you regain a sense of control and predictability in your daily life.",
     exerciseTitle: "Activity Baseline Finder",
     sections: [
       {
@@ -519,6 +536,7 @@ export const workbookData = [
   {
     moduleId: 18,
     title: "Module 18: Creating a Pain-Friendly Environment",
+    summary: "Applying the principles of ergonomics (fitting the environment to the person) can dramatically reduce physical strain and conserve energy. This module provides a detailed 'walk-through' of your surroundings to identify opportunities for health-supporting improvements.",
     exerciseTitle: "Ergonomic Improvements",
     sections: [
       {
@@ -567,6 +585,7 @@ export const workbookData = [
   {
     moduleId: 19,
     title: "Module 19: Weaving Your Web of Support",
+    summary: "A strong support system is an essential lifeline when navigating chronic pain. This module helps you visualize your current network of family, friends, and peers, identifying strengths and gaps so you can take active steps to strengthen your vital connections.",
     exerciseTitle: "My Support Map",
     sections: [
       {
@@ -582,6 +601,7 @@ export const workbookData = [
   {
     moduleId: 20,
     title: "Module 20: Finding Your Voice: Self-Advocacy",
+    summary: "Self-advocacy is the skill of using your voice to ensure your needs are heard and met. This module provides scripts to help you communicate clearly and assertively with your healthcare team, transforming you into an empowered partner in your own care.",
     exerciseTitle: "Advocacy Script Builder",
     sections: [
       {
@@ -596,6 +616,7 @@ export const workbookData = [
   {
     moduleId: 21,
     title: "Module 21: Breaking Free from Unhelpful Habits",
+    summary: "Building resilience involves removing habits that actively undermine your progress. This module provides a structured planner to help you tackle roadblocks like smoking or excessive alcohol use, which can fuel inflammation and interfere with your pain management.",
     exerciseTitle: "My Habit Change Planner",
     sections: [
       {
@@ -615,6 +636,7 @@ export const workbookData = [
   {
     moduleId: 22,
     title: "Module 22: Building Your Resilience",
+    summary: "Resilience is your ability to adapt well in the face of adversity. This module focuses on cultivating inner strength through realistic optimism and self-efficacy, using daily practices like gratitude and self-compassion to shift your focus toward success and hope.",
     exerciseTitle: "Gratitude and Self-Compassion Journal",
     sections: [
       {
@@ -630,6 +652,7 @@ export const workbookData = [
   {
     moduleId: 23,
     title: "Module 23: Finding Meaning and Purpose",
+    summary: "Chronic pain can challenge our sense of purpose, but finding meaning remains a powerful source of healing. This module helps you identify your core values and brainstorm small, manageable ways to contribute to your world and maintain a fulfilling identity.",
     exerciseTitle: "My Contribution Brainstorm",
     sections: [
       {
@@ -644,6 +667,7 @@ export const workbookData = [
   {
     moduleId: 24,
     title: "Module 24: Your Path to Inner Peace",
+    summary: "Spirituality and personal meaning are profound sources of strength and comfort. Whether through faith, nature, art, or meditation, this module encourages you to explore what brings you a sense of awe and peace and to intentionally nurture that connection.",
     exerciseTitle: "Spirituality and Personal Meaning",
     sections: [
       {
@@ -658,6 +682,7 @@ export const workbookData = [
   {
     moduleId: 25,
     title: "Module 25: Your Flare-Up Plan & Hopeful Future",
+    summary: "Setbacks are a normal part of the journey. This module helps you create a concrete, step-by-step plan for your 'tough days,' transforming fear of the unknown into a feeling of preparedness and control as you walk toward a hopeful future.",
     exerciseTitle: "My Personalized Flare-Up Plan",
     sections: [
       {

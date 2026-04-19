@@ -180,6 +180,17 @@ const WorkbookForms = () => {
               </button>
             </div>
 
+            {currentModuleData.summary && (
+              <div className="bg-primary-50/50 border border-primary-100 p-4 rounded-xl mb-6 flex gap-3 no-print">
+                <div className="text-primary-600 mt-0.5">
+                  <div className="w-1.5 h-full bg-primary-300 rounded-full"></div>
+                </div>
+                <p className="text-secondary-700 text-sm leading-relaxed italic">
+                  {currentModuleData.summary}
+                </p>
+              </div>
+            )}
+
             {currentModuleData.sections.map((section, idx) => (
               <div key={idx} className="space-y-4">
                 <h5 className="font-bold text-primary-700 bg-primary-50 px-3 py-2 rounded-lg border border-primary-100 inline-block">

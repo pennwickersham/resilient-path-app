@@ -24,6 +24,22 @@ const Home = () => {
         </p>
       </section>
 
+      {/* Shopify Placeholder */}
+      <section className="bg-primary-900 p-5 rounded-2xl shadow-md border border-primary-800 flex items-center justify-between relative overflow-hidden group cursor-pointer">
+        <div className="relative z-10">
+          <h3 className="text-white font-bold text-lg">Purchase the Book</h3>
+          <p className="text-primary-100/80 text-sm mt-1">Visit our future Shopify store to buy the physical book and workbook.</p>
+          <div className="inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg text-xs font-semibold mt-3 border border-white/20 transition-colors">
+            Coming Soon (TBD)
+          </div>
+        </div>
+        <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center -mr-4 rotate-12 group-hover:scale-110 transition duration-500 shrink-0">
+          <BookOpen className="text-white/20" size={48} />
+        </div>
+        {/* Subtle background glow */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/10 blur-3xl -mr-10 -mt-10"></div>
+      </section>
+
       <div className="grid grid-cols-2 gap-4">
         <Link to="/workbook" className="bg-primary-50 p-5 rounded-2xl border border-primary-100 flex flex-col items-center text-center justify-center hover:bg-primary-100 transition shadow-sm group cursor-pointer">
           <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 transition duration-300">

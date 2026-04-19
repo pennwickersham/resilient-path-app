@@ -1,7 +1,7 @@
 {
   "name": "resilient-path-app",
   "private": true,
-  "version": "0.0.0",
+  "version": "2.0.0",
   "type": "module",
   "main": "dist-electron/main.js",
   "scripts": {
@@ -14,7 +14,7 @@
   },
   "build": {
     "appId": "com.resilientpath.app",
-    "productName": "Resilient Path",
+    "productName": "Resilient Path (Version 2)",
     "directories": {
       "output": "release"
     },
