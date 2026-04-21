@@ -97,7 +97,7 @@ const Chatbot = () => {
       }));
 
       const response = await ai.models.generateContent({
-        model: 'gemini-1.5-flash',
+        model: 'models/gemini-2.0-flash',
         contents: [
           ...history,
           { role: 'user', parts: [{ text: userMessage }] }
@@ -114,14 +114,12 @@ const Chatbot = () => {
     } catch (error) {
       console.error("Gemini AI Error:", error);
       
-      let errorMsg = "An error occurred while connecting to the AI. Please try again.";
+      let errorMsg = error.message || "An error occurred while connecting to the AI. Please try again.";
       
       if (error.message?.includes('API key')) {
         errorMsg = "Invalid API key. Please check your key in settings.";
       } else if (error.message?.includes('quota')) {
         errorMsg = "API quota exceeded. Please try again later.";
-      } else if (error.message?.includes('model')) {
-        errorMsg = "AI model error. Please contact support.";
       }
 
       setMessages(prev => [...prev, { role: 'model', content: errorMsg }]);
