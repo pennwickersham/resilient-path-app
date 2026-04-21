@@ -71,6 +71,11 @@ const Chatbot = () => {
         2. At the very end of your short answer, ALWAYS ask the user a variation of: "Would you like a longer, more detailed answer that includes specific references to the book and workbook?"
         3. Only provide the deep, detailed answer with specific book/workbook references IF the user explicitly says "yes" or asks for more details in a subsequent message.
         
+        FORMATTING RULE:
+        - Always respond using clear paragraphs. 
+        - Use double line breaks between paragraphs for readability on mobile screens. 
+        - Avoid large, monolithic blocks (walls) of text.
+        
         Your goal is to be strictly informed by the provided book and workbook excerpts. You may also reference general, widely accepted medical knowledge but prioritizing the program's biopsychosocial philosophy.
         Do not provide final diagnoses or prescribe medications. Always remind the user to consult their healthcare provider for medical advice.
         
@@ -85,18 +90,18 @@ const Chatbot = () => {
         ---
       `;
 
-      // Convert history to Gemini format
-      const history = messages.map(msg => ({
+      // Build history (excluding the first system greeting)
+      const history = messages.slice(1).map(msg => ({
         role: msg.role === 'model' ? 'model' : 'user',
         parts: [{ text: msg.content }]
       }));
 
-      // Add user's new message
-      history.push({ role: 'user', parts: [{ text: userMessage }] });
-
       const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: history,
+        model: 'gemini-1.5-flash',
+        contents: [
+          ...history,
+          { role: 'user', parts: [{ text: userMessage }] }
+        ],
         config: {
           systemInstruction: systemInstruction,
           temperature: 0.3,
@@ -107,12 +112,19 @@ const Chatbot = () => {
       setMessages(prev => [...prev, { role: 'model', content: replyText }]);
 
     } catch (error) {
-      console.error(error);
-      setMessages(prev => [...prev, { role: 'model', content: "An error occurred while connecting to the AI. Please check your API key and try again." }]);
+      console.error("Gemini AI Error:", error);
+      
+      let errorMsg = "An error occurred while connecting to the AI. Please try again.";
+      
       if (error.message?.includes('API key')) {
-        setIsKeySet(false);
-        localStorage.removeItem('resilientPathGeminiKey');
+        errorMsg = "Invalid API key. Please check your key in settings.";
+      } else if (error.message?.includes('quota')) {
+        errorMsg = "API quota exceeded. Please try again later.";
+      } else if (error.message?.includes('model')) {
+        errorMsg = "AI model error. Please contact support.";
       }
+
+      setMessages(prev => [...prev, { role: 'model', content: errorMsg }]);
     } finally {
       setIsLoading(false);
     }
