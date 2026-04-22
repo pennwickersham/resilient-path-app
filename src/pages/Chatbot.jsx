@@ -171,7 +171,7 @@ const Chatbot = () => {
         {messages.map((msg, idx) => (
           <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div 
-              className={`max-w-[85%] rounded-2xl p-3 text-sm leading-relaxed ${
+              className={`max-w-[85%] rounded-2xl p-3 text-sm leading-relaxed whitespace-pre-wrap ${
                 msg.role === 'user' 
                   ? 'bg-primary-600 text-white rounded-tr-none' 
                   : 'bg-secondary-100 text-secondary-900 rounded-tl-none border border-secondary-200'

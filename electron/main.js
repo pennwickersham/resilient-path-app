@@ -12,7 +12,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
-    title: "Resilient Path",
+    title: "Resilient Path v2",
     autoHideMenuBar: true, // Hides standard window menu bar
     webPreferences: {
       preload: join(_dirname, 'preload.mjs'),
