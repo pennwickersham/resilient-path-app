@@ -165,31 +165,48 @@ const WorkbookForms = () => {
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-secondary-100 print:shadow-none print:border-none print:p-0" ref={printRef}>
         {currentModuleData && (
           <div className="space-y-8">
-            <div className="border-b border-secondary-100 pb-4 mb-6 flex justify-between items-start gap-4">
-              <div>
-                <h3 className="text-xl font-bold text-primary-900">{currentModuleData.title}</h3>
-                <h4 className="text-lg font-semibold text-secondary-700 mt-1">{currentModuleData.exerciseTitle}</h4>
+            {/* Module Orientation Header */}
+            <div className="bg-gradient-to-br from-primary-50 to-white border border-primary-100 p-6 rounded-2xl mb-8 shadow-inner overflow-hidden relative group">
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 text-primary-700 font-bold text-xs uppercase tracking-widest mb-3">
+                  <div className="w-8 h-[2px] bg-primary-600"></div>
+                   Module Orientation
+                </div>
+                
+                <h3 className="text-2xl font-black text-primary-900 leading-tight mb-2">
+                  {currentModuleData.title}
+                </h3>
+                 
+                {currentModuleData.summary && (
+                  <p className="text-secondary-700 text-sm leading-relaxed mb-4 font-medium italic">
+                    "{currentModuleData.summary}"
+                  </p>
+                )}
+
+                <div className="flex flex-wrap gap-2 mt-4 no-print">
+                  <div className="bg-white/80 border border-primary-200 px-3 py-1 rounded-full text-[10px] font-bold text-primary-700 shadow-sm flex items-center gap-1.5 uppercase">
+                    <div className="w-1.5 h-1.5 bg-primary-500 rounded-full animate-pulse"></div>
+                    Current Objective: {currentModuleData.exerciseTitle}
+                  </div>
+                </div>
               </div>
-              <button 
+              
+              {/* Abstract decorative element in background */}
+              <div className="absolute top-0 right-0 w-48 h-48 bg-primary-500/5 rounded-full blur-3xl -mr-20 -mt-20 group-hover:bg-primary-500/10 transition-colors"></div>
+              <div className="absolute bottom-0 left-0 w-32 h-32 bg-secondary-400/5 rounded-full blur-3xl -ml-10 -mb-10"></div>
+            </div>
+
+            <div className="border-b border-secondary-100 pb-4 mb-6 flex justify-between items-center gap-4 no-print">
+               <h4 className="text-lg font-bold text-secondary-900">Worksheet: {currentModuleData.exerciseTitle}</h4>
+               <button 
                 onClick={handleClearModule}
-                className="flex items-center gap-1.5 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 px-3 py-1.5 rounded-lg transition-colors no-print shrink-0 mt-1"
+                className="flex items-center gap-1.5 text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 px-3 py-1.5 rounded-lg transition-all active:scale-95 shrink-0"
                 title="Clear all answers in this module"
               >
                 <Trash2 size={14} />
-                Clear
+                Reset Data
               </button>
             </div>
-
-            {currentModuleData.summary && (
-              <div className="bg-primary-50/50 border border-primary-100 p-4 rounded-xl mb-6 flex gap-3 no-print">
-                <div className="text-primary-600 mt-0.5">
-                  <div className="w-1.5 h-full bg-primary-300 rounded-full"></div>
-                </div>
-                <p className="text-secondary-700 text-sm leading-relaxed italic">
-                  {currentModuleData.summary}
-                </p>
-              </div>
-            )}
 
             {currentModuleData.sections.map((section, idx) => (
               <div key={idx} className="space-y-4">

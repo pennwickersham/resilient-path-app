@@ -24,20 +24,32 @@ const Home = () => {
         </p>
       </section>
 
-      {/* Shopify Placeholder */}
-      <section className="bg-primary-900 p-5 rounded-2xl shadow-md border border-primary-800 flex items-center justify-between relative overflow-hidden group cursor-pointer">
-        <div className="relative z-10">
-          <h3 className="text-white font-bold text-lg">Purchase the Book</h3>
-          <p className="text-primary-100/80 text-sm mt-1">Visit our future Shopify store to buy the physical book and workbook.</p>
-          <div className="inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg text-xs font-semibold mt-3 border border-white/20 transition-colors">
-            Coming Soon (TBD)
+      {/* Shopify / Book Purchase Section */}
+      <section 
+        className="bg-white p-5 rounded-2xl shadow-sm border border-secondary-100 flex flex-col gap-4 relative overflow-hidden group hover:border-primary-200 transition-colors cursor-pointer"
+        onClick={() => window.open('https://shopify.com', '_blank')}
+      >
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 bg-primary-900 rounded-xl flex items-center justify-center shrink-0 shadow-md">
+            <BookOpen className="text-white" size={32} />
+          </div>
+          <div>
+            <h3 className="text-primary-900 font-bold text-lg">Order the Physical Workbook</h3>
+            <p className="text-secondary-600 text-sm leading-snug mt-0.5">
+              Get the complete hardcopy book and journaling companion.
+            </p>
           </div>
         </div>
-        <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center -mr-4 rotate-12 group-hover:scale-110 transition duration-500 shrink-0">
-          <BookOpen className="text-white/20" size={48} />
+        
+        <div className="bg-primary-50 p-4 rounded-xl border border-primary-100 flex items-center justify-between group-hover:bg-primary-100 transition-colors">
+          <span className="text-primary-800 font-bold text-sm">Visit our Shopify Store</span>
+          <div className="bg-primary-600 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm">
+            TBD
+          </div>
         </div>
-        {/* Subtle background glow */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/10 blur-3xl -mr-10 -mt-10"></div>
+        
+        {/* Decorative Shopify-esque feel */}
+        <div className="absolute -top-10 -right-10 w-24 h-24 bg-primary-100/30 rounded-full blur-2xl"></div>
       </section>
 
       <div className="grid grid-cols-2 gap-4">
