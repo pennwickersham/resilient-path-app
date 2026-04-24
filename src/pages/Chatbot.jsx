@@ -101,44 +101,53 @@ const Chatbot = () => {
       let response;
       let retries = 0;
       const maxRetries = 5;
-      const modelQueue = ['models/gemini-2.5-flash', 'models/gemini-1.5-flash'];
+      // Use the most compatible model names for this SDK version
+      const modelQueue = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash'];
       let currentModelIndex = 0;
       
       while (retries < maxRetries) {
-        const currentModel = modelQueue[currentModelIndex];
+        const currentModelName = modelQueue[currentModelIndex];
         try {
-          response = await ai.models.generateContent({
-            model: currentModel,
+          // Use the recommended getGenerativeModel pattern
+          const model = ai.getGenerativeModel({ 
+            model: currentModelName,
+            systemInstruction: systemInstruction 
+          });
+
+          const result = await model.generateContent({
             contents: [
               ...history,
               { role: 'user', parts: [{ text: userMessage }] }
             ],
-            config: {
-              systemInstruction: systemInstruction,
+            generationConfig: {
               temperature: 0.3,
             }
           });
+          
+          response = result.response;
           break; // Success!
         } catch (err) {
           retries++;
-          const is503 = err.message?.includes('503') || err.message?.includes('demand');
+          const errorText = err.message || "";
+          const is503 = errorText.includes('503') || errorText.includes('demand');
+          const is404 = errorText.includes('404') || errorText.includes('not found');
           
-          if (is503 && retries < maxRetries) {
-            // If primary busy, switch to fallback model immediately on first failure, then retry both
+          if ((is503 || is404) && retries < maxRetries) {
+            // If model not found or busy, switch to next model immediately
             if (currentModelIndex < modelQueue.length - 1) {
-              console.log(`Primary model busy. Switching to fallback: ${modelQueue[currentModelIndex + 1]}`);
+              console.log(`Model ${modelQueue[currentModelIndex]} failed (${is404 ? '404' : '503'}). Trying ${modelQueue[currentModelIndex + 1]}...`);
               currentModelIndex++;
             }
             
-            console.log(`AI busy (503). Retry ${retries}/${maxRetries} using ${modelQueue[currentModelIndex]}...`);
-            await new Promise(resolve => setTimeout(resolve, 3000 * retries)); // Wait 3s, 6s, 9s...
+            console.log(`Retry ${retries}/${maxRetries} using ${modelQueue[currentModelIndex]}...`);
+            await new Promise(resolve => setTimeout(resolve, 3000 * retries)); 
             continue;
           }
-          throw err; // Re-throw if not 503 or max retries reached
+          throw err; 
         }
       }
 
-      const replyText = response.text || "I'm sorry, I couldn't generate a response.";
+      const replyText = response.text() || "I'm sorry, I couldn't generate a response.";
       setMessages(prev => [...prev, { role: 'model', content: replyText }]);
 
     } catch (error) {
