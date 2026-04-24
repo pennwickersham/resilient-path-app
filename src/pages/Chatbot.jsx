@@ -60,7 +60,7 @@ const Chatbot = () => {
     setIsLoading(true);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: apiKey });
+      const ai = new GoogleGenerativeAI(apiKey);
 
       // Build the system prompt with context
       const systemInstruction = `
