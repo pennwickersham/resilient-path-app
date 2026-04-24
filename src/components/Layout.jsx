@@ -12,7 +12,10 @@ const Layout = () => {
   return (
     <div className="flex flex-col min-h-screen bg-secondary-50 text-secondary-900 font-sans w-full max-w-md mx-auto relative shadow-xl overflow-hidden">
       {/* Header */}
-      <header className="bg-white border-b border-secondary-100 p-4 sticky top-0 z-10 shadow-sm flex items-center justify-center">
+      <header 
+        className="bg-white border-b border-secondary-100 sticky top-0 z-10 shadow-sm flex items-center justify-center"
+        style={{ paddingTop: 'calc(1rem + env(safe-area-inset-top))' }}
+      >
         <h1 className="text-xl font-bold text-primary-700 tracking-tight">Resilient Path</h1>
       </header>
 
@@ -22,7 +25,13 @@ const Layout = () => {
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 w-full max-w-md bg-white border-t border-secondary-100 flex justify-around items-center h-16 px-2 z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+      <nav 
+        className="fixed bottom-0 w-full max-w-md bg-white border-t border-secondary-100 flex justify-around items-center z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]"
+        style={{ 
+          height: 'calc(4rem + env(safe-area-inset-bottom))',
+          paddingBottom: 'env(safe-area-inset-bottom)'
+        }}
+      >
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
