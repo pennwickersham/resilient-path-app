@@ -101,8 +101,8 @@ const Chatbot = () => {
       let response;
       let retries = 0;
       const maxRetries = 5;
-      // Use the most compatible model names for this SDK version
-      const modelQueue = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash'];
+      // Using -latest aliases for maximum reliability and current access
+      const modelQueue = ['gemini-1.5-flash-latest', 'gemini-1.5-pro-latest', 'gemini-1.5-flash'];
       let currentModelIndex = 0;
       
       while (retries < maxRetries) {
@@ -196,7 +196,7 @@ const Chatbot = () => {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-140px)] animate-in fade-in duration-500">
+    <div className="flex flex-col h-[calc(100vh-160px)] animate-in fade-in duration-500">
       <div className="flex items-center gap-2 mb-2 shrink-0">
         <h2 className="text-xl font-bold text-primary-800">Therapist AI</h2>
       </div>
@@ -204,7 +204,7 @@ const Chatbot = () => {
         <AlertCircle size={14} className="shrink-0" />
         AI is for educational purposes based on The Resilient Path. Not medical advice.
       </p>
-
+ 
       {/* Chat Area */}
       <div className="flex-1 overflow-y-auto bg-white border border-secondary-200 rounded-2xl p-4 shadow-inner mb-4 flex flex-col gap-4">
         {messages.map((msg, idx) => (
@@ -231,8 +231,8 @@ const Chatbot = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
-      <div className="bg-white border border-secondary-200 rounded-full p-1.5 flex items-center shadow-sm shrink-0">
+      {/* Input Area - Added extra margin-bottom for home key safety */}
+      <div className="bg-white border border-secondary-200 rounded-full p-1.5 flex items-center shadow-sm shrink-0 mb-[env(safe-area-inset-bottom,20px)] sm:mb-2 mt-auto">
         <input 
           type="text" 
           placeholder="Ask a question..." 
