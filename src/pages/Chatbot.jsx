@@ -75,6 +75,7 @@ const Chatbot = () => {
         - Always respond using clear paragraphs. 
         - Use double line breaks between paragraphs for readability on mobile screens. 
         - Avoid large, monolithic blocks (walls) of text.
+        - STRICT RULE: Do NOT use any bolding (**text**) or italics (*text*). Use plain text only.
         
         Your goal is to be strictly informed by the provided book and workbook excerpts. You may also reference general, widely accepted medical knowledge but prioritizing the program's biopsychosocial philosophy.
         Do not provide final diagnoses or prescribe medications. Always remind the user to consult their healthcare provider for medical advice.
@@ -96,17 +97,36 @@ const Chatbot = () => {
         parts: [{ text: msg.content }]
       }));
 
-      const response = await ai.models.generateContent({
-        model: 'models/gemini-2.5-flash',
-        contents: [
-          ...history,
-          { role: 'user', parts: [{ text: userMessage }] }
-        ],
-        config: {
-          systemInstruction: systemInstruction,
-          temperature: 0.3,
+      // Retry logic for 503 errors
+      let response;
+      let retries = 0;
+      const maxRetries = 3;
+      
+      while (retries < maxRetries) {
+        try {
+          response = await ai.models.generateContent({
+            model: 'models/gemini-2.5-flash',
+            contents: [
+              ...history,
+              { role: 'user', parts: [{ text: userMessage }] }
+            ],
+            config: {
+              systemInstruction: systemInstruction,
+              temperature: 0.3,
+            }
+          });
+          break; // Success!
+        } catch (err) {
+          retries++;
+          const is503 = err.message?.includes('503') || err.message?.includes('demand');
+          if (is503 && retries < maxRetries) {
+            console.log(`AI busy (503). Retry ${retries}/${maxRetries}...`);
+            await new Promise(resolve => setTimeout(resolve, 2000 * retries)); // Wait 2s, 4s...
+            continue;
+          }
+          throw err; // Re-throw if not 503 or max retries reached
         }
-      });
+      }
 
       const replyText = response.text || "I'm sorry, I couldn't generate a response.";
       setMessages(prev => [...prev, { role: 'model', content: replyText }]);
