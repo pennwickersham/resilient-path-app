@@ -97,15 +97,18 @@ const Chatbot = () => {
         parts: [{ text: msg.content }]
       }));
 
-      // Retry logic for 503 errors
+      // Multi-Model Fallback & Retry logic
       let response;
       let retries = 0;
-      const maxRetries = 3;
+      const maxRetries = 5;
+      const modelQueue = ['models/gemini-2.5-flash', 'models/gemini-1.5-flash'];
+      let currentModelIndex = 0;
       
       while (retries < maxRetries) {
+        const currentModel = modelQueue[currentModelIndex];
         try {
           response = await ai.models.generateContent({
-            model: 'models/gemini-2.5-flash',
+            model: currentModel,
             contents: [
               ...history,
               { role: 'user', parts: [{ text: userMessage }] }
@@ -119,9 +122,16 @@ const Chatbot = () => {
         } catch (err) {
           retries++;
           const is503 = err.message?.includes('503') || err.message?.includes('demand');
+          
           if (is503 && retries < maxRetries) {
-            console.log(`AI busy (503). Retry ${retries}/${maxRetries}...`);
-            await new Promise(resolve => setTimeout(resolve, 2000 * retries)); // Wait 2s, 4s...
+            // If primary busy, switch to fallback model immediately on first failure, then retry both
+            if (currentModelIndex < modelQueue.length - 1) {
+              console.log(`Primary model busy. Switching to fallback: ${modelQueue[currentModelIndex + 1]}`);
+              currentModelIndex++;
+            }
+            
+            console.log(`AI busy (503). Retry ${retries}/${maxRetries} using ${modelQueue[currentModelIndex]}...`);
+            await new Promise(resolve => setTimeout(resolve, 3000 * retries)); // Wait 3s, 6s, 9s...
             continue;
           }
           throw err; // Re-throw if not 503 or max retries reached
