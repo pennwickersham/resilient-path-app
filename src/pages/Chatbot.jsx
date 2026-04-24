@@ -101,18 +101,18 @@ const Chatbot = () => {
       let response;
       let retries = 0;
       const maxRetries = 5;
-      // Using -latest aliases for maximum reliability and current access
-      const modelQueue = ['gemini-1.5-flash-latest', 'gemini-1.5-pro-latest', 'gemini-1.5-flash'];
+      // VERIFIED AVAILABLE via ListModels API query on 2026-04-24.
+      // All Gemini 1.5 models have been retired and return 404.
+      const modelQueue = ['gemini-2.5-flash', 'gemini-2.0-flash-001', 'gemini-2.5-pro'];
       let currentModelIndex = 0;
       
       while (retries < maxRetries) {
         const currentModelName = modelQueue[currentModelIndex];
         try {
-          // Use the recommended getGenerativeModel pattern
           const model = ai.getGenerativeModel({ 
             model: currentModelName,
             systemInstruction: systemInstruction 
-          });
+          }, { apiVersion: 'v1beta' });
 
           const result = await model.generateContent({
             contents: [
@@ -130,24 +130,34 @@ const Chatbot = () => {
           retries++;
           const errorText = err.message || "";
           const is503 = errorText.includes('503') || errorText.includes('demand');
-          const is404 = errorText.includes('404') || errorText.includes('not found');
+          const is404 = errorText.includes('404') || errorText.includes('not found') || errorText.includes('not supported');
           
           if ((is503 || is404) && retries < maxRetries) {
-            // If model not found or busy, switch to next model immediately
             if (currentModelIndex < modelQueue.length - 1) {
               console.log(`Model ${modelQueue[currentModelIndex]} failed (${is404 ? '404' : '503'}). Trying ${modelQueue[currentModelIndex + 1]}...`);
               currentModelIndex++;
             }
             
             console.log(`Retry ${retries}/${maxRetries} using ${modelQueue[currentModelIndex]}...`);
-            await new Promise(resolve => setTimeout(resolve, 3000 * retries)); 
+            await new Promise(resolve => setTimeout(resolve, 2000 * retries)); 
             continue;
           }
           throw err; 
         }
       }
 
-      const replyText = response.text() || "I'm sorry, I couldn't generate a response.";
+      // Extract text, handling both standard and thinking-model responses
+      let replyText = '';
+      try {
+        replyText = response.text();
+      } catch (e) {
+        // Fallback: manually extract text parts from candidates
+        const parts = response?.candidates?.[0]?.content?.parts || [];
+        replyText = parts
+          .filter(p => p.text && !p.thought)
+          .map(p => p.text)
+          .join('\n') || "I'm sorry, I couldn't generate a response.";
+      }
       setMessages(prev => [...prev, { role: 'model', content: replyText }]);
 
     } catch (error) {
