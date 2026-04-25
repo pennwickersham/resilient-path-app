@@ -33,6 +33,14 @@ export const workbookData = [
           { id: 'm1_s3_q4', type: 'textarea', label: 'Who in your life seems to understand what you\'re going through? Who struggles to understand?' },
           { id: 'm1_s3_q5', type: 'textarea', label: 'What are some social or environmental factors that make your pain harder to manage?' }
         ]
+      },
+      {
+        sectionTitle: 'Reflection Prompt',
+        fields: [
+          { id: 'm1_s4_q1', type: 'textarea', label: 'Take a moment to look at your completed Pain Map. What connections can you see between the three sections?' },
+          { id: 'm1_s4_q2', type: 'textarea', label: 'How do the "ingredients" from one section influence the others? For example, have you noticed how a specific worry (Psycho) might lead to increased muscle tension (Bio)? Or how feeling misunderstood by a loved one (Social) can make you feel more sad and frustrated (Psycho)?' },
+          { id: 'm1_s4_q3', type: 'textarea', label: 'Write down one or two connections you\'ve observed in your own life:' }
+        ]
       }
     ]
   },
@@ -70,7 +78,7 @@ export const workbookData = [
       {
         sectionTitle: 'Reflection Prompt',
         fields: [
-          { id: 'm2_s4_q1', type: 'textarea', label: 'How does understanding the difference between allodynia and hyperalgesia change how you view your pain?' }
+          { id: 'm2_s4_q1', type: 'textarea', label: 'How does the idea that your nervous system can become \'overprotective\' and \'stuck on high alert\' change how you think about your pain? Does it make the distinction between \'hurt\' (the sensation you feel) and \'harm\' (actual tissue damage) any clearer?' }
         ]
       }
     ]
@@ -130,9 +138,11 @@ export const workbookData = [
         ]
       },
       {
-        sectionTitle: 'Action Prompt',
+        sectionTitle: 'Reflection & Action Prompt',
         fields: [
-          { id: 'm4_s2_q1', type: 'textarea', label: 'Circle or list the top 3 words you would use to communicate your pain to your doctor.' }
+          { id: 'm4_s2_q0', type: 'textarea', label: 'Does seeing the words categorized like this help you understand your own pain better? Do you see how you might have a "mixed pain state"?' },
+          { id: 'm4_s2_q1', type: 'textarea', label: 'List the top 3 words you would use to communicate your pain to your doctor.' },
+          { id: 'm4_s2_q2', type: 'textarea', label: 'Take this completed worksheet with you to your next doctor\'s appointment. When your doctor asks you to describe your pain, use these specific words to provide important clues to guide your diagnosis and treatment plan.' }
         ]
       }
     ]
@@ -168,8 +178,9 @@ export const workbookData = [
         ]
       },
       {
-        sectionTitle: 'Weekly Observation Reflection',
+        sectionTitle: 'Reflection Prompt',
         fields: [
+          { id: 'm5_s1_q0', type: 'textarea', label: 'At the end of the week, take some time to review your completed tracker. Look for connections and patterns. What do you notice?' },
           { id: 'm5_s1_q1', type: 'textarea', label: 'After a night of poor sleep, what typically happens to your pain and fatigue levels the next day?' },
           { id: 'm5_s1_q2', type: 'textarea', label: 'On days when your pain is higher, how does that affect your mood and your activity levels?' },
           { id: 'm5_s1_q3', type: 'textarea', label: 'Are there any activities or foods that consistently seem to make you feel better or worse?' },
@@ -194,12 +205,12 @@ export const workbookData = [
         ]
       },
       {
-        sectionTitle: 'Intervention Plan',
+        sectionTitle: 'Reflection Prompt',
         fields: [
-          { id: 'm6_s2_q0', type: 'textarea', label: '1. What was the initial trigger or situation for your emotional storm?' },
-          { id: 'm6_s2_q1', type: 'textarea', label: '2. What is a more helpful, balanced thought you could practice next time?' },
-          { id: 'm6_s2_q2', type: 'textarea', label: '3. What is one small action you could take that would align more with your values, even with the pain?' },
-          { id: 'm6_s2_q3', type: 'textarea', label: '4. How do you feel after practicing this new thought and action?' }
+          { id: 'm6_s2_q0', type: 'textarea', label: 'Look at the cycle you just described. It can feel like a powerful, unstoppable chain reaction. But you have the power to intervene at any link in the chain. How could you intervene in this cycle next time?' },
+          { id: 'm6_s2_q1', type: 'textarea', label: 'What is a more helpful, balanced thought you could practice? (e.g., "My back is stiff this morning, which is frustrating. I will do my gentle stretches and then tackle my most important task first. I can manage this.")' },
+          { id: 'm6_s2_q2', type: 'textarea', label: 'What is one small action you could take that would align more with your values, even with the pain? (e.g., "Instead of going back to bed, I will make a cup of tea and sit in a comfortable chair for 10 minutes.")' },
+          { id: 'm6_s2_q3', type: 'textarea', label: 'Write down one specific intervention you could try:' }
         ]
       }
     ]
@@ -254,13 +265,21 @@ export const workbookData = [
           { id: 'm8_s2_q1', type: 'textarea', label: 'Describe the dynamics of 1-2 key relationships before chronic pain.' },
           { id: 'm8_s2_q2', type: 'textarea', label: 'Describe how chronic pain has affected these dynamics. How have these key relationships and interactions been impacted?' }
         ]
+      },
+      {
+        sectionTitle: 'Reflection Prompt',
+        fields: [
+          { id: 'm8_s3_q0', type: 'textarea', label: 'It is completely normal for the exercise above to bring up feelings of sadness or grief. Take a moment to acknowledge whatever emotions are present without judgment. This is a valid and important part of your experience.' },
+          { id: 'm8_s3_q1', type: 'textarea', label: 'Choose one of your core values or a quality from a role you listed (e.g., "being a caring parent," "being a creative person," "being a supportive friend"). This value hasn\'t disappeared, even if the way you express it has to change. How can you express that core value in a new, adapted way that works with your current abilities?' },
+          { id: 'm8_s3_q2', type: 'textarea', label: 'Example: "My role as an \'avid hiker\' has changed. But the underlying value was \'connecting with nature.\' A new, adapted way to express this is to create a small container garden on my patio or to find an accessible park bench where I can sit and enjoy the outdoors for 15 minutes."' }
+        ]
       }
     ]
   },
   {
     moduleId: 9,
     title: "Module 9: Building Your Healthcare Alliance",
-    summary: "You are the captain of your professional care team. This module provides tools to organize your medical information and make every appointment more productive through clear preparation and assertive, prepared communication.",
+    summary: "You are the captain of your professional care team. This module provides tools to organize your medical information and make every appointment more productive through clear preparation and assertive, prepared communication. Being seen, heard, and validated by your healthcare team is fundamental to effective care.",
     exerciseTitle: "Appointment Preparation Kit",
     sections: [
       {
@@ -271,6 +290,16 @@ export const workbookData = [
           { id: 'm9_s1_q3', type: 'textarea', label: 'Function update: Sleep, energy, mood, ability to do daily activities.' },
           { id: 'm9_s1_q4', type: 'textarea', label: 'Medication update: Are current medications helping? Any side effects?' },
           { id: 'm9_s1_q5', type: 'textarea', label: 'My specific questions for the doctor:' }
+        ]
+      },
+      {
+        sectionTitle: '6. My Notes from the Visit & Our Plan',
+        fields: [
+          { id: 'm9_s2_q1', type: 'textarea', label: 'New Prescriptions/Changes:' },
+          { id: 'm9_s2_q2', type: 'textarea', label: 'Tests Ordered:' },
+          { id: 'm9_s2_q3', type: 'textarea', label: 'Referrals Made:' },
+          { id: 'm9_s2_q4', type: 'textarea', label: 'Next Steps for Me:' },
+          { id: 'm9_s2_q5', type: 'text', label: 'Follow-up Appointment:' }
         ]
       }
     ]
@@ -289,7 +318,29 @@ export const workbookData = [
           { id: 'm10_log_3', type: 'text', label: 'Medication 2: Name, Dose, and Time' },
           { id: 'm10_log_4', type: 'text', label: 'Medication 2: Effectiveness/Notes' },
           { id: 'm10_log_5', type: 'text', label: 'Medication 3: Name, Dose, and Time' },
-          { id: 'm10_log_6', type: 'text', label: 'Medication 3: Effectiveness/Notes' }
+          { id: 'm10_log_6', type: 'text', label: 'Medication 3: Effectiveness/Notes' },
+          { id: 'm10_log_7', type: 'text', label: 'Medication 4: Name, Dose, and Time' },
+          { id: 'm10_log_8', type: 'text', label: 'Medication 4: Effectiveness/Notes' },
+          { id: 'm10_log_9', type: 'text', label: 'Medication 5: Name, Dose, and Time' },
+          { id: 'm10_log_10', type: 'text', label: 'Medication 5: Effectiveness/Notes' },
+          { id: 'm10_log_11', type: 'text', label: 'Medication 6: Name, Dose, and Time' },
+          { id: 'm10_log_12', type: 'text', label: 'Medication 6: Effectiveness/Notes' },
+          { id: 'm10_log_13', type: 'text', label: 'Medication 7: Name, Dose, and Time' },
+          { id: 'm10_log_14', type: 'text', label: 'Medication 7: Effectiveness/Notes' },
+          { id: 'm10_log_15', type: 'text', label: 'Medication 8: Name, Dose, and Time' },
+          { id: 'm10_log_16', type: 'text', label: 'Medication 8: Effectiveness/Notes' },
+          { id: 'm10_log_17', type: 'text', label: 'Medication 9: Name, Dose, and Time' },
+          { id: 'm10_log_18', type: 'text', label: 'Medication 9: Effectiveness/Notes' },
+          { id: 'm10_log_19', type: 'text', label: 'Medication 10: Name, Dose, and Time' },
+          { id: 'm10_log_20', type: 'text', label: 'Medication 10: Effectiveness/Notes' }
+        ]
+      },
+      {
+        sectionTitle: 'Response to Medications',
+        fields: [
+          { id: 'm10_resp_q1', type: 'textarea', label: 'Which medications seem to be helping the most? How can you tell?' },
+          { id: 'm10_resp_q2', type: 'textarea', label: 'Which medications seem to be less effective or not working? What have you noticed?' },
+          { id: 'm10_resp_q3', type: 'textarea', label: 'Have you noticed any patterns in how you respond to your medications (e.g., time of day, taken with food, interactions)?' }
         ]
       },
       {

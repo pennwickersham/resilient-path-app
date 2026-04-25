@@ -2,7 +2,7 @@ import { PhoneCall, AlertCircle, HeartPulse } from 'lucide-react';
 
 const EmergencyGuidance = () => {
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-500">
+    <div className="flex flex-col gap-6 animate-in fade-in duration-500 pb-24">
       <h2 className="text-2xl font-bold text-red-700 flex items-center gap-2">
         <AlertCircle className="text-red-600" size={28} />
         Emergency Help

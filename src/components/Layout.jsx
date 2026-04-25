@@ -1,11 +1,12 @@
 import { Outlet, NavLink } from 'react-router-dom';
-import { Home, FileText, MessageCircle, AlertTriangle } from 'lucide-react';
+import { Home, FileText, MessageCircle, ClipboardList, AlertTriangle } from 'lucide-react';
 
 const Layout = () => {
   const navItems = [
     { name: 'Home', path: '/', icon: Home },
     { name: 'Workbook', path: '/workbook', icon: FileText },
     { name: 'Chat', path: '/chatbot', icon: MessageCircle },
+    { name: 'Health', path: '/health-tools', icon: ClipboardList },
     { name: 'Emergency', path: '/emergency', icon: AlertTriangle },
   ];
 
@@ -44,7 +45,7 @@ const Layout = () => {
                 }`
               }
             >
-              <Icon size={24} strokeWidth={2.5} />
+              <Icon size={22} strokeWidth={2} />
               <span className="text-[10px] font-medium">{item.name}</span>
             </NavLink>
           );

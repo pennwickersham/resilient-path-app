@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { workbookData } from '../data/workbookForms';
-import { Printer, Share2, Trash2 } from 'lucide-react';
+import { Printer, Share2, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Capacitor } from '@capacitor/core';
 import { Share } from '@capacitor/share';
 
 const WorkbookForms = () => {
+  const topRef = useRef();
   const [answers, setAnswers] = useState({});
   const [activeModule, setActiveModule] = useState(1);
   const printRef = useRef();
@@ -116,8 +117,18 @@ const WorkbookForms = () => {
 
   const currentModuleData = workbookData.find(m => m.moduleId === activeModule);
 
+  const navigateModule = (direction) => {
+    const currentIndex = workbookData.findIndex(m => m.moduleId === activeModule);
+    const newIndex = currentIndex + direction;
+    if (newIndex >= 0 && newIndex < workbookData.length) {
+      setActiveModule(workbookData[newIndex].moduleId);
+      topRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4 animate-in fade-in duration-500 pb-12">
+      <div ref={topRef}></div>
       <div className="flex justify-between items-center mb-2 no-print flex-wrap gap-3">
         <h2 className="text-2xl font-bold text-primary-800">Digital Workbook</h2>
         <div className="flex items-center gap-2 flex-wrap">
@@ -271,6 +282,29 @@ const WorkbookForms = () => {
           </div>
         )}
       </div>
+
+      {/* Bottom Module Navigation */}
+      {currentModuleData && (
+        <div className="flex justify-between items-center mt-6 no-print gap-4">
+          <button
+            onClick={() => navigateModule(-1)}
+            disabled={workbookData.findIndex(m => m.moduleId === activeModule) === 0}
+            className="flex items-center gap-1.5 px-5 py-2.5 rounded-full text-sm font-semibold transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed bg-white text-secondary-700 border border-secondary-200 hover:bg-secondary-50 shadow-sm"
+          >
+            <ChevronLeft size={18} />
+            Previous
+          </button>
+          <span className="text-xs text-secondary-400 font-medium">Module {activeModule} of {workbookData.length}</span>
+          <button
+            onClick={() => navigateModule(1)}
+            disabled={workbookData.findIndex(m => m.moduleId === activeModule) === workbookData.length - 1}
+            className="flex items-center gap-1.5 px-5 py-2.5 rounded-full text-sm font-semibold transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed bg-primary-600 text-white hover:bg-primary-700 shadow-sm"
+          >
+            Next
+            <ChevronRight size={18} />
+          </button>
+        </div>
+      )}
 
       <style jsx>{`
         @media print {

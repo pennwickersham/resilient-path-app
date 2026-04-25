@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { BookOpen, MessageCircle, AlertTriangle } from 'lucide-react';
+import { BookOpen, MessageCircle, AlertTriangle, ClipboardList } from 'lucide-react';
 
 const Home = () => {
   return (
@@ -67,6 +67,16 @@ const Home = () => {
           <h3 className="font-semibold text-primary-900 text-sm">Ask the Therapist AI</h3>
         </Link>
       </div>
+
+      <Link to="/health-tools" className="bg-primary-50 p-4 rounded-2xl border border-primary-100 flex items-center gap-4 hover:bg-primary-100 transition shadow-sm group cursor-pointer">
+        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition duration-300">
+          <ClipboardList className="text-primary-600" size={24} strokeWidth={2.5} />
+        </div>
+        <div>
+          <h3 className="font-bold text-primary-900 text-base">My Health Tools</h3>
+          <p className="text-primary-600/80 text-xs font-medium leading-tight mt-0.5">Medications, doctors, history & symptom tracker — easy to share.</p>
+        </div>
+      </Link>
 
       <Link to="/emergency" className="bg-red-50 p-4 rounded-2xl border border-red-200 flex items-center gap-4 hover:bg-red-100 transition shadow-sm mt-2 cursor-pointer group">
         <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition duration-300">
