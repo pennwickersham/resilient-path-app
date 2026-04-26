@@ -6,7 +6,7 @@
   "build": {
     "production": {
       "ios": {
-        "autoIncrement": false,
+        "config": "build-ios.yml",
         "credentialsSource": "remote"
       }
     }

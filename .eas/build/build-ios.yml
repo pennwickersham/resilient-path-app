@@ -1,0 +1,54 @@
+build:
+  name: Capacitor iOS Build
+  steps:
+    - eas/checkout
+    - run:
+        name: Install Node dependencies
+        command: npm ci
+    - run:
+        name: Build web assets
+        command: npm run build
+    - run:
+        name: Sync Capacitor
+        command: npx cap sync ios
+    - run:
+        name: Resolve Swift Package Manager dependencies
+        working_directory: ./ios/App
+        command: |
+          xcodebuild -resolvePackageDependencies -project App.xcodeproj -scheme App
+    - run:
+        name: Build iOS archive
+        working_directory: ./ios/App
+        command: |
+          xcodebuild \
+            -project App.xcodeproj \
+            -scheme App \
+            -configuration Release \
+            -archivePath $EAS_BUILD_RUNNER_WORKING_DIRECTORY/build/App.xcarchive \
+            archive \
+            CODE_SIGN_IDENTITY="${IOS_CODE_SIGN_IDENTITY}" \
+            PROVISIONING_PROFILE_SPECIFIER="${IOS_PROVISIONING_PROFILE_SPECIFIER}" \
+            CODE_SIGN_STYLE=Manual
+    - run:
+        name: Export IPA
+        command: |
+          cat > exportOptions.plist << EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store</string>
+            <key>teamID</key>
+            <string>Z7DH27LD9D</string>
+          </dict>
+          </plist>
+          EOF
+          xcodebuild \
+            -exportArchive \
+            -archivePath build/App.xcarchive \
+            -exportPath build/output \
+            -exportOptionsPlist exportOptions.plist
+    - eas/upload-artifact:
+        params:
+          path: ./build/output/*.ipa
