@@ -1,4 +1,16 @@
 {
+  "cli": {
+    "version": ">= 3.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "production": {
+      "ios": {
+        "autoIncrement": false,
+        "credentialsSource": "remote"
+      }
+    }
+  },
   "submit": {
     "production": {
       "ios": {
