@@ -194,6 +194,14 @@ const WorkbookForms = () => {
                   </p>
                 )}
 
+                {currentModuleData.patientNote && (
+                  <div className="bg-amber-50 border-l-4 border-amber-400 px-4 py-3 rounded-r-xl mt-3">
+                    <p className="text-amber-900 text-sm italic font-medium leading-relaxed">
+                      "{currentModuleData.patientNote}"
+                    </p>
+                  </div>
+                )}
+
                 <div className="flex flex-wrap gap-2 mt-4 no-print">
                   <div className="bg-white/80 border border-primary-200 px-3 py-1 rounded-full text-[10px] font-bold text-primary-700 shadow-sm flex items-center gap-1.5 uppercase">
                     <div className="w-1.5 h-1.5 bg-primary-500 rounded-full animate-pulse"></div>

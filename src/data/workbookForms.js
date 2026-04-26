@@ -3,6 +3,7 @@ export const workbookData = [
     moduleId: 1,
     title: "Module 1: Redefining Your Pain Experience",
     summary: "Welcome to the first step in transforming your understanding of pain. This module introduces the modern, holistic definition of pain: it is a personal sensory and emotional experience influenced by biological, psychological, and social factors. Validating your experience is the foundation for your resilient path forward.",
+    patientNote: "Your pain is real, it is valid, and it is uniquely yours \u2014 understanding it is the first step to managing it.",
     exerciseTitle: "My Biopsychosocial Pain Map",
     sections: [
       {
@@ -48,6 +49,7 @@ export const workbookData = [
     moduleId: 2,
     title: "Module 2: The Science of Your Hurt",
     summary: "Understanding how you hurt helps move from fearing pain to managing it. This module explores how your nervous system can become over-reactive (central sensitization), turning up the 'volume' on signals even without new damage. Understanding 'hurt vs. harm' is a powerful shift in perspective.",
+    patientNote: "Learning that your nervous system can change gives you the power to help it heal.",
     exerciseTitle: "Translating the Science to You",
     sections: [
       {
@@ -87,6 +89,7 @@ export const workbookData = [
     moduleId: 3,
     title: "Module 3: When Your Alarm System Goes Wrong",
     summary: "Chronic pain can become a self-perpetuating vicious cycle, where initial pain leads to muscle guarding (splinting), which then creates more pain. This module helps you identify and interrupt these patterns, preventing your nervous system from remaining stuck on high alert.",
+    patientNote: "Recognizing these cycles is not about blame \u2014 it\u2019s about finding the places where you can gently intervene.",
     exerciseTitle: "Identifying Your Vicious Cycles",
     sections: [
       {
@@ -111,6 +114,7 @@ export const workbookData = [
     moduleId: 4,
     title: "Module 4: Naming Your Pain",
     summary: "Pain isn't just one thing—it has different 'flavors' (nociceptive, neuropathic, and nociplastic). Understanding the specific type of pain you are experiencing is crucial for choosing the most effective treatments and communicating clearly with your healthcare team.",
+    patientNote: "Putting the right words to your pain helps your doctor truly understand what you\u2019re living with.",
     exerciseTitle: "Your Pain's Vocabulary",
     sections: [
       {
@@ -151,6 +155,7 @@ export const workbookData = [
     moduleId: 5,
     title: "Module 5: The Physical Toll",
     summary: "Chronic pain often carries a heavy physical burden beyond the pain itself, including profound fatigue and sleep disruption. This module helps you track the interconnected patterns of pain, sleep, and activity to find ways to break these exhausting physical cycles.",
+    patientNote: "Tracking your patterns day by day reveals insights that even the best doctor\u2019s visit can miss.",
     exerciseTitle: "The Weekly Symptom and Activity Tracker",
     sections: [
       {
@@ -193,6 +198,7 @@ export const workbookData = [
     moduleId: 6,
     title: "Module 6: Navigating the Emotional Storm",
     summary: "Emotions like fear, sadness, and frustration are normal responses to pain. This module uses CBT principles to show how your thoughts can trigger cycles of emotional and physical suffering, helping you build more helpful, balanced ways of thinking.",
+    patientNote: "Your emotions about pain are not weakness \u2014 they are information you can learn to work with.",
     exerciseTitle: "The 'Thoughts-Feelings-Body-Actions' Cycle",
     sections: [
       {
@@ -219,6 +225,7 @@ export const workbookData = [
     moduleId: 7,
     title: "Module 7: Clearing the 'Pain Fog'",
     summary: "'Pain fog' is a real physiological consequence of your brain's limited resources being consumed by pain. This module identifies your specific cognitive challenges and helps you build a practical toolkit of strategies to manage them effectively.",
+    patientNote: "Brain fog doesn\u2019t mean you\u2019re losing your mind \u2014 it means your brain is working overtime to protect you.",
     exerciseTitle: "My Cognitive Tool Kit",
     sections: [
       {
@@ -248,6 +255,7 @@ export const workbookData = [
     moduleId: 8,
     title: "Module 8: Pain in Your World",
     summary: "Chronic pain ripples through your relationships, work, and identity. Acknowledging what has changed is the first step toward forging a new, meaningful identity that incorporates the reality of pain and expresses your core values in adapted ways.",
+    patientNote: "Who you are at your core hasn\u2019t changed \u2014 only the way you express it needs to adapt.",
     exerciseTitle: "Relationship and Role Mapping",
     sections: [
       {
@@ -280,6 +288,7 @@ export const workbookData = [
     moduleId: 9,
     title: "Module 9: Building Your Healthcare Alliance",
     summary: "You are the captain of your professional care team. This module provides tools to organize your medical information and make every appointment more productive through clear preparation and assertive, prepared communication. Being seen, heard, and validated by your healthcare team is fundamental to effective care.",
+    patientNote: "Walking into your next appointment prepared transforms you from a passive patient into an active partner.",
     exerciseTitle: "Appointment Preparation Kit",
     sections: [
       {
@@ -308,6 +317,7 @@ export const workbookData = [
     moduleId: 10,
     title: "Module 10: Your Medication Tool Kit",
     summary: "Medications are just one tool in your management plan. This module helps you track your prescriptions and supplements accurately, focusing on finding the right balance of benefit and functional improvement while identifying potential side effects.",
+    patientNote: "Medications work best when you understand exactly what each one is doing for you.",
     exerciseTitle: "Medication Reflection",
     sections: [
       {
@@ -356,7 +366,8 @@ export const workbookData = [
   {
     moduleId: 11,
     title: "Module 11: Exploring Interventional Options",
-    summary: "Procedures like injections or implanted devices can target the source of pain more directly. This module helps you approach these options with realistic expectations and ensures you have all the information needed for shared decision-making with your specialist.",
+    summary: "When medications and other therapies aren\u2019t providing enough relief, interventional procedures like injections or implanted devices can target the source of pain more directly. This module helps you approach these options with realistic expectations and guides your conversation with your doctor to ensure you have all the information needed for shared decision-making.",
+    patientNote: "When other treatments aren\u2019t enough, knowing the right questions to ask empowers you to make the best decision for your body.",
     exerciseTitle: "Shared Decision-Making",
     sections: [
       {
@@ -369,10 +380,12 @@ export const workbookData = [
         ]
       },
       {
-        sectionTitle: 'Correction Process and Recovery',
+        sectionTitle: 'The Procedure Process and Recovery',
         fields: [
-          { id: 'm11_s2_q1', type: 'textarea', label: 'What is the exact correction process or procedure being considered or performed?' },
-          { id: 'm11_s2_q2', type: 'textarea', label: 'What are the post-procedure recovery steps or limitations you need to plan for?' }
+          { id: 'm11_s2_q0', type: 'text', label: 'Use this section to document the specific procedure being discussed and to plan for your recovery. Bring these notes to your pre-procedure appointment.' },
+          { id: 'm11_s2_q1', type: 'textarea', label: 'What is the exact procedure being considered or performed? Describe it in your own words after discussing with your doctor.' },
+          { id: 'm11_s2_q2', type: 'textarea', label: 'What are the post-procedure recovery steps or limitations you need to plan for?' },
+          { id: 'm11_s2_q3', type: 'textarea', label: 'What questions do you still have for your doctor about the procedure and recovery?' }
         ]
       },
       {
@@ -388,6 +401,7 @@ export const workbookData = [
     moduleId: 12,
     title: "Module 12: Movement as Your Medicine",
     summary: "Appropriate movement is a potent medicine for chronic pain. Understanding the difference between 'hurt' and 'harm' helps you use pacing and graded activity to gradually teach your body and brain that movement is safe and beneficial for long-term health.",
+    patientNote: "Every small, safe movement you make is a message to your brain that your body can be trusted.",
     exerciseTitle: "Overcoming Fear of Movement",
     sections: [
       {
@@ -421,7 +435,8 @@ export const workbookData = [
       {
         sectionTitle: 'End of Week Reflection Log',
         fields: [
-          { id: 'm12_s3_q1', type: 'textarea', label: 'Looking back at this week, what did you successfully accomplish and how did your body respond?' }
+          { id: 'm12_s3_q1', type: 'textarea', label: 'Looking back at this week, what did you successfully accomplish and how did your body respond?' },
+          { id: 'm12_s3_q2', type: 'textarea', label: 'Based on how your body responded this week, are you ready to slightly increase your baseline for next week? If so, what would that look like? If not, what adjustments might help?' }
         ]
       }
     ]
@@ -430,6 +445,7 @@ export const workbookData = [
     moduleId: 13,
     title: "Module 13: Fueling Your Body for Resilience",
     summary: "Your nutrition can either fuel the flames of inflammation or help to tame them. This module explores the gut-brain axis and helps you build an anti-inflammatory diet that supports your overall well-being and long-term health.",
+    patientNote: "What you eat can either calm or fuel the fire of inflammation \u2014 and small changes add up.",
     exerciseTitle: "Food and Symptom Diary",
     sections: [
       {
@@ -442,7 +458,21 @@ export const workbookData = [
           { id: 'm13_log_5', type: 'text', label: 'Day 3: Breakfast, Lunch, Dinner' },
           { id: 'm13_log_6', type: 'text', label: 'Day 3: Snacks & Corresponding Symptoms' },
           { id: 'm13_log_7', type: 'text', label: 'Day 4: Breakfast, Lunch, Dinner' },
-          { id: 'm13_log_8', type: 'text', label: 'Day 4: Snacks & Corresponding Symptoms' }
+          { id: 'm13_log_8', type: 'text', label: 'Day 4: Snacks & Corresponding Symptoms' },
+          { id: 'm13_log_9', type: 'text', label: 'Day 5: Breakfast, Lunch, Dinner' },
+          { id: 'm13_log_10', type: 'text', label: 'Day 5: Snacks & Corresponding Symptoms' },
+          { id: 'm13_log_11', type: 'text', label: 'Day 6: Breakfast, Lunch, Dinner' },
+          { id: 'm13_log_12', type: 'text', label: 'Day 6: Snacks & Corresponding Symptoms' },
+          { id: 'm13_log_13', type: 'text', label: 'Day 7: Breakfast, Lunch, Dinner' },
+          { id: 'm13_log_14', type: 'text', label: 'Day 7: Snacks & Corresponding Symptoms' }
+        ]
+      },
+      {
+        sectionTitle: 'Building an Anti-Inflammatory Plate',
+        fields: [
+          { id: 'm13_plate_desc', type: 'text', label: 'Aim for this balance at each meal: 1/2 plate colorful vegetables and fruits, 1/4 plate lean protein (fish, chicken, beans, tofu), 1/4 plate whole grains or healthy starches. Add a serving of healthy fats (olive oil, avocado, nuts).' },
+          { id: 'm13_plate_q1', type: 'textarea', label: 'Look at your food diary above. How close are your meals to this anti-inflammatory plate model? What is one meal you could adjust this week?' },
+          { id: 'm13_plate_q2', type: 'textarea', label: 'Which anti-inflammatory foods do you already enjoy? Which new ones are you willing to try?' }
         ]
       },
       {
@@ -458,21 +488,22 @@ export const workbookData = [
     moduleId: 14,
     title: "Module 14: Harnessing Your Mind's Power",
     summary: "Your mind is a powerful ally in managing pain. This module introduces evidence-based psychological tools like Cognitive Behavioral Therapy (CBT) and Acceptance and Commitment Therapy (ACT) to help you build a life guided by your core values.",
+    patientNote: "Your thoughts are powerful, and learning to notice and gently redirect them is a skill that gets easier with practice.",
     exerciseTitle: "Psychological Approaches",
     sections: [
       {
         sectionTitle: 'Why a CBT Record?',
         fields: [
-          { id: 'm14_s0_q1', type: 'text', label: 'Description: A CBT Thought Record helps you identify and pause automatic negative thoughts, allowing you to reframe them to reduce emotional suffering.' }
+          { id: 'm14_s0_q1', type: 'text', label: 'A Cognitive Behavioral Therapy (CBT) Thought Record is a simple but powerful tool. When pain triggers a negative thought (like "I can\'t do anything anymore"), that thought creates real emotions (sadness, frustration) that can actually make your pain feel worse. This exercise helps you catch those automatic thoughts, pause, and practice replacing them with more balanced, realistic ones. Over time, this rewires the thought patterns that fuel your suffering. Fill out the record below the next time you notice a strong negative thought related to your pain.' }
         ]
       },
       {
         sectionTitle: 'CBT Thought Record',
         fields: [
-          { id: 'm14_s1_q1', type: 'textarea', label: 'Situation (What was happening?)' },
-          { id: 'm14_s1_q2', type: 'textarea', label: 'Automatic negative thought (What went through my mind?)' },
-          { id: 'm14_s1_q3', type: 'textarea', label: 'Emotion(s) (How did that thought make me feel?)' },
-          { id: 'm14_s1_q4', type: 'textarea', label: 'Balanced/alternative thought (What is a more helpful or realistic way to see this?)' }
+          { id: 'm14_s1_q1', type: 'textarea', label: 'The Situation: What was happening when the negative thought appeared? Where were you? What were you doing?' },
+          { id: 'm14_s1_q2', type: 'textarea', label: 'The Automatic Thought: What was the first negative thought that popped into your mind? Write it down exactly as it occurred to you.' },
+          { id: 'm14_s1_q3', type: 'textarea', label: 'The Emotion(s): What feeling(s) did that thought create? (e.g., sadness, anger, fear, hopelessness) Rate the intensity 0-10.' },
+          { id: 'm14_s1_q4', type: 'textarea', label: 'A More Balanced Thought: Step back and ask \u2014 is this thought 100% true? What would I say to a friend in this situation? Write a more realistic, compassionate way to see it.' }
         ]
       },
       {
@@ -502,6 +533,7 @@ export const workbookData = [
     moduleId: 15,
     title: "Module 15: Reclaiming Your Nights",
     summary: "Sleep is a biological superpower for healing and pain management. This module focuses on improving your sleep hygiene—the essential habits and environmental factors that can break the cycle of sleep disruption and increased pain.",
+    patientNote: "A good night\u2019s sleep isn\u2019t a luxury \u2014 it\u2019s one of the most healing things you can do for your pain.",
     exerciseTitle: "Sleep Hygiene Checklist",
     sections: [
       {
@@ -540,6 +572,7 @@ export const workbookData = [
     moduleId: 16,
     title: "Module 16: Beyond the Clinic: Complementary Therapies",
     summary: "Complementary and integrative therapies, such as acupuncture, massage, or yoga, can be valuable additions to your health plan. This module helps you be an informed consumer by providing a structured way to research and evaluate these options safely and effectively.",
+    patientNote: "Being an informed consumer of complementary therapies protects both your health and your wallet.",
     exerciseTitle: "My Complementary Therapy Evaluation",
     sections: [
       {
@@ -558,6 +591,7 @@ export const workbookData = [
     moduleId: 17,
     title: "Module 17: The Art of Pacing and Planning",
     summary: "Escaping the 'boom-bust' cycle requires active management of your energy. This module teaches the principles of pacing—breaking down tasks and scheduling proactive rest—to help you regain a sense of control and predictability in your daily life.",
+    patientNote: "Pacing isn\u2019t about doing less \u2014 it\u2019s about doing things smarter so you can do more over time.",
     exerciseTitle: "Activity Baseline Finder",
     sections: [
       {
@@ -588,6 +622,7 @@ export const workbookData = [
     moduleId: 18,
     title: "Module 18: Creating a Pain-Friendly Environment",
     summary: "Applying the principles of ergonomics (fitting the environment to the person) can dramatically reduce physical strain and conserve energy. This module provides a detailed 'walk-through' of your surroundings to identify opportunities for health-supporting improvements.",
+    patientNote: "Small changes to your surroundings can make a surprisingly big difference in your daily comfort.",
     exerciseTitle: "Ergonomic Improvements",
     sections: [
       {
@@ -637,6 +672,7 @@ export const workbookData = [
     moduleId: 19,
     title: "Module 19: Weaving Your Web of Support",
     summary: "A strong support system is an essential lifeline when navigating chronic pain. This module helps you visualize your current network of family, friends, and peers, identifying strengths and gaps so you can take active steps to strengthen your vital connections.",
+    patientNote: "You don\u2019t have to walk this path alone \u2014 even one strong connection can make all the difference.",
     exerciseTitle: "My Support Map",
     sections: [
       {
@@ -653,6 +689,7 @@ export const workbookData = [
     moduleId: 20,
     title: "Module 20: Finding Your Voice: Self-Advocacy",
     summary: "Self-advocacy is the skill of using your voice to ensure your needs are heard and met. This module provides scripts to help you communicate clearly and assertively with your healthcare team, transforming you into an empowered partner in your own care.",
+    patientNote: "Your voice matters, and learning to use it effectively is one of the most important skills you can build.",
     exerciseTitle: "Advocacy Script Builder",
     sections: [
       {
@@ -668,6 +705,7 @@ export const workbookData = [
     moduleId: 21,
     title: "Module 21: Breaking Free from Unhelpful Habits",
     summary: "Building resilience involves removing habits that actively undermine your progress. This module provides a structured planner to help you tackle roadblocks like smoking or excessive alcohol use, which can fuel inflammation and interfere with your pain management.",
+    patientNote: "Letting go of habits that hold you back is an act of courage and self-care.",
     exerciseTitle: "My Habit Change Planner",
     sections: [
       {
@@ -688,6 +726,7 @@ export const workbookData = [
     moduleId: 22,
     title: "Module 22: Building Your Resilience",
     summary: "Resilience is your ability to adapt well in the face of adversity. This module focuses on cultivating inner strength through realistic optimism and self-efficacy, using daily practices like gratitude and self-compassion to shift your focus toward success and hope.",
+    patientNote: "Resilience isn\u2019t about never struggling \u2014 it\u2019s about getting back up one more time.",
     exerciseTitle: "Gratitude and Self-Compassion Journal",
     sections: [
       {
@@ -704,6 +743,7 @@ export const workbookData = [
     moduleId: 23,
     title: "Module 23: Finding Meaning and Purpose",
     summary: "Chronic pain can challenge our sense of purpose, but finding meaning remains a powerful source of healing. This module helps you identify your core values and brainstorm small, manageable ways to contribute to your world and maintain a fulfilling identity.",
+    patientNote: "Even on your hardest days, you have something meaningful to offer the world.",
     exerciseTitle: "My Contribution Brainstorm",
     sections: [
       {
@@ -719,6 +759,7 @@ export const workbookData = [
     moduleId: 24,
     title: "Module 24: Your Path to Inner Peace",
     summary: "Spirituality and personal meaning are profound sources of strength and comfort. Whether through faith, nature, art, or meditation, this module encourages you to explore what brings you a sense of awe and peace and to intentionally nurture that connection.",
+    patientNote: "Whatever brings you peace \u2014 faith, nature, music, or stillness \u2014 lean into it without apology.",
     exerciseTitle: "Spirituality and Personal Meaning",
     sections: [
       {
@@ -734,6 +775,7 @@ export const workbookData = [
     moduleId: 25,
     title: "Module 25: Your Flare-Up Plan & Hopeful Future",
     summary: "Setbacks are a normal part of the journey. This module helps you create a concrete, step-by-step plan for your 'tough days,' transforming fear of the unknown into a feeling of preparedness and control as you walk toward a hopeful future.",
+    patientNote: "Having a plan for tough days transforms fear of the unknown into quiet confidence.",
     exerciseTitle: "My Personalized Flare-Up Plan",
     sections: [
       {

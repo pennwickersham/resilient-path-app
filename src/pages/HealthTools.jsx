@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Pill, Stethoscope, ClipboardList, Activity, Share2, Printer, Plus, Trash2 } from 'lucide-react';
+import { Pill, Stethoscope, ClipboardList, Activity, Share2, Printer, Plus, Trash2, Download, Check } from 'lucide-react';
 import { Capacitor } from '@capacitor/core';
 import { Share } from '@capacitor/share';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 
 const TABS = [
   { id: 'medications', label: 'Medications', icon: Pill },
@@ -150,6 +151,69 @@ const HealthTools = () => {
     }
   };
 
+  // Save-to-phone state
+  const [saveStatus, setSaveStatus] = useState('');
+
+  const handleSaveToPhone = async (section = 'all') => {
+    let text = '';
+    let filename = '';
+    const dateStr = new Date().toISOString().split('T')[0];
+
+    switch (section) {
+      case 'medications':
+        text = formatMedicationsText();
+        filename = `Resilient_Path_Medications_${dateStr}.txt`;
+        break;
+      case 'doctors':
+        text = formatDoctorsText();
+        filename = `Resilient_Path_Doctors_${dateStr}.txt`;
+        break;
+      case 'history':
+        text = formatHistoryText();
+        filename = `Resilient_Path_Medical_History_${dateStr}.txt`;
+        break;
+      case 'symptoms':
+        text = formatSymptomsText();
+        filename = `Resilient_Path_Symptom_Tracker_${dateStr}.txt`;
+        break;
+      default:
+        text = formatMedicationsText() + '\n' + formatDoctorsText() + '\n' + formatHistoryText() + '\n' + formatSymptomsText();
+        filename = `Resilient_Path_Health_Records_${dateStr}.txt`;
+    }
+
+    if (Capacitor.isNativePlatform()) {
+      try {
+        await Filesystem.writeFile({
+          path: filename,
+          data: text.trim(),
+          directory: Directory.Documents,
+          encoding: Encoding.UTF8,
+        });
+        setSaveStatus(`Saved to Documents/${filename}`);
+        setTimeout(() => setSaveStatus(''), 4000);
+      } catch (e) {
+        console.error('Save to phone failed', e);
+        // Fallback: share instead
+        try {
+          await Share.share({ title: 'Health Records', text: text.trim(), dialogTitle: 'Save Health Records' });
+        } catch (shareErr) {
+          console.error('Share fallback also failed', shareErr);
+        }
+      }
+    } else {
+      // Browser fallback: download as file
+      const blob = new Blob([text.trim()], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+      setSaveStatus(`Downloaded ${filename}`);
+      setTimeout(() => setSaveStatus(''), 4000);
+    }
+  };
+
   // Generic list updater
   const updateListItem = (setter, index, field, value) => {
     setter(prev => prev.map((item, i) => i === index ? { ...item, [field]: value } : item));
@@ -190,17 +254,33 @@ const HealthTools = () => {
     <div className="flex flex-col gap-4 animate-in fade-in duration-500 pb-12">
       <div className="flex justify-between items-center mb-1 flex-wrap gap-3">
         <h2 className="text-2xl font-bold text-primary-800">Health Tools</h2>
-        <button
-          onClick={() => handleShare('all')}
-          className="flex items-center gap-1.5 bg-primary-100 hover:bg-primary-200 text-primary-800 px-3 py-2 rounded-lg text-sm font-semibold transition-colors"
-        >
-          {Capacitor.isNativePlatform() ? <Share2 size={16} /> : <Printer size={16} />}
-          {Capacitor.isNativePlatform() ? 'Share All' : 'Print All'}
-        </button>
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={() => handleSaveToPhone('all')}
+            className="flex items-center gap-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-3 py-2 rounded-lg text-sm font-semibold transition-colors"
+          >
+            <Download size={16} />
+            Save to Phone
+          </button>
+          <button
+            onClick={() => handleShare('all')}
+            className="flex items-center gap-1.5 bg-primary-100 hover:bg-primary-200 text-primary-800 px-3 py-2 rounded-lg text-sm font-semibold transition-colors"
+          >
+            {Capacitor.isNativePlatform() ? <Share2 size={16} /> : <Printer size={16} />}
+            {Capacitor.isNativePlatform() ? 'Share All' : 'Print All'}
+          </button>
+        </div>
       </div>
 
+      {saveStatus && (
+        <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold px-3 py-2 rounded-lg animate-in fade-in duration-300">
+          <Check size={14} />
+          {saveStatus}
+        </div>
+      )}
+
       <p className="text-secondary-600 text-sm mb-2">
-        Keep all your important health information in one place. Easy to share with your healthcare team via email, text, or print.
+        Keep all your important health information in one place. Easy to save to your phone or share with your healthcare team via email, text, or print.
       </p>
 
       {/* Tab Selector */}
@@ -347,13 +427,22 @@ const HealthTools = () => {
           <div className="space-y-6">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-bold text-secondary-900">Symptom Tracker</h3>
-              <button
-                onClick={() => handleShare('symptoms')}
-                className="flex items-center gap-1 text-xs font-semibold text-primary-700 bg-primary-50 hover:bg-primary-100 border border-primary-200 px-2.5 py-1.5 rounded-lg transition-colors"
-              >
-                {Capacitor.isNativePlatform() ? <Share2 size={13} /> : <Printer size={13} />}
-                Share
-              </button>
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => handleSaveToPhone('symptoms')}
+                  className="flex items-center gap-1 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2.5 py-1.5 rounded-lg transition-colors"
+                >
+                  <Download size={13} />
+                  Save
+                </button>
+                <button
+                  onClick={() => handleShare('symptoms')}
+                  className="flex items-center gap-1 text-xs font-semibold text-primary-700 bg-primary-50 hover:bg-primary-100 border border-primary-200 px-2.5 py-1.5 rounded-lg transition-colors"
+                >
+                  {Capacitor.isNativePlatform() ? <Share2 size={13} /> : <Printer size={13} />}
+                  Share
+                </button>
+              </div>
             </div>
 
             <p className="text-secondary-500 text-xs">
