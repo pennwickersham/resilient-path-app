@@ -1,10 +1,27 @@
-import { Link } from 'react-router-dom';
-import { BookOpen, MessageCircle, AlertTriangle, ClipboardList } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { BookOpen, MessageCircle, AlertTriangle, ClipboardList, Lock } from 'lucide-react';
+import { useSubscription } from '../context/SubscriptionContext';
+import Paywall from '../components/Paywall';
 
 const Home = () => {
+  const { isSubscribed, showPaywall, setShowPaywall } = useSubscription();
+  const navigate = useNavigate();
+
+  const handleGatedNav = (e, path) => {
+    if (!isSubscribed) {
+      e.preventDefault();
+      setShowPaywall(true);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-5 animate-in fade-in duration-500 pb-6">
       
+      {/* Paywall Modal */}
+      {showPaywall && (
+        <Paywall onClose={() => setShowPaywall(false)} />
+      )}
+
       {/* Book Cover / Hero Section */}
       <section className="relative w-full h-72 rounded-3xl overflow-hidden shadow-md flex items-center justify-center bg-black group">
         <img 
@@ -53,14 +70,32 @@ const Home = () => {
       </section>
 
       <div className="grid grid-cols-2 gap-4">
-        <Link to="/workbook" className="bg-primary-50 p-5 rounded-2xl border border-primary-100 flex flex-col items-center text-center justify-center hover:bg-primary-100 transition shadow-sm group cursor-pointer">
+        <Link 
+          to="/workbook" 
+          onClick={(e) => handleGatedNav(e, '/workbook')}
+          className="bg-primary-50 p-5 rounded-2xl border border-primary-100 flex flex-col items-center text-center justify-center hover:bg-primary-100 transition shadow-sm group cursor-pointer relative"
+        >
+          {!isSubscribed && (
+            <div className="absolute top-2 right-2 w-6 h-6 bg-secondary-200 rounded-full flex items-center justify-center">
+              <Lock className="text-secondary-500" size={12} />
+            </div>
+          )}
           <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 transition duration-300">
             <BookOpen className="text-primary-600" size={26} strokeWidth={2.5} />
           </div>
           <h3 className="font-semibold text-primary-900 text-sm">Review Your Workbook</h3>
         </Link>
         
-        <Link to="/chatbot" className="bg-primary-50 p-5 rounded-2xl border border-primary-100 flex flex-col items-center text-center justify-center hover:bg-primary-100 transition shadow-sm group cursor-pointer">
+        <Link 
+          to="/chatbot" 
+          onClick={(e) => handleGatedNav(e, '/chatbot')}
+          className="bg-primary-50 p-5 rounded-2xl border border-primary-100 flex flex-col items-center text-center justify-center hover:bg-primary-100 transition shadow-sm group cursor-pointer relative"
+        >
+          {!isSubscribed && (
+            <div className="absolute top-2 right-2 w-6 h-6 bg-secondary-200 rounded-full flex items-center justify-center">
+              <Lock className="text-secondary-500" size={12} />
+            </div>
+          )}
           <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 transition duration-300">
             <MessageCircle className="text-primary-600" size={26} strokeWidth={2.5} />
           </div>
@@ -68,7 +103,16 @@ const Home = () => {
         </Link>
       </div>
 
-      <Link to="/health-tools" className="bg-primary-50 p-4 rounded-2xl border border-primary-100 flex items-center gap-4 hover:bg-primary-100 transition shadow-sm group cursor-pointer">
+      <Link 
+        to="/health-tools" 
+        onClick={(e) => handleGatedNav(e, '/health-tools')}
+        className="bg-primary-50 p-4 rounded-2xl border border-primary-100 flex items-center gap-4 hover:bg-primary-100 transition shadow-sm group cursor-pointer relative"
+      >
+        {!isSubscribed && (
+          <div className="absolute top-2 right-2 w-6 h-6 bg-secondary-200 rounded-full flex items-center justify-center">
+            <Lock className="text-secondary-500" size={12} />
+          </div>
+        )}
         <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition duration-300">
           <ClipboardList className="text-primary-600" size={24} strokeWidth={2.5} />
         </div>

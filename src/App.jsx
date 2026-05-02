@@ -1,4 +1,5 @@
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { SubscriptionProvider } from './context/SubscriptionContext';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import WorkbookForms from './pages/WorkbookForms';
@@ -10,19 +11,21 @@ import BackButtonHandler from './components/BackButtonHandler';
 
 function App() {
   return (
-    <Router>
-      <BackButtonHandler />
-      <DisclaimerPopup />
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="workbook" element={<WorkbookForms />} />
-          <Route path="chatbot" element={<Chatbot />} />
-          <Route path="emergency" element={<EmergencyGuidance />} />
-          <Route path="health-tools" element={<HealthTools />} />
-        </Route>
-      </Routes>
-    </Router>
+    <SubscriptionProvider>
+      <Router>
+        <BackButtonHandler />
+        <DisclaimerPopup />
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="workbook" element={<WorkbookForms />} />
+            <Route path="chatbot" element={<Chatbot />} />
+            <Route path="emergency" element={<EmergencyGuidance />} />
+            <Route path="health-tools" element={<HealthTools />} />
+          </Route>
+        </Routes>
+      </Router>
+    </SubscriptionProvider>
   );
 }
 

@@ -1,7 +1,18 @@
-import { Outlet, NavLink } from 'react-router-dom';
+import { Outlet, NavLink, useLocation } from 'react-router-dom';
 import { Home, FileText, MessageCircle, ClipboardList, AlertTriangle } from 'lucide-react';
+import { useSubscription } from '../context/SubscriptionContext';
+import Paywall from './Paywall';
+
+// Pages that require a subscription
+const GATED_PATHS = ['/workbook', '/chatbot', '/health-tools'];
 
 const Layout = () => {
+  const { isSubscribed, isLoading } = useSubscription();
+  const location = useLocation();
+
+  const isGatedPage = GATED_PATHS.some(p => location.pathname.startsWith(p));
+  const showGate = isGatedPage && !isSubscribed && !isLoading;
+
   const navItems = [
     { name: 'Home', path: '/', icon: Home },
     { name: 'Workbook', path: '/workbook', icon: FileText },
@@ -22,7 +33,7 @@ const Layout = () => {
 
       {/* Main Content Area */}
       <main className="flex-1 overflow-y-auto pb-20 p-4 relative z-0">
-        <Outlet />
+        {showGate ? <Paywall /> : <Outlet />}
       </main>
 
       {/* Bottom Navigation */}
