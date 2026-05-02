@@ -1,0 +1,8 @@
+{
+  "name": "resilient-path-app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "custom",
+  "id": "cff7bfc7"
+}

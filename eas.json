@@ -1,13 +1,13 @@
 {
   "cli": {
-    "version": ">= 3.0.0",
-    "appVersionSource": "remote"
+    "version": ">= 3.0.0"
   },
   "build": {
     "production": {
       "ios": {
-        "config": "build-ios.yml",
-        "credentialsSource": "remote"
+        "credentialsSource": "remote",
+        "scheme": "App",
+        "buildConfiguration": "Release"
       }
     }
   },

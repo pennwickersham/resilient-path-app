@@ -507,24 +507,38 @@ export const workbookData = [
         ]
       },
       {
-        sectionTitle: 'ACT Values Compass',
+        sectionTitle: 'What is ACT?',
         fields: [
-          { id: 'm14_s2_q1', type: 'text', label: 'Pick one life domain that is high importance but lower satisfaction (e.g., Social Life, Work, Health):' },
-          { id: 'm14_s2_q2', type: 'textarea', label: 'What is one small, committed action you could take this week to move closer to that value?' }
+          { id: 'm14_act_desc', type: 'text', label: 'Acceptance and Commitment Therapy (ACT) takes a different approach from CBT. Instead of trying to change painful thoughts, ACT teaches you to accept them without judgment and redirect your energy toward actions that align with your deepest values. The goal is not to eliminate pain, but to build a rich and meaningful life alongside it.' }
         ]
       },
       {
         sectionTitle: 'ACT Values Chart',
         fields: [
-          { id: 'm14_s3_q1', type: 'text', label: 'Domain: Family/Relationships -> Current Value rating (1-10)' },
-          { id: 'm14_s3_q2', type: 'text', label: 'Domain: Career/Education -> Current Value rating (1-10)' },
-          { id: 'm14_s3_q3', type: 'text', label: 'Domain: Personal Growth/Health -> Current Value rating (1-10)' }
+          { id: 'm14_s3_q1a', type: 'text', label: 'Domain: Family/Relationships \u2014 Importance (1-10):' },
+          { id: 'm14_s3_q1b', type: 'text', label: 'Domain: Family/Relationships \u2014 Satisfaction (1-10):' },
+          { id: 'm14_s3_q2a', type: 'text', label: 'Domain: Career/Education \u2014 Importance (1-10):' },
+          { id: 'm14_s3_q2b', type: 'text', label: 'Domain: Career/Education \u2014 Satisfaction (1-10):' },
+          { id: 'm14_s3_q3a', type: 'text', label: 'Domain: Personal Growth/Health \u2014 Importance (1-10):' },
+          { id: 'm14_s3_q3b', type: 'text', label: 'Domain: Personal Growth/Health \u2014 Satisfaction (1-10):' },
+          { id: 'm14_s3_q4a', type: 'text', label: 'Domain: Social Life/Friends \u2014 Importance (1-10):' },
+          { id: 'm14_s3_q4b', type: 'text', label: 'Domain: Social Life/Friends \u2014 Satisfaction (1-10):' },
+          { id: 'm14_s3_q5a', type: 'text', label: 'Domain: Recreation/Leisure \u2014 Importance (1-10):' },
+          { id: 'm14_s3_q5b', type: 'text', label: 'Domain: Recreation/Leisure \u2014 Satisfaction (1-10):' }
+        ]
+      },
+      {
+        sectionTitle: 'ACT Values Compass',
+        fields: [
+          { id: 'm14_s2_q1', type: 'text', label: 'Looking at your chart above, pick one life domain where importance is high but satisfaction is low:' },
+          { id: 'm14_s2_q2', type: 'textarea', label: 'What is one small, committed action you could take this week to move closer to that value?' }
         ]
       },
       {
         sectionTitle: 'Guided Mindfulness Reflection',
         fields: [
-          { id: 'm14_s4_q1', type: 'textarea', label: 'After completing a brief mindfulness exercise, what did you notice about your breathing and your body tension?' }
+          { id: 'm14_s4_desc', type: 'text', label: 'Mindfulness is the practice of paying attention to the present moment without judgment. For chronic pain, mindfulness helps you observe pain sensations without adding layers of fear or catastrophizing on top of them. Even 5 minutes of focused breathing can begin to calm your nervous system. Try this: sit comfortably, close your eyes, and breathe slowly for 5 minutes. Notice each breath. When your mind wanders, gently bring it back to the breath.' },
+          { id: 'm14_s4_q1', type: 'textarea', label: 'After completing the mindfulness exercise, what did you notice about your breathing, your body tension, and your thoughts?' }
         ]
       }
     ]
@@ -571,14 +585,14 @@ export const workbookData = [
   {
     moduleId: 16,
     title: "Module 16: Beyond the Clinic: Complementary Therapies",
-    summary: "Complementary and integrative therapies, such as acupuncture, massage, or yoga, can be valuable additions to your health plan. This module helps you be an informed consumer by providing a structured way to research and evaluate these options safely and effectively.",
+    summary: "Complementary and integrative therapies, such as acupuncture, chiropractic care, massage, or yoga, can be valuable additions to your health plan. This module helps you be an informed consumer by providing a structured way to research and evaluate these options safely and effectively.",
     patientNote: "Being an informed consumer of complementary therapies protects both your health and your wallet.",
     exerciseTitle: "My Complementary Therapy Evaluation",
     sections: [
       {
         sectionTitle: 'Therapy Evaluation',
         fields: [
-          { id: 'm16_s1_q1', type: 'text', label: 'Therapy I am considering (e.g., Acupuncture, Yoga, Massage):' },
+          { id: 'm16_s1_q1', type: 'text', label: 'Therapy I am considering (e.g., Acupuncture, Chiropractic, Yoga, Massage, Tai Chi):' },
           { id: 'm16_s1_q2', type: 'textarea', label: '1. The evidence: What does scientific research say about this therapy for my condition?' },
           { id: 'm16_s1_q3', type: 'textarea', label: '2. The logistics & risks: What is the cost, and what are the potential side effects?' },
           { id: 'm16_s1_q4', type: 'textarea', label: '3. Communication: Have I discussed this with my primary doctor? What is their feedback?' },
@@ -610,10 +624,22 @@ export const workbookData = [
         ]
       },
       {
-        sectionTitle: 'My Pacing Plan Concept',
+        sectionTitle: 'My Weekly Pacing Plan',
         fields: [
-          { id: 'm17_s2_q1', type: 'textarea', label: 'Overall Strategy: Detail the daily approach for breaking tasks into smaller components.' },
-          { id: 'm17_s2_q2', type: 'textarea', label: 'What is a specific task you will pace this week, and how?' }
+          { id: 'm17_w1', type: 'textarea', label: 'Monday: Planned activities, rest breaks, and time limits.' },
+          { id: 'm17_w2', type: 'textarea', label: 'Tuesday: Planned activities, rest breaks, and time limits.' },
+          { id: 'm17_w3', type: 'textarea', label: 'Wednesday: Planned activities, rest breaks, and time limits.' },
+          { id: 'm17_w4', type: 'textarea', label: 'Thursday: Planned activities, rest breaks, and time limits.' },
+          { id: 'm17_w5', type: 'textarea', label: 'Friday: Planned activities, rest breaks, and time limits.' },
+          { id: 'm17_w6', type: 'textarea', label: 'Saturday: Planned activities, rest breaks, and time limits.' },
+          { id: 'm17_w7', type: 'textarea', label: 'Sunday: Planned activities, rest breaks, and time limits.' }
+        ]
+      },
+      {
+        sectionTitle: 'End of Week Pacing Reflection',
+        fields: [
+          { id: 'm17_s2_q1', type: 'textarea', label: 'What worked well this week with your pacing? What was difficult?' },
+          { id: 'm17_s2_q2', type: 'textarea', label: 'What adjustments will you make to next week\'s plan?' }
         ]
       }
     ]
@@ -627,9 +653,8 @@ export const workbookData = [
     sections: [
       {
         sectionTitle: 'Purpose of an Ergonomic Action Plan',
-        fields: [
-          { id: 'm18_desc', type: 'text', label: 'The goal of an ergonomic action plan is to modify your environment so that your body spends less energy and encounters less physical stress doing daily tasks.' }
-        ]
+        description: 'The goal of an ergonomic action plan is to modify your environment so that your body spends less energy and encounters less physical stress doing daily tasks.',
+        fields: []
       },
       {
         sectionTitle: 'Ergonomic Checklists',
@@ -676,11 +701,19 @@ export const workbookData = [
     exerciseTitle: "My Support Map",
     sections: [
       {
+        sectionTitle: 'Types of Support',
+        description: 'There are several types of support, and understanding them can help you identify what you have and what you may need: Emotional support (someone who listens and validates your feelings), Practical support (help with daily tasks, rides to appointments, meals), Informational support (advice, resources, and guidance from those with knowledge or experience), and Social companionship (people who help you feel connected and reduce isolation).',
+        fields: []
+      },
+      {
         sectionTitle: 'Analyzing Your Network',
         fields: [
-          { id: 'm19_s1_q1', type: 'textarea', label: 'What are the strengths of your support system? Who are your key pillars of support?' },
-          { id: 'm19_s1_q2', type: 'textarea', label: 'Are there any gaps? Is there a type of support you feel you\'re missing?' },
-          { id: 'm19_s1_q3', type: 'textarea', label: 'What is one small step you could take to strengthen a connection or fill a gap?' }
+          { id: 'm19_s1_q1', type: 'textarea', label: 'Emotional Support: Who listens to you and validates your feelings? Who can you call on a hard day?' },
+          { id: 'm19_s1_q2', type: 'textarea', label: 'Practical Support: Who helps with daily tasks, appointments, or errands when you need it?' },
+          { id: 'm19_s1_q3', type: 'textarea', label: 'Informational Support: Who provides helpful advice, medical knowledge, or useful resources?' },
+          { id: 'm19_s1_q4', type: 'textarea', label: 'Social Companionship: Who helps you feel connected and less isolated?' },
+          { id: 'm19_s1_q5', type: 'textarea', label: 'Are there any gaps? Which type of support do you feel you are missing most?' },
+          { id: 'm19_s1_q6', type: 'textarea', label: 'What is one small step you could take this week to strengthen a connection or fill a gap?' }
         ]
       }
     ]
@@ -693,10 +726,23 @@ export const workbookData = [
     exerciseTitle: "Advocacy Script Builder",
     sections: [
       {
+        sectionTitle: 'Why Self-Advocacy Matters',
+        description: 'Chronic pain patients often feel rushed, dismissed, or unheard in medical appointments. Self-advocacy is not about being difficult \u2014 it is about clearly and respectfully communicating your needs so your healthcare team can provide the best possible care. Preparing what you want to say in advance ensures you make the most of your limited appointment time and leave feeling heard.',
+        fields: []
+      },
+      {
         sectionTitle: 'Building Your Scripts',
         fields: [
-          { id: 'm20_s1_q1', type: 'textarea', label: 'Script for Describing Your Pain Clearly (Location, quality, functional impact):' },
-          { id: 'm20_s1_q2', type: 'textarea', label: 'Script for Requesting a Referral or Discussing Treatment Options:' }
+          { id: 'm20_s1_q1', type: 'textarea', label: 'Script for Describing Your Pain Clearly: Write 2-3 sentences covering location, quality (sharp, burning, aching), intensity (0-10), and how it affects your daily function.' },
+          { id: 'm20_s1_q2', type: 'textarea', label: 'Script for Requesting a Referral or Discussing Treatment Options: Practice a clear, respectful way to ask for what you need (e.g., "I\'d like to discuss whether a referral to a pain specialist might be helpful for me.")' },
+          { id: 'm20_s1_q3', type: 'textarea', label: 'Script for When You Feel Dismissed: How will you calmly redirect the conversation? (e.g., "I appreciate your input. I want to make sure we\'ve explored all the options. Can we discuss...?")' }
+        ]
+      },
+      {
+        sectionTitle: 'Advocacy Reflection',
+        fields: [
+          { id: 'm20_s2_q1', type: 'textarea', label: 'Think about a past appointment where you left feeling unheard. What would you say differently now?' },
+          { id: 'm20_s2_q2', type: 'textarea', label: 'What is one thing you will do to prepare before your next appointment?' }
         ]
       }
     ]
@@ -715,7 +761,19 @@ export const workbookData = [
           { id: 'm21_s1_q0a', type: 'text', label: 'Start Date:' },
           { id: 'm21_s1_q0b', type: 'text', label: 'Target Quit/Goal Date:' },
           { id: 'm21_s1_q2', type: 'textarea', label: '1. My "why": What are my deepest reasons for making this change?' },
-          { id: 'm21_s1_q3', type: 'textarea', label: '2. My support system for this change & My triggers:' },
+          { id: 'm21_s1_q3', type: 'textarea', label: '2. My support system for this change:' }
+        ]
+      },
+      {
+        sectionTitle: 'My Triggers',
+        fields: [
+          { id: 'm21_s2_q1', type: 'textarea', label: 'What situations, emotions, times of day, or people trigger this habit? List as many as you can identify.' },
+          { id: 'm21_s2_q2', type: 'textarea', label: 'For each trigger above, what is one alternative action or coping strategy you can use instead?' }
+        ]
+      },
+      {
+        sectionTitle: 'Coping and Rewards',
+        fields: [
           { id: 'm21_s1_q4', type: 'textarea', label: '3. My coping plan for cravings and temptation (What will I do instead?):' },
           { id: 'm21_s1_q5', type: 'textarea', label: '4. My reward for milestones:' }
         ]
@@ -725,10 +783,15 @@ export const workbookData = [
   {
     moduleId: 22,
     title: "Module 22: Building Your Resilience",
-    summary: "Resilience is your ability to adapt well in the face of adversity. This module focuses on cultivating inner strength through realistic optimism and self-efficacy, using daily practices like gratitude and self-compassion to shift your focus toward success and hope.",
-    patientNote: "Resilience isn\u2019t about never struggling \u2014 it\u2019s about getting back up one more time.",
+    summary: "Resilience is your ability to adapt well in the face of adversity. This module focuses on cultivating inner strength through realistic optimism and self-efficacy, using daily practices like gratitude and self-compassion to shift your focus from simply managing pain to truly living well with it.",
+    patientNote: "The goal is no longer just to manage your pain \u2014 it is to build a life you love living, even with it.",
     exerciseTitle: "Gratitude and Self-Compassion Journal",
     sections: [
+      {
+        sectionTitle: 'From Managing to Living Well',
+        description: 'Up to this point, much of this workbook has focused on understanding and managing your pain. This module marks a shift. Resilience is not simply about survival \u2014 it is about thriving. It means moving beyond coping day-to-day and toward building a life that feels meaningful, joyful, and connected, even in the presence of pain. The practices below help you strengthen that foundation.',
+        fields: []
+      },
       {
         sectionTitle: 'Daily Reflection',
         fields: [

@@ -24,10 +24,10 @@ build:
             -project App.xcodeproj \
             -scheme App \
             -configuration Release \
-            -archivePath $EAS_BUILD_RUNNER_WORKING_DIRECTORY/build/App.xcarchive \
+            -archivePath $EAS_BUILD_WORKINGDIR/build/App.xcarchive \
             archive \
-            CODE_SIGN_IDENTITY="${IOS_CODE_SIGN_IDENTITY}" \
-            PROVISIONING_PROFILE_SPECIFIER="${IOS_PROVISIONING_PROFILE_SPECIFIER}" \
+            CODE_SIGN_IDENTITY="$CODE_SIGN_IDENTITY" \
+            PROVISIONING_PROFILE_SPECIFIER="$PROVISIONING_PROFILE_SPECIFIER" \
             CODE_SIGN_STYLE=Manual
     - run:
         name: Export IPA
@@ -49,6 +49,5 @@ build:
             -archivePath build/App.xcarchive \
             -exportPath build/output \
             -exportOptionsPlist exportOptions.plist
-    - eas/upload-artifact:
-        params:
-          path: ./build/output/*.ipa
+          cp build/output/*.ipa ./output.ipa
+    - eas/build

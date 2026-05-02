@@ -122,7 +122,10 @@ const WorkbookForms = () => {
     const newIndex = currentIndex + direction;
     if (newIndex >= 0 && newIndex < workbookData.length) {
       setActiveModule(workbookData[newIndex].moduleId);
-      topRef.current?.scrollIntoView({ behavior: 'smooth' });
+      // Use setTimeout to ensure scroll happens after React re-renders the new module
+      setTimeout(() => {
+        topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
     }
   };
 
@@ -232,6 +235,12 @@ const WorkbookForms = () => {
                 <h5 className="font-bold text-primary-700 bg-primary-50 px-3 py-2 rounded-lg border border-primary-100 inline-block">
                   {section.sectionTitle}
                 </h5>
+
+                {section.description && (
+                  <p className="text-secondary-600 text-sm leading-relaxed mt-2 mb-1 px-1">
+                    {section.description}
+                  </p>
+                )}
                 
                 <div className="space-y-6 mt-4">
                   {section.fields.map((field) => (
