@@ -1,6 +1,8 @@
 # Gymfile for Ionic Appflow CI builds
-# Passes DEVELOPMENT_TEAM as xcodebuild arg so that ALL targets
-# (including SPM dependencies like RevenueCat) inherit the team ID.
-# This fixes "Signing for RevenueCat_RevenueCat requires a development team".
+# Fixes RevenueCat SPM dependency signing conflict in CI.
+#
+# - DEVELOPMENT_TEAM: SPM targets need the team to be present
+# - CODE_SIGN_STYLE=Manual: Prevents conflict between automatic signing
+#   on SPM targets and the manual CODE_SIGN_IDENTITY that Appflow passes
 
-xcargs "DEVELOPMENT_TEAM=Z7DH27LD9D"
+xcargs "DEVELOPMENT_TEAM=Z7DH27LD9D CODE_SIGN_STYLE=Manual"
