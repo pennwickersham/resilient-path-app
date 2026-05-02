@@ -49,7 +49,7 @@ const BackButtonHandler = () => {
           </button>
           <button 
             onClick={() => CapacitorApp.exitApp()}
-            className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition shadow-sm"
+            className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl transition shadow-sm"
           >
             Exit
           </button>

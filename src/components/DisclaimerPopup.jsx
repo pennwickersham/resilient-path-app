@@ -27,7 +27,7 @@ const DisclaimerPopup = () => {
       }}
     >
       <div className="bg-white max-w-md w-full rounded-2xl p-6 shadow-2xl">
-        <div className="flex flex-col items-center gap-2 text-red-600 mb-4 text-center">
+        <div className="flex flex-col items-center gap-2 text-purple-600 mb-4 text-center">
           <AlertCircle size={36} />
           <h2 className="text-xl font-bold uppercase tracking-wide">Not a Medical Device</h2>
           <h3 className="text-lg font-semibold text-secondary-900">Medical Disclaimer</h3>

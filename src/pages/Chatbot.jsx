@@ -210,7 +210,7 @@ const Chatbot = () => {
       <div className="flex items-center gap-2 mb-2 shrink-0">
         <h2 className="text-xl font-bold text-primary-800">Therapist AI</h2>
       </div>
-      <p className="text-secondary-600 text-xs mb-3 shrink-0 flex items-center gap-1 bg-yellow-50 text-yellow-800 p-2 rounded-lg border border-yellow-200">
+      <p className="text-secondary-600 text-xs mb-3 shrink-0 flex items-center gap-1 bg-primary-50 text-primary-800 p-2 rounded-lg border border-primary-200">
         <AlertCircle size={14} className="shrink-0" />
         AI is for educational purposes based on The Resilient Path. Not medical advice.
       </p>

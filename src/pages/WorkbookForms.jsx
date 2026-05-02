@@ -198,8 +198,8 @@ const WorkbookForms = () => {
                 )}
 
                 {currentModuleData.patientNote && (
-                  <div className="bg-amber-50 border-l-4 border-amber-400 px-4 py-3 rounded-r-xl mt-3">
-                    <p className="text-amber-900 text-sm italic font-medium leading-relaxed">
+                  <div className="bg-primary-50 border-l-4 border-primary-400 px-4 py-3 rounded-r-xl mt-3">
+                    <p className="text-primary-900 text-sm italic font-medium leading-relaxed">
                       "{currentModuleData.patientNote}"
                     </p>
                   </div>
@@ -222,7 +222,7 @@ const WorkbookForms = () => {
                <h4 className="text-lg font-bold text-secondary-900">Worksheet: {currentModuleData.exerciseTitle}</h4>
                <button 
                 onClick={handleClearModule}
-                className="flex items-center gap-1.5 text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 px-3 py-1.5 rounded-lg transition-all active:scale-95 shrink-0"
+                className="flex items-center gap-1.5 text-xs font-bold text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-200 px-3 py-1.5 rounded-lg transition-all active:scale-95 shrink-0"
                 title="Clear all answers in this module"
               >
                 <Trash2 size={14} />

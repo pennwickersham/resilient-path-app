@@ -122,13 +122,13 @@ const Home = () => {
         </div>
       </Link>
 
-      <Link to="/emergency" className="bg-red-50 p-4 rounded-2xl border border-red-200 flex items-center gap-4 hover:bg-red-100 transition shadow-sm mt-2 cursor-pointer group">
+      <Link to="/emergency" className="bg-purple-50 p-4 rounded-2xl border border-purple-200 flex items-center gap-4 hover:bg-purple-100 transition shadow-sm mt-2 cursor-pointer group">
         <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition duration-300">
-          <AlertTriangle className="text-red-600" size={24} strokeWidth={2.5} />
+          <AlertTriangle className="text-purple-600" size={24} strokeWidth={2.5} />
         </div>
         <div>
-          <h3 className="font-bold text-red-800 text-base">Emergency Information</h3>
-          <p className="text-red-600/80 text-xs font-medium leading-tight mt-0.5">Quick access to crisis resources.</p>
+          <h3 className="font-bold text-purple-800 text-base">Emergency Information</h3>
+          <p className="text-purple-600/80 text-xs font-medium leading-tight mt-0.5">Quick access to crisis resources.</p>
         </div>
       </Link>
     </div>

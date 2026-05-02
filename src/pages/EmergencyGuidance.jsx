@@ -3,17 +3,17 @@ import { PhoneCall, AlertCircle, HeartPulse } from 'lucide-react';
 const EmergencyGuidance = () => {
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-500 pb-24">
-      <h2 className="text-2xl font-bold text-red-700 flex items-center gap-2">
-        <AlertCircle className="text-red-600" size={28} />
+      <h2 className="text-2xl font-bold text-purple-700 flex items-center gap-2">
+        <AlertCircle className="text-purple-600" size={28} />
         Emergency Help
       </h2>
 
-      <div className="bg-red-50 p-5 rounded-2xl border border-red-200">
-        <h3 className="font-bold text-red-900 mb-2 flex items-center gap-2">
+      <div className="bg-purple-50 p-5 rounded-2xl border border-purple-200">
+        <h3 className="font-bold text-purple-900 mb-2 flex items-center gap-2">
           <HeartPulse size={20} />
           In Crisis or Feeling Suicidal?
         </h3>
-        <p className="text-red-800 text-sm mb-4">
+        <p className="text-purple-800 text-sm mb-4">
           You are not alone. Please reach out immediately. Help is available 24/7.
         </p>
         <a href="tel:988" className="bg-red-600 text-white flex items-center justify-center gap-2 py-3 rounded-xl font-bold shadow-md hover:bg-red-700 transition">
@@ -31,11 +31,11 @@ const EmergencyGuidance = () => {
         </ul>
       </div>
 
-      <div className="bg-orange-50 p-5 rounded-2xl border border-orange-200 shadow-sm">
-        <h3 className="font-bold text-orange-900 mb-2">Urgent vs Emergent Care</h3>
-        <div className="space-y-4 text-sm text-orange-900">
+      <div className="bg-purple-50/60 p-5 rounded-2xl border border-purple-200 shadow-sm">
+        <h3 className="font-bold text-purple-900 mb-2">Urgent vs Emergent Care</h3>
+        <div className="space-y-4 text-sm text-purple-900">
           <div>
-            <strong className="block mb-1 text-orange-950">Go to the Emergency Room (Emergent) if:</strong>
+            <strong className="block mb-1 text-purple-950">Go to the Emergency Room (Emergent) if:</strong>
             <ul className="list-disc pl-5 space-y-1">
               <li>Sudden loss of bowel or bladder control.</li>
               <li>Sudden onset of severe weakness or numbness in arms or legs.</li>
@@ -43,7 +43,7 @@ const EmergencyGuidance = () => {
             </ul>
           </div>
           <div>
-            <strong className="block mb-1 text-orange-950">Go to Urgent Care if:</strong>
+            <strong className="block mb-1 text-purple-950">Go to Urgent Care if:</strong>
             <ul className="list-disc pl-5 space-y-1">
               <li>Severe pain flare-up that cannot be managed at home but does not include emergency symptoms.</li>
               <li>Minor injuries or infections.</li>

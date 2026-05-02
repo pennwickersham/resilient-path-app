@@ -821,7 +821,7 @@ export const workbookData = [
   {
     moduleId: 24,
     title: "Module 24: Your Path to Inner Peace",
-    summary: "Spirituality and personal meaning are profound sources of strength and comfort. Whether through faith, nature, art, or meditation, this module encourages you to explore what brings you a sense of awe and peace and to intentionally nurture that connection.",
+    summary: "Spirituality and personal meaning are profound sources of strength and comfort. When one is facing profound challenges, seeking connection to something larger than oneself is natural. Whether through faith, nature, art, or meditation, this module encourages you to explore what brings you a sense of awe and peace and to intentionally nurture that connection.",
     patientNote: "Whatever brings you peace \u2014 faith, nature, music, or stillness \u2014 lean into it without apology.",
     exerciseTitle: "Spirituality and Personal Meaning",
     sections: [

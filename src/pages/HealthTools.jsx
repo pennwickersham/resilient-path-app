@@ -328,7 +328,7 @@ const HealthTools = () => {
                     Medication {idx + 1}
                   </span>
                   {medications.length > 1 && (
-                    <button onClick={() => removeListItem(setMedications, idx)} className="text-red-400 hover:text-red-600 transition-colors">
+                    <button onClick={() => removeListItem(setMedications, idx)} className="text-purple-400 hover:text-purple-600 transition-colors">
                       <Trash2 size={14} />
                     </button>
                   )}
@@ -375,7 +375,7 @@ const HealthTools = () => {
                     Provider {idx + 1}
                   </span>
                   {doctors.length > 1 && (
-                    <button onClick={() => removeListItem(setDoctors, idx)} className="text-red-400 hover:text-red-600 transition-colors">
+                    <button onClick={() => removeListItem(setDoctors, idx)} className="text-purple-400 hover:text-purple-600 transition-colors">
                       <Trash2 size={14} />
                     </button>
                   )}
@@ -456,7 +456,7 @@ const HealthTools = () => {
                     Entry {idx + 1}
                   </span>
                   {symptoms.length > 1 && (
-                    <button onClick={() => removeListItem(setSymptoms, idx)} className="text-red-400 hover:text-red-600 transition-colors">
+                    <button onClick={() => removeListItem(setSymptoms, idx)} className="text-purple-400 hover:text-purple-600 transition-colors">
                       <Trash2 size={14} />
                     </button>
                   )}

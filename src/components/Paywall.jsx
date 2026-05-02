@@ -97,11 +97,11 @@ const Paywall = ({ onClose }) => {
 
         {/* Pricing */}
         <div className="px-5 pb-2">
-          <div className="bg-gradient-to-r from-amber-50 to-primary-50 border border-amber-200 rounded-2xl p-4 text-center">
+          <div className="bg-gradient-to-r from-purple-50 to-primary-50 border border-purple-200 rounded-2xl p-4 text-center">
             <div className="flex items-center justify-center gap-1.5 mb-1">
-              <Sparkles className="text-amber-500" size={16} />
-              <span className="text-amber-700 font-bold text-sm">7 Days Free</span>
-              <Sparkles className="text-amber-500" size={16} />
+              <Sparkles className="text-purple-400" size={16} />
+              <span className="text-purple-700 font-bold text-sm">7 Days Free</span>
+              <Sparkles className="text-purple-400" size={16} />
             </div>
             <p className="text-secondary-600 text-xs">
               Then just <span className="font-bold text-secondary-900">$1.99/month</span>. Cancel anytime.
@@ -150,7 +150,7 @@ const Paywall = ({ onClose }) => {
             <p className={`text-xs text-center p-2 rounded-lg ${
               restoreMsg.includes('restored') 
                 ? 'text-emerald-700 bg-emerald-50' 
-                : 'text-amber-700 bg-amber-50'
+                : 'text-purple-700 bg-purple-50'
             }`}>
               {restoreMsg}
             </p>
