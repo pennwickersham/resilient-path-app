@@ -9,8 +9,8 @@ import { Capacitor } from '@capacitor/core';
 // ─── CONFIGURATION ───────────────────────────────────────────────
 // Replace with your RevenueCat Public SDK API keys from:
 // RevenueCat Dashboard → Project Settings → API Keys
-const REVENUECAT_API_KEY_APPLE = 'appl_YOUR_APPLE_KEY_HERE';
-const REVENUECAT_API_KEY_GOOGLE = 'goog_YOUR_GOOGLE_KEY_HERE';
+const REVENUECAT_API_KEY_APPLE = 'appl_UjGQPFdDQoVvqOlLOVwglfkZqrG';
+const REVENUECAT_API_KEY_GOOGLE = 'goog_rsFTBscYVROFrHgGivMAhhRwiEn';
 
 const PRODUCT_ID = 'resilient.path.app';
 
