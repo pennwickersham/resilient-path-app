@@ -19,6 +19,17 @@ let purchasesModule = null;
 let isInitialized = false;
 
 /**
+ * Helper: race a promise against a timeout.
+ * Rejects with 'TIMEOUT' if the promise doesn't resolve in time.
+ */
+function withTimeout(promise, ms) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT')), ms)),
+  ]);
+}
+
+/**
  * Dynamically import RevenueCat only on native platforms.
  * Returns null on web/desktop where native IAP isn't available.
  */
@@ -53,11 +64,13 @@ export async function initializeRevenueCat() {
   const apiKey = platform === 'ios' ? REVENUECAT_API_KEY_APPLE : REVENUECAT_API_KEY_GOOGLE;
 
   try {
-    await Purchases.configure({ apiKey });
+    await withTimeout(Purchases.configure({ apiKey }), 5000);
     isInitialized = true;
     console.log('[SubscriptionService] RevenueCat initialized for', platform);
   } catch (err) {
     console.error('[SubscriptionService] Init failed:', err);
+    // Mark as initialized even on failure to prevent retries that hang
+    isInitialized = true;
   }
 }
 
@@ -77,7 +90,7 @@ export async function checkSubscriptionStatus() {
   }
 
   try {
-    const { customerInfo } = await Purchases.getCustomerInfo();
+    const { customerInfo } = await withTimeout(Purchases.getCustomerInfo(), 5000);
     const entitlements = customerInfo.entitlements.active;
     
     // Check if any entitlement is active
@@ -96,7 +109,7 @@ export async function checkSubscriptionStatus() {
     return { isActive: hasActive, isTrialing, expirationDate };
   } catch (err) {
     console.error('[SubscriptionService] Status check failed:', err);
-    // On error, grant access to avoid locking out paying users
+    // On error (including timeout), grant access to avoid locking out users
     return { isActive: true, isTrialing: false, expirationDate: null };
   }
 }

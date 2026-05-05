@@ -18,25 +18,40 @@ export function SubscriptionProvider({ children }) {
 
   // Initialize RevenueCat and check status on mount
   useEffect(() => {
+    let didTimeout = false;
+
+    // Timeout guard: if init takes too long, fail-open
+    const timeoutId = setTimeout(() => {
+      didTimeout = true;
+      console.warn('[SubscriptionContext] Init timed out — granting access');
+      setIsSubscribed(true);
+      setIsLoading(false);
+    }, 8000);
+
     async function init() {
       try {
         await initializeRevenueCat();
+        if (didTimeout) return; // timeout already fired
+
         const status = await checkSubscriptionStatus();
+        if (didTimeout) return;
         setIsSubscribed(status.isActive);
         setIsTrialing(status.isTrialing);
 
-        // Pre-fetch offerings for the paywall
-        const currentOffering = await getOfferings();
-        setOfferings(currentOffering);
+        // Pre-fetch offerings for the paywall (don't block on this)
+        getOfferings().then(o => { if (!didTimeout) setOfferings(o); }).catch(() => {});
       } catch (err) {
         console.error('[SubscriptionContext] Init error:', err);
         // Fail-open: don't lock out users on error
-        setIsSubscribed(true);
+        if (!didTimeout) setIsSubscribed(true);
       } finally {
-        setIsLoading(false);
+        clearTimeout(timeoutId);
+        if (!didTimeout) setIsLoading(false);
       }
     }
     init();
+
+    return () => clearTimeout(timeoutId);
   }, []);
 
   const subscribe = useCallback(async (pkg) => {
