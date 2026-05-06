@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { Send, KeyRound, AlertCircle, Loader2 } from 'lucide-react';
+import { Send, KeyRound, AlertCircle, Loader2, ShieldOff } from 'lucide-react';
 
 const Chatbot = () => {
   const [messages, setMessages] = useState([
@@ -176,6 +176,28 @@ const Chatbot = () => {
       setIsLoading(false);
     }
   };
+
+  // Check AI data sharing consent — must be accepted before any data is sent to Google
+  const aiConsent = localStorage.getItem('aiConsentAccepted');
+  if (aiConsent !== 'true') {
+    return (
+      <div className="flex flex-col items-center justify-center h-full p-6 text-center animate-in fade-in duration-500">
+        <div className="bg-white p-8 rounded-2xl shadow-sm border border-secondary-200 max-w-md w-full">
+          <div className="w-16 h-16 bg-secondary-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <ShieldOff size={32} className="text-secondary-400" />
+          </div>
+          <h2 className="text-xl font-bold text-primary-900 mb-2">AI Data Consent Required</h2>
+          <p className="text-secondary-600 text-sm leading-relaxed mb-4">
+            This feature sends your messages to <strong>Google Gemini</strong> (Google LLC) to generate responses.
+            You must consent to this data sharing before using the AI chat.
+          </p>
+          <p className="text-secondary-500 text-xs leading-relaxed bg-secondary-50 p-3 rounded-xl border border-secondary-100">
+            To enable this feature, please close and reopen the app — the data consent notice will appear on the next launch, where you can review and accept the terms.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (!isKeySet) {
     return (

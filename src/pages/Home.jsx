@@ -41,6 +41,23 @@ const Home = () => {
         </p>
       </section>
 
+      {/* Subscription CTA — visible to non-subscribers, helps reviewers locate IAP */}
+      {!isSubscribed && (
+        <button
+          id="get-full-access-btn"
+          onClick={() => setShowPaywall(true)}
+          className="w-full bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-2xl p-5 flex items-center justify-between shadow-md hover:from-primary-700 hover:to-primary-800 active:scale-[0.98] transition-all duration-200"
+        >
+          <div className="text-left">
+            <p className="font-bold text-base leading-tight">Get Full Access</p>
+            <p className="text-white/80 text-xs mt-0.5">7-day free trial · then $1.99/month</p>
+          </div>
+          <div className="bg-white/20 rounded-xl px-3 py-1.5 text-sm font-bold shrink-0 ml-3">
+            Subscribe
+          </div>
+        </button>
+      )}
+
       {/* Shopify / Book Purchase Section */}
       <section 
         className="bg-white p-5 rounded-2xl shadow-sm border border-secondary-100 flex flex-col gap-4 relative overflow-hidden group hover:border-primary-200 transition-colors cursor-pointer"
