@@ -7,8 +7,8 @@ const Chatbot = () => {
     { role: 'model', content: "Hello! I'm here to support you. Ask me anything about the Resilient Path program, chronic pain management, or your medications." }
   ]);
   const [input, setInput] = useState('');
-  const [apiKey, setApiKey] = useState('AIzaSyDnkEpMTk99fKjXCMvGtpFTcKaGL_JwEUc');
-  const [isKeySet, setIsKeySet] = useState(true);
+  const [apiKey, setApiKey] = useState(import.meta.env.VITE_GEMINI_API_KEY || '');
+  const [isKeySet, setIsKeySet] = useState(!!import.meta.env.VITE_GEMINI_API_KEY);
   const [isLoading, setIsLoading] = useState(false);
   const [contextFiles, setContextFiles] = useState({ book: '', workbook: '' });
   
