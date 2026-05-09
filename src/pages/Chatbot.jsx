@@ -7,11 +7,9 @@ const Chatbot = () => {
     { role: 'model', content: "Hello! I'm here to support you. Ask me anything about the Resilient Path program, chronic pain management, or your medications." }
   ]);
   const [input, setInput] = useState('');
-  // Fallback key ensures the chat works even if the build-time env var wasn't embedded.
-  const FALLBACK_KEY = 'AIzaSyALKpKADytFnnmG3zaf1wyEVIh98cYeJbw';
-  const resolvedKey = import.meta.env.VITE_GEMINI_API_KEY || FALLBACK_KEY;
+  const resolvedKey = import.meta.env.VITE_GEMINI_API_KEY || '';
   const [apiKey, setApiKey] = useState(resolvedKey);
-  const [isKeySet, setIsKeySet] = useState(true);
+  const [isKeySet, setIsKeySet] = useState(resolvedKey.length > 0);
   const [isLoading, setIsLoading] = useState(false);
   const [contextFiles, setContextFiles] = useState({ book: '', workbook: '' });
   
