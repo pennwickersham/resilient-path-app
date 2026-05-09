@@ -1,4 +1,4 @@
-package com.resilientpath.app;
+package resilient.path.app;
 
 import com.getcapacitor.BridgeActivity;
 
