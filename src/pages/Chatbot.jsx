@@ -7,13 +7,17 @@ const Chatbot = () => {
     { role: 'model', content: "Hello! I'm here to support you. Ask me anything about the Resilient Path program, chronic pain management, or your medications." }
   ]);
   const [input, setInput] = useState('');
-  // Primary: env var injected by Appflow at build time.
-  // Fallback: hardcoded so the chatbot works when the build pipeline
-  // doesn't embed the env var (common with Capacitor + Appflow + Vite).
-  const FALLBACK_KEY = 'AIzaSyANeBSqIA7Wv0v2vzc2DFeBSaQq5JEHoGs';
-  const resolvedKey = import.meta.env.VITE_GEMINI_API_KEY || FALLBACK_KEY;
-  const [apiKey, setApiKey] = useState(resolvedKey);
-  const [isKeySet, setIsKeySet] = useState(resolvedKey.length > 0);
+  // API key is injected at build time by Appflow Secrets → Vite replaces
+  // import.meta.env.VITE_GEMINI_API_KEY with the literal value in the
+  // production JS bundle.  The key is NEVER stored in source code or Git.
+  // Users can also enter their own key via localStorage.
+  const buildTimeKey = import.meta.env.VITE_GEMINI_API_KEY || '';
+  const storedKey = typeof window !== 'undefined'
+    ? localStorage.getItem('resilientPathGeminiKey') || ''
+    : '';
+  const initialKey = storedKey || buildTimeKey;
+  const [apiKey, setApiKey] = useState(initialKey);
+  const [isKeySet, setIsKeySet] = useState(initialKey.length > 0);
   const [isLoading, setIsLoading] = useState(false);
   const [contextFiles, setContextFiles] = useState({ book: '', workbook: '' });
   
