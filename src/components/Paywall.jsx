@@ -159,14 +159,41 @@ const Paywall = ({ onClose }) => {
 
         {/* Footer */}
         <div className="px-5 pb-5">
-          <p className="text-secondary-400 text-[10px] text-center leading-snug">
-            Payment will be charged to your App Store or Google Play account. Subscription automatically renews unless cancelled at least 24 hours before the end of the current period. Manage your subscription in your device settings.
-          </p>
+          {/* Subscription details - required by App Store Guideline 3.1.2(c) */}
+          <div className="bg-secondary-50 rounded-xl p-3 mb-3 text-[10px] text-secondary-500 leading-relaxed">
+            <p className="font-semibold text-secondary-600 mb-1">Resilient Path Monthly Subscription</p>
+            <p>• Duration: 1 month, auto-renewing</p>
+            <p>• Price: $1.99/month (after 7-day free trial)</p>
+            <p>• Payment charged to your Apple ID at confirmation of purchase</p>
+            <p>• Subscription renews unless cancelled at least 24 hours before the end of the current period</p>
+            <p>• Manage or cancel in iPhone Settings → Apple ID → Subscriptions</p>
+          </div>
+
+          {/* Legal links - required by App Store Guideline 3.1.2(c) */}
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <a
+              href="https://resilientpathapp.com/privacy-policy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary-600 text-[10px] underline"
+            >
+              Privacy Policy
+            </a>
+            <span className="text-secondary-300 text-[10px]">•</span>
+            <a
+              href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary-600 text-[10px] underline"
+            >
+              Terms of Use (EULA)
+            </a>
+          </div>
           
           {onClose && (
             <button
               onClick={onClose}
-              className="w-full text-secondary-400 text-xs mt-3 hover:text-secondary-600 transition-colors"
+              className="w-full text-secondary-400 text-xs hover:text-secondary-600 transition-colors"
             >
               Maybe Later
             </button>
