@@ -7,7 +7,11 @@ const Chatbot = () => {
     { role: 'model', content: "Hello! I'm here to support you. Ask me anything about the Resilient Path program, chronic pain management, or your medications." }
   ]);
   const [input, setInput] = useState('');
-  const resolvedKey = import.meta.env.VITE_GEMINI_API_KEY || '';
+  // Primary: env var injected by Appflow at build time.
+  // Fallback: hardcoded so the chatbot works when the build pipeline
+  // doesn't embed the env var (common with Capacitor + Appflow + Vite).
+  const FALLBACK_KEY = 'AIzaSyANeBSqIA7Wv0v2vzc2DFeBSaQq5JEHoGs';
+  const resolvedKey = import.meta.env.VITE_GEMINI_API_KEY || FALLBACK_KEY;
   const [apiKey, setApiKey] = useState(resolvedKey);
   const [isKeySet, setIsKeySet] = useState(resolvedKey.length > 0);
   const [isLoading, setIsLoading] = useState(false);
