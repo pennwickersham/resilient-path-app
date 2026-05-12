@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { AlertCircle, Bot, ShieldCheck } from 'lucide-react';
+import { AlertCircle, Bot, ShieldCheck, Heart } from 'lucide-react';
 
 const DisclaimerPopup = () => {
   const [step, setStep] = useState(null); // null = not ready, 'medical' | 'ai' | 'done'
@@ -57,23 +57,35 @@ const DisclaimerPopup = () => {
               <h3 className="text-lg font-semibold text-secondary-900">Medical Disclaimer</h3>
             </div>
 
-            <div className="h-64 overflow-y-auto pr-2 text-sm text-secondary-700 bg-secondary-50 p-4 rounded-xl border border-secondary-100 space-y-3 mb-6">
+            <div className="h-72 overflow-y-auto pr-2 text-sm text-secondary-700 bg-secondary-50 p-4 rounded-xl border border-secondary-100 space-y-3 mb-4">
               <p>
-                <strong>Important:</strong> "Managing Life with Chronic Pain: The Resilient Path" Application is intended for informational purposes only and does <strong>NOT</strong> provide medical advice.
+                <strong>Important:</strong> "Managing Life with Chronic Pain: The Resilient Path" is an <strong>educational and informational wellness tool only</strong>. It is <strong>NOT</strong> a medical device and has not received regulatory clearance from the FDA or any other regulatory body.
               </p>
               <p>
-                The content is not intended to be a substitute for professional medical advice, diagnosis, or treatment.
+                This application does <strong>NOT</strong> provide medical advice, diagnoses, or treatment recommendations. The content — including the digital workbook, AI chat assistant, and health tracking tools — is intended solely for general informational and educational purposes.
               </p>
               <p>
-                Always seek the advice of your rheumatologist, pain management provider, or other qualified health provider with any questions regarding a medical condition.
+                Always seek the advice of your rheumatologist, pain management provider, or other qualified health provider with any questions regarding a medical condition. <strong>Do not rely on information in this app to make medical decisions.</strong>
               </p>
               <p>
-                Never disregard professional medical advice or delay seeking it because of something you have read or seen in this app.
+                Never disregard professional medical advice or delay seeking it because of something you have read or seen in this app. If you think you may have a medical emergency, call your doctor or 911 immediately.
               </p>
               <p>
-                By clicking "Accept", you acknowledge that you have read this disclaimer and understand that this tool is not a substitute for professional medical guidance.
+                The AI-powered chat feature provides responses based on educational material only. It cannot and does not diagnose conditions, prescribe medications, or replace consultations with licensed healthcare professionals.
               </p>
             </div>
+
+            {/* Self-compassion statement */}
+            <div className="flex items-start gap-3 bg-purple-50 border border-purple-100 rounded-xl p-3 mb-5">
+              <Heart size={20} className="text-purple-500 shrink-0 mt-0.5" />
+              <p className="text-sm text-purple-800 leading-relaxed">
+                We encourage you to use this app and the information it provides with <strong>patience, honesty, and self-compassion</strong>. Your journey is unique, and progress is not always linear. Be gentle with yourself along the way.
+              </p>
+            </div>
+
+            <p className="text-xs text-secondary-500 text-center mb-4">
+              By tapping "I Understand and Accept", you acknowledge that this app is not a substitute for professional medical guidance.
+            </p>
 
             <button
               id="disclaimer-accept-btn"

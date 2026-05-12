@@ -116,19 +116,30 @@ export async function checkSubscriptionStatus() {
 
 /**
  * Fetch available subscription offerings from RevenueCat.
+ * Retries up to 3 times with exponential backoff for resilience in sandbox.
  * @returns {Object|null} The current offering, or null if unavailable.
  */
 export async function getOfferings() {
   const Purchases = await getPurchasesModule();
   if (!Purchases) return null;
 
-  try {
-    const { offerings } = await Purchases.getOfferings();
-    return offerings.current || null;
-  } catch (err) {
-    console.error('[SubscriptionService] Get offerings failed:', err);
-    return null;
+  let lastErr = null;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const { offerings } = await withTimeout(Purchases.getOfferings(), 8000);
+      if (offerings?.current) return offerings.current;
+      // If current is null, wait and retry (sandbox can be slow)
+      console.warn(`[SubscriptionService] offerings.current is null (attempt ${attempt + 1})`);
+    } catch (err) {
+      lastErr = err;
+      console.warn(`[SubscriptionService] getOfferings attempt ${attempt + 1} failed:`, err.message);
+    }
+    if (attempt < 2) {
+      await new Promise(r => setTimeout(r, 1500 * (attempt + 1)));
+    }
   }
+  console.error('[SubscriptionService] Get offerings failed after retries:', lastErr);
+  return null;
 }
 
 /**
@@ -152,6 +163,39 @@ export async function purchasePackage(pkg) {
       return { success: false, error: 'cancelled' };
     }
     console.error('[SubscriptionService] Purchase failed:', err);
+    return { success: false, error: err.message || 'Purchase failed' };
+  }
+}
+
+/**
+ * Fallback: purchase by product identifier directly.
+ * Used when offerings-based purchase fails (e.g. sandbox environment).
+ * @param {string} productId — The StoreKit product identifier
+ * @returns {{ success: boolean, customerInfo?: Object, error?: string }}
+ */
+export async function purchaseStoreProduct(productId) {
+  const Purchases = await getPurchasesModule();
+  if (!Purchases) {
+    return { success: false, error: 'Purchases not available on this platform' };
+  }
+
+  try {
+    // Fetch products directly by ID
+    const { products } = await withTimeout(
+      Purchases.getProducts({ productIdentifiers: [productId] }),
+      8000
+    );
+    if (!products || products.length === 0) {
+      return { success: false, error: 'Product not found. Please try again later.' };
+    }
+    const { customerInfo } = await Purchases.purchaseStoreProduct({ product: products[0] });
+    const hasActive = Object.keys(customerInfo.entitlements.active).length > 0;
+    return { success: hasActive, customerInfo };
+  } catch (err) {
+    if (err.code === 1 || err.message?.includes('cancelled') || err.message?.includes('canceled')) {
+      return { success: false, error: 'cancelled' };
+    }
+    console.error('[SubscriptionService] purchaseStoreProduct failed:', err);
     return { success: false, error: err.message || 'Purchase failed' };
   }
 }

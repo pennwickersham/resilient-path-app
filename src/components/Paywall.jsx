@@ -1,29 +1,56 @@
-import { useState } from 'react';
-import { Shield, BookOpen, MessageCircle, ClipboardList, Sparkles, CheckCircle, Loader2, RotateCcw } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Shield, BookOpen, MessageCircle, ClipboardList, Sparkles, CheckCircle, Loader2, RotateCcw, RefreshCw } from 'lucide-react';
 import { useSubscription } from '../context/SubscriptionContext';
 
 const Paywall = ({ onClose }) => {
-  const { offerings, subscribe, restore } = useSubscription();
+  const { offerings, offeringsLoading, subscribe, subscribeFallback, restore, refreshOfferings } = useSubscription();
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
   const [error, setError] = useState(null);
   const [restoreMsg, setRestoreMsg] = useState(null);
+  const [retryingOfferings, setRetryingOfferings] = useState(false);
+
+  // When the paywall opens and offerings are null, attempt to fetch them
+  useEffect(() => {
+    if (!offerings && !offeringsLoading) {
+      setRetryingOfferings(true);
+      refreshOfferings().finally(() => setRetryingOfferings(false));
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleRetryOfferings = async () => {
+    setRetryingOfferings(true);
+    setError(null);
+    await refreshOfferings();
+    setRetryingOfferings(false);
+  };
 
   const handleSubscribe = async () => {
-    if (!offerings?.availablePackages?.length) {
-      setError('Subscription not available yet. Please try again later.');
-      return;
-    }
-    
     setPurchasing(true);
     setError(null);
-    
-    const pkg = offerings.availablePackages[0];
-    const result = await subscribe(pkg);
-    
-    if (!result.success && result.error !== 'cancelled') {
-      setError(result.error || 'Something went wrong. Please try again.');
+
+    // Primary path: purchase via offerings package
+    if (offerings?.availablePackages?.length) {
+      const pkg = offerings.availablePackages[0];
+      const result = await subscribe(pkg);
+      
+      if (!result.success && result.error !== 'cancelled') {
+        // If the package-based purchase failed, try fallback
+        console.warn('[Paywall] Package purchase failed, trying product ID fallback...');
+        const fallbackResult = await subscribeFallback();
+        if (!fallbackResult.success && fallbackResult.error !== 'cancelled') {
+          setError('Unable to complete purchase. Please check your connection and try again.');
+        }
+      }
+    } else {
+      // Fallback path: purchase by product ID directly
+      console.warn('[Paywall] No offerings available, using product ID fallback...');
+      const result = await subscribeFallback();
+      if (!result.success && result.error !== 'cancelled') {
+        setError('Unable to complete purchase. Please check your connection and try again.');
+      }
     }
+
     setPurchasing(false);
   };
 
@@ -41,6 +68,8 @@ const Paywall = ({ onClose }) => {
     }
     setRestoring(false);
   };
+
+  const isLoadingOfferings = offeringsLoading || retryingOfferings;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-300">
@@ -112,14 +141,20 @@ const Paywall = ({ onClose }) => {
         {/* CTA Buttons */}
         <div className="p-5 pt-3 space-y-3">
           <button
+            id="start-free-trial-btn"
             onClick={handleSubscribe}
-            disabled={purchasing}
+            disabled={purchasing || isLoadingOfferings}
             className="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-primary-600/30 transition-all duration-200 active:scale-[0.98] disabled:opacity-60 flex items-center justify-center gap-2"
           >
             {purchasing ? (
               <>
                 <Loader2 className="animate-spin" size={18} />
                 Processing...
+              </>
+            ) : isLoadingOfferings ? (
+              <>
+                <Loader2 className="animate-spin" size={18} />
+                Loading...
               </>
             ) : (
               <>
@@ -143,7 +178,17 @@ const Paywall = ({ onClose }) => {
           </button>
 
           {error && (
-            <p className="text-red-600 text-xs text-center bg-red-50 p-2 rounded-lg">{error}</p>
+            <div className="text-center space-y-2">
+              <p className="text-red-600 text-xs bg-red-50 p-2 rounded-lg">{error}</p>
+              <button
+                onClick={handleRetryOfferings}
+                disabled={retryingOfferings}
+                className="text-primary-600 text-xs font-semibold flex items-center justify-center gap-1 mx-auto hover:text-primary-800 transition-colors"
+              >
+                <RefreshCw size={12} className={retryingOfferings ? 'animate-spin' : ''} />
+                Retry
+              </button>
+            </div>
           )}
 
           {restoreMsg && (

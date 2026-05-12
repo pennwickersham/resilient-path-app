@@ -172,15 +172,27 @@ const Chatbot = () => {
     } catch (error) {
       console.error("Gemini AI Error:", error);
       
-      let errorMsg = error.message || "An error occurred while connecting to the AI. Please try again.";
+      // Sanitize error messages — never show raw API errors to users
+      let errorMsg;
+      const rawMsg = (error.message || '').toLowerCase();
       
-      if (error.message?.includes('API key')) {
-        errorMsg = "Invalid API key. Please check your key in settings.";
-      } else if (error.message?.includes('quota')) {
-        errorMsg = "API quota exceeded. Please try again later.";
+      if (rawMsg.includes('api key') || rawMsg.includes('api_key') || rawMsg.includes('unauthorized') || rawMsg.includes('403')) {
+        errorMsg = "The AI service is temporarily unavailable. Please try again later.";
+      } else if (rawMsg.includes('quota') || rawMsg.includes('rate limit') || rawMsg.includes('429')) {
+        errorMsg = "The AI service is experiencing high demand. Please wait a moment and try again.";
+      } else if (rawMsg.includes('network') || rawMsg.includes('fetch') || rawMsg.includes('failed to fetch') || rawMsg.includes('timeout')) {
+        errorMsg = "Unable to connect to the AI service. Please check your internet connection and try again.";
+      } else if (rawMsg.includes('safety') || rawMsg.includes('blocked') || rawMsg.includes('harm')) {
+        errorMsg = "I wasn't able to respond to that particular question. Could you try rephrasing it?";
+      } else if (rawMsg.includes('503') || rawMsg.includes('overloaded') || rawMsg.includes('unavailable')) {
+        errorMsg = "The AI service is temporarily unavailable. Please try again in a few moments.";
+      } else if (rawMsg.includes('404') || rawMsg.includes('not found') || rawMsg.includes('not supported')) {
+        errorMsg = "The AI service is being updated. Please try again shortly.";
+      } else {
+        errorMsg = "Something went wrong. Please try again.";
       }
 
-      setMessages(prev => [...prev, { role: 'model', content: errorMsg }]);
+      setMessages(prev => [...prev, { role: 'model', content: errorMsg, isError: true }]);
     } finally {
       setIsLoading(false);
     }
@@ -254,10 +266,28 @@ const Chatbot = () => {
               className={`max-w-[85%] rounded-2xl p-3 text-sm leading-relaxed whitespace-pre-wrap ${
                 msg.role === 'user' 
                   ? 'bg-primary-600 text-white rounded-tr-none' 
-                  : 'bg-secondary-100 text-secondary-900 rounded-tl-none border border-secondary-200'
+                  : msg.isError
+                    ? 'bg-amber-50 text-amber-800 rounded-tl-none border border-amber-200'
+                    : 'bg-secondary-100 text-secondary-900 rounded-tl-none border border-secondary-200'
               }`}
             >
               {msg.content}
+              {msg.isError && (
+                <button
+                  onClick={() => {
+                    // Find the last user message and retry it
+                    const lastUserMsg = [...messages].reverse().find(m => m.role === 'user');
+                    if (lastUserMsg) {
+                      // Remove the error message and re-send
+                      setMessages(prev => prev.filter((_, i) => i !== idx));
+                      setInput(lastUserMsg.content);
+                    }
+                  }}
+                  className="block mt-2 text-xs text-amber-600 font-semibold underline hover:text-amber-800"
+                >
+                  Tap to retry
+                </button>
+              )}
             </div>
           </div>
         ))}
