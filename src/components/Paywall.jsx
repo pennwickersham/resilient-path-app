@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Shield, BookOpen, MessageCircle, ClipboardList, Sparkles, CheckCircle, Loader2, RotateCcw, RefreshCw } from 'lucide-react';
 import { useSubscription } from '../context/SubscriptionContext';
 
@@ -9,6 +9,26 @@ const Paywall = ({ onClose }) => {
   const [error, setError] = useState(null);
   const [restoreMsg, setRestoreMsg] = useState(null);
   const [retryingOfferings, setRetryingOfferings] = useState(false);
+
+  // Auto-recovery guard: if purchasing is stuck for 30s, reset it
+  const purchaseTimerRef = useRef(null);
+  useEffect(() => {
+    if (purchasing) {
+      purchaseTimerRef.current = setTimeout(() => {
+        console.warn('[Paywall] Purchase stuck — auto-recovering');
+        setPurchasing(false);
+        setError('The purchase took too long. Please try again.');
+      }, 30000);
+    } else {
+      if (purchaseTimerRef.current) {
+        clearTimeout(purchaseTimerRef.current);
+        purchaseTimerRef.current = null;
+      }
+    }
+    return () => {
+      if (purchaseTimerRef.current) clearTimeout(purchaseTimerRef.current);
+    };
+  }, [purchasing]);
 
   // When the paywall opens and offerings are null, attempt to fetch them
   useEffect(() => {
@@ -29,29 +49,34 @@ const Paywall = ({ onClose }) => {
     setPurchasing(true);
     setError(null);
 
-    // Primary path: purchase via offerings package
-    if (offerings?.availablePackages?.length) {
-      const pkg = offerings.availablePackages[0];
-      const result = await subscribe(pkg);
-      
-      if (!result.success && result.error !== 'cancelled') {
-        // If the package-based purchase failed, try fallback
-        console.warn('[Paywall] Package purchase failed, trying product ID fallback...');
-        const fallbackResult = await subscribeFallback();
-        if (!fallbackResult.success && fallbackResult.error !== 'cancelled') {
-          setError('Unable to complete purchase. Please check your connection and try again.');
+    try {
+      // Primary path: purchase via offerings package
+      if (offerings?.availablePackages?.length) {
+        const pkg = offerings.availablePackages[0];
+        const result = await subscribe(pkg);
+        
+        if (!result.success && result.error !== 'cancelled') {
+          // If the package-based purchase failed, try fallback
+          console.warn('[Paywall] Package purchase failed, trying product ID fallback...');
+          const fallbackResult = await subscribeFallback();
+          if (!fallbackResult.success && fallbackResult.error !== 'cancelled') {
+            setError(fallbackResult.error || 'Unable to complete purchase. Please check your connection and try again.');
+          }
+        }
+      } else {
+        // Fallback path: purchase by product ID directly
+        console.warn('[Paywall] No offerings available, using product ID fallback...');
+        const result = await subscribeFallback();
+        if (!result.success && result.error !== 'cancelled') {
+          setError(result.error || 'Unable to complete purchase. Please check your connection and try again.');
         }
       }
-    } else {
-      // Fallback path: purchase by product ID directly
-      console.warn('[Paywall] No offerings available, using product ID fallback...');
-      const result = await subscribeFallback();
-      if (!result.success && result.error !== 'cancelled') {
-        setError('Unable to complete purchase. Please check your connection and try again.');
-      }
+    } catch (err) {
+      console.error('[Paywall] Unexpected error during subscribe:', err);
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setPurchasing(false);
     }
-
-    setPurchasing(false);
   };
 
   const handleRestore = async () => {
@@ -59,17 +84,21 @@ const Paywall = ({ onClose }) => {
     setError(null);
     setRestoreMsg(null);
     
-    const result = await restore();
-    
-    if (result.isActive) {
-      setRestoreMsg('Subscription restored!');
-    } else {
-      setRestoreMsg('No active subscription found. If you believe this is an error, please contact support.');
+    try {
+      const result = await restore();
+      
+      if (result.isActive) {
+        setRestoreMsg('Subscription restored!');
+      } else {
+        setRestoreMsg('No active subscription found. If you believe this is an error, please contact support.');
+      }
+    } catch (err) {
+      console.error('[Paywall] Unexpected error during restore:', err);
+      setRestoreMsg('Unable to restore. Please try again.');
+    } finally {
+      setRestoring(false);
     }
-    setRestoring(false);
   };
-
-  const isLoadingOfferings = offeringsLoading || retryingOfferings;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-300">
@@ -143,18 +172,13 @@ const Paywall = ({ onClose }) => {
           <button
             id="start-free-trial-btn"
             onClick={handleSubscribe}
-            disabled={purchasing || isLoadingOfferings}
+            disabled={purchasing}
             className="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-primary-600/30 transition-all duration-200 active:scale-[0.98] disabled:opacity-60 flex items-center justify-center gap-2"
           >
             {purchasing ? (
               <>
                 <Loader2 className="animate-spin" size={18} />
                 Processing...
-              </>
-            ) : isLoadingOfferings ? (
-              <>
-                <Loader2 className="animate-spin" size={18} />
-                Loading...
               </>
             ) : (
               <>

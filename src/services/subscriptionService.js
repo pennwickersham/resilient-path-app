@@ -124,9 +124,9 @@ export async function getOfferings() {
   if (!Purchases) return null;
 
   let lastErr = null;
-  for (let attempt = 0; attempt < 3; attempt++) {
+  for (let attempt = 0; attempt < 2; attempt++) {
     try {
-      const { offerings } = await withTimeout(Purchases.getOfferings(), 8000);
+      const { offerings } = await withTimeout(Purchases.getOfferings(), 6000);
       if (offerings?.current) return offerings.current;
       // If current is null, wait and retry (sandbox can be slow)
       console.warn(`[SubscriptionService] offerings.current is null (attempt ${attempt + 1})`);
@@ -134,8 +134,8 @@ export async function getOfferings() {
       lastErr = err;
       console.warn(`[SubscriptionService] getOfferings attempt ${attempt + 1} failed:`, err.message);
     }
-    if (attempt < 2) {
-      await new Promise(r => setTimeout(r, 1500 * (attempt + 1)));
+    if (attempt < 1) {
+      await new Promise(r => setTimeout(r, 1500));
     }
   }
   console.error('[SubscriptionService] Get offerings failed after retries:', lastErr);
@@ -154,13 +154,20 @@ export async function purchasePackage(pkg) {
   }
 
   try {
-    const { customerInfo } = await Purchases.purchasePackage({ aPackage: pkg });
+    const { customerInfo } = await withTimeout(
+      Purchases.purchasePackage({ aPackage: pkg }),
+      60000
+    );
     const hasActive = Object.keys(customerInfo.entitlements.active).length > 0;
     return { success: hasActive, customerInfo };
   } catch (err) {
     // User cancellation is not an error
     if (err.code === 1 || err.message?.includes('cancelled') || err.message?.includes('canceled')) {
       return { success: false, error: 'cancelled' };
+    }
+    if (err.message === 'TIMEOUT') {
+      console.error('[SubscriptionService] purchasePackage timed out');
+      return { success: false, error: 'Purchase timed out. Please try again.' };
     }
     console.error('[SubscriptionService] Purchase failed:', err);
     return { success: false, error: err.message || 'Purchase failed' };
@@ -188,12 +195,19 @@ export async function purchaseStoreProduct(productId) {
     if (!products || products.length === 0) {
       return { success: false, error: 'Product not found. Please try again later.' };
     }
-    const { customerInfo } = await Purchases.purchaseStoreProduct({ product: products[0] });
+    const { customerInfo } = await withTimeout(
+      Purchases.purchaseStoreProduct({ product: products[0] }),
+      60000
+    );
     const hasActive = Object.keys(customerInfo.entitlements.active).length > 0;
     return { success: hasActive, customerInfo };
   } catch (err) {
     if (err.code === 1 || err.message?.includes('cancelled') || err.message?.includes('canceled')) {
       return { success: false, error: 'cancelled' };
+    }
+    if (err.message === 'TIMEOUT') {
+      console.error('[SubscriptionService] purchaseStoreProduct timed out');
+      return { success: false, error: 'Purchase timed out. Please try again.' };
     }
     console.error('[SubscriptionService] purchaseStoreProduct failed:', err);
     return { success: false, error: err.message || 'Purchase failed' };
@@ -211,11 +225,18 @@ export async function restorePurchases() {
   }
 
   try {
-    const { customerInfo } = await Purchases.restorePurchases();
+    const { customerInfo } = await withTimeout(
+      Purchases.restorePurchases(),
+      15000
+    );
     const hasActive = Object.keys(customerInfo.entitlements.active).length > 0;
     return { isActive: hasActive };
   } catch (err) {
-    console.error('[SubscriptionService] Restore failed:', err);
+    if (err.message === 'TIMEOUT') {
+      console.error('[SubscriptionService] restorePurchases timed out');
+    } else {
+      console.error('[SubscriptionService] Restore failed:', err);
+    }
     return { isActive: false };
   }
 }
