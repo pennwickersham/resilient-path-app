@@ -56,7 +56,7 @@ const Home = () => {
             {isSubscribed ? '✓ Subscribed — Manage Plan' : 'Get Full Access'}
           </p>
           <p className="text-white/80 text-xs mt-0.5">
-            {isSubscribed ? 'Tap to view or manage your subscription' : '7-day free trial · then $1.99/month'}
+            {isSubscribed ? 'Tap to view or manage your subscription' : '$3.99/month · 7-day free trial included'}
           </p>
         </div>
         <div className="bg-white/20 rounded-xl px-3 py-1.5 text-sm font-bold shrink-0 ml-3">

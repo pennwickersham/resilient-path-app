@@ -2,7 +2,7 @@
  * Subscription Service — RevenueCat Integration
  * 
  * Handles all RevenueCat interactions for the Resilient Path app.
- * Product: resilient.path.app ($1.99/month with 7-day free trial)
+ * Product: resilient.path.app ($3.99/month with 7-day free trial)
  */
 import { Capacitor } from '@capacitor/core';
 

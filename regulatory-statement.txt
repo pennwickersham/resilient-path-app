@@ -1,0 +1,82 @@
+REGULATORY STATEMENT — The Resilient Path Application
+=====================================================
+
+Product: "Managing Life with Chronic Pain: The Resilient Path"
+Developer: Brewster Wickersham Publications
+Bundle ID: com.resilientpath.app
+Date: May 12, 2026
+
+CLASSIFICATION: Educational / Informational Wellness Tool
+
+This statement is provided in response to Apple App Store Review Guideline 1.4.1 
+regarding applications that provide health-related information.
+
+STATEMENT OF NON-MEDICAL DEVICE STATUS
+---------------------------------------
+
+"The Resilient Path" is an educational and informational wellness companion 
+application based on the published book "Managing Life with Chronic Pain: 
+The Resilient Path." It is designed to complement — not replace — professional 
+medical care.
+
+This application:
+
+  1. Does NOT perform any medical device functions as defined by the FDA 
+     (21 CFR Part 820) or any international regulatory body.
+
+  2. Does NOT provide medical diagnoses, clinical assessments, or diagnostic 
+     conclusions of any kind.
+
+  3. Does NOT recommend, prescribe, or suggest specific medical treatments, 
+     medications, or therapeutic interventions.
+
+  4. Does NOT measure, record, or analyze physiological signals or biomarkers 
+     for clinical purposes.
+
+  5. Is NOT intended to be used in the diagnosis of disease or other conditions, 
+     or in the cure, mitigation, treatment, or prevention of disease.
+
+WHAT THE APPLICATION DOES PROVIDE:
+
+  - A digital companion workbook with guided journaling exercises based on 
+    published educational materials about chronic pain self-management.
+
+  - An AI-powered chat feature that provides educational responses based solely 
+    on the published book content. This feature explicitly instructs users to 
+    consult their healthcare providers and does not provide personalized 
+    medical advice.
+
+  - Self-tracking tools (symptom logs, medication lists, doctor visit notes) 
+    that allow users to organize and share their own health information with 
+    their healthcare providers. These tools do not analyze, interpret, or 
+    provide clinical meaning to the data entered.
+
+  - Emergency resource links directing users to professional crisis services.
+
+IN-APP SAFEGUARDS:
+
+  - A mandatory medical disclaimer is displayed on EVERY app launch, explicitly 
+    stating the app is NOT a medical device and does NOT provide medical advice.
+
+  - Users must acknowledge the disclaimer before accessing any app content.
+
+  - The AI chat feature includes persistent banners reminding users that 
+    responses are educational only, not medical advice.
+
+  - The AI chat system prompt explicitly prohibits the AI from providing 
+    diagnoses or prescribing medications.
+
+  - A self-compassion statement encourages users to approach their health 
+    journey with patience and to work alongside their medical providers.
+
+REGULATORY CONCLUSION:
+
+Based on the above, "The Resilient Path" does not meet the definition of a 
+medical device under FDA regulations, EU MDR 2017/745, or equivalent 
+international frameworks. It is an educational wellness tool that explicitly 
+directs users to seek professional medical guidance for all health decisions.
+
+No regulatory clearance or approval is required for this application.
+
+For questions regarding this statement, please contact:
+support@resilientpathapp.com

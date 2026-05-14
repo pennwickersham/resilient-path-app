@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Shield, BookOpen, MessageCircle, ClipboardList, Sparkles, CheckCircle, Loader2, RotateCcw, RefreshCw } from 'lucide-react';
+import { Shield, BookOpen, MessageCircle, ClipboardList, CheckCircle, Loader2, RotateCcw, RefreshCw } from 'lucide-react';
 import { useSubscription } from '../context/SubscriptionContext';
 
 const Paywall = ({ onClose }) => {
@@ -153,17 +153,21 @@ const Paywall = ({ onClose }) => {
           </div>
         </div>
 
-        {/* Pricing */}
+        {/* Pricing — billed amount is the MOST prominent element (Apple Guideline 3.1.2(c)) */}
         <div className="px-5 pb-2">
-          <div className="bg-gradient-to-r from-purple-50 to-primary-50 border border-purple-200 rounded-2xl p-4 text-center">
-            <div className="flex items-center justify-center gap-1.5 mb-1">
-              <Sparkles className="text-purple-400" size={16} />
-              <span className="text-purple-700 font-bold text-sm">7 Days Free</span>
-              <Sparkles className="text-purple-400" size={16} />
-            </div>
-            <p className="text-secondary-600 text-xs">
-              Then just <span className="font-bold text-secondary-900">$1.99/month</span>. Cancel anytime.
+          <div className="border border-secondary-200 rounded-2xl p-5 text-center bg-white">
+            {/* PRIMARY: Billed amount — largest, boldest element */}
+            <p className="text-secondary-900 font-extrabold text-2xl leading-tight">
+              $3.99<span className="text-base font-bold text-secondary-600">/month</span>
             </p>
+            <p className="text-secondary-500 text-sm mt-1">Auto-renewing monthly subscription</p>
+            
+            {/* SUBORDINATE: Free trial — smaller font, lighter color */}
+            <div className="mt-3 pt-3 border-t border-secondary-100">
+              <p className="text-secondary-400 text-xs">
+                Includes a 7-day free trial. Cancel anytime.
+              </p>
+            </div>
           </div>
         </div>
 
@@ -183,7 +187,7 @@ const Paywall = ({ onClose }) => {
             ) : (
               <>
                 <CheckCircle size={18} />
-                Start Your Free Trial
+                Subscribe — $3.99/month
               </>
             )}
           </button>
@@ -232,7 +236,7 @@ const Paywall = ({ onClose }) => {
           <div className="bg-secondary-50 rounded-xl p-3 mb-3 text-[10px] text-secondary-500 leading-relaxed">
             <p className="font-semibold text-secondary-600 mb-1">Resilient Path Monthly Subscription</p>
             <p>• Duration: 1 month, auto-renewing</p>
-            <p>• Price: $1.99/month (after 7-day free trial)</p>
+            <p>• Price: $3.99/month (after 7-day free trial)</p>
             <p>• Payment charged to your Apple ID at confirmation of purchase</p>
             <p>• Subscription renews unless cancelled at least 24 hours before the end of the current period</p>
             <p>• Manage or cancel in iPhone Settings → Apple ID → Subscriptions</p>
