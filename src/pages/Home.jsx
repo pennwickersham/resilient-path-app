@@ -64,17 +64,17 @@ const Home = () => {
         </div>
       </button>
 
-      {/* Shopify / Book Purchase Section */}
+      {/* Book & Workbook Purchase Section */}
       <section 
         className="bg-white p-5 rounded-2xl shadow-sm border border-secondary-100 flex flex-col gap-4 relative overflow-hidden group hover:border-primary-200 transition-colors cursor-pointer"
-        onClick={() => window.open('https://shopify.com', '_blank')}
+        onClick={() => window.open('https://brewsterwickershampublications.com', '_blank')}
       >
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 bg-primary-900 rounded-xl flex items-center justify-center shrink-0 shadow-md">
             <BookOpen className="text-white" size={32} />
           </div>
           <div>
-            <h3 className="text-primary-900 font-bold text-lg">Order the Physical Workbook</h3>
+            <h3 className="text-primary-900 font-bold text-lg">Order the Book & Workbook</h3>
             <p className="text-secondary-600 text-sm leading-snug mt-0.5">
               Get the complete hardcopy book and journaling companion.
             </p>
@@ -82,13 +82,13 @@ const Home = () => {
         </div>
         
         <div className="bg-primary-50 p-4 rounded-xl border border-primary-100 flex items-center justify-between group-hover:bg-primary-100 transition-colors">
-          <span className="text-primary-800 font-bold text-sm">Visit our Shopify Store</span>
+          <span className="text-primary-800 font-bold text-sm">Brewster Wickersham Publications</span>
           <div className="bg-primary-600 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm">
-            TBD
+            Shop Now
           </div>
         </div>
         
-        {/* Decorative Shopify-esque feel */}
+        {/* Decorative accent */}
         <div className="absolute -top-10 -right-10 w-24 h-24 bg-primary-100/30 rounded-full blur-2xl"></div>
       </section>
 
