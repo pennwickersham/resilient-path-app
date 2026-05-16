@@ -12,7 +12,7 @@ import { Capacitor } from '@capacitor/core';
 const REVENUECAT_API_KEY_APPLE = 'appl_UjGQPFdDQoVvqOlLOVwglfkZqrG';
 const REVENUECAT_API_KEY_GOOGLE = 'goog_rsFTBscYVROFrHgGivMAhhRwiEn';
 
-const PRODUCT_ID = 'resilient.path.app';
+const PRODUCT_ID = 'com.resilientpath.app.monthly';
 
 // ─── STATE ───────────────────────────────────────────────────────
 let purchasesModule = null;

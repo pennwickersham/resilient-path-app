@@ -10,7 +10,7 @@ import {
 
 const SubscriptionContext = createContext(null);
 
-const PRODUCT_ID = 'resilient.path.app';
+const PRODUCT_ID = 'com.resilientpath.app.monthly';
 
 export function SubscriptionProvider({ children }) {
   const [isSubscribed, setIsSubscribed] = useState(false);
