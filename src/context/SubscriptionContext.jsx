@@ -25,12 +25,13 @@ export function SubscriptionProvider({ children }) {
     let didTimeout = false;
 
     // Timeout guard: if init takes too long, fail-open
+    // Extended to 15s to accommodate slow sandbox environments
     const timeoutId = setTimeout(() => {
       didTimeout = true;
       console.warn('[SubscriptionContext] Init timed out — granting access');
       setIsSubscribed(true);
       setIsLoading(false);
-    }, 8000);
+    }, 15000);
 
     async function init() {
       try {
@@ -44,10 +45,7 @@ export function SubscriptionProvider({ children }) {
 
         // Pre-fetch offerings for the paywall (don't block on this)
         setOfferingsLoading(true);
-        getOfferings()
-          .then(o => { if (!didTimeout) setOfferings(o); })
-          .catch(() => {})
-          .finally(() => { if (!didTimeout) setOfferingsLoading(false); });
+        fetchOfferingsWithRetry(didTimeout);
       } catch (err) {
         console.error('[SubscriptionContext] Init error:', err);
         // Fail-open: don't lock out users on error
@@ -57,6 +55,35 @@ export function SubscriptionProvider({ children }) {
         if (!didTimeout) setIsLoading(false);
       }
     }
+
+    /**
+     * Fetch offerings with a secondary retry if the first attempt returns null.
+     * Sandbox environments often need extra time for offerings to become available.
+     */
+    function fetchOfferingsWithRetry(cancelled) {
+      getOfferings()
+        .then(o => {
+          if (cancelled) return;
+          if (o) {
+            setOfferings(o);
+            setOfferingsLoading(false);
+          } else {
+            // First fetch returned null — retry after a delay
+            console.warn('[SubscriptionContext] Initial offerings null, retrying in 3s...');
+            setTimeout(() => {
+              if (cancelled) return;
+              getOfferings()
+                .then(o2 => { if (!cancelled) setOfferings(o2); })
+                .catch(() => {})
+                .finally(() => { if (!cancelled) setOfferingsLoading(false); });
+            }, 3000);
+          }
+        })
+        .catch(() => {
+          if (!cancelled) setOfferingsLoading(false);
+        });
+    }
+
     init();
 
     return () => clearTimeout(timeoutId);
@@ -141,4 +168,3 @@ export function useSubscription() {
   }
   return context;
 }
-

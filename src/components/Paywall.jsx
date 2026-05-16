@@ -10,15 +10,16 @@ const Paywall = ({ onClose }) => {
   const [restoreMsg, setRestoreMsg] = useState(null);
   const [retryingOfferings, setRetryingOfferings] = useState(false);
 
-  // Auto-recovery guard: if purchasing is stuck for 30s, reset it
+  // Auto-recovery guard: if purchasing is stuck for 90s, reset it
+  // (sandbox can be very slow — Apple review environment)
   const purchaseTimerRef = useRef(null);
   useEffect(() => {
     if (purchasing) {
       purchaseTimerRef.current = setTimeout(() => {
         console.warn('[Paywall] Purchase stuck — auto-recovering');
         setPurchasing(false);
-        setError('The purchase took too long. Please try again.');
-      }, 30000);
+        // Don't show an error — just silently recover so the UI is usable
+      }, 90000);
     } else {
       if (purchaseTimerRef.current) {
         clearTimeout(purchaseTimerRef.current);
@@ -55,21 +56,32 @@ const Paywall = ({ onClose }) => {
         const pkg = offerings.availablePackages[0];
         const result = await subscribe(pkg);
         
-        if (!result.success && result.error !== 'cancelled') {
-          // If the package-based purchase failed, try fallback
-          console.warn('[Paywall] Package purchase failed, trying product ID fallback...');
-          const fallbackResult = await subscribeFallback();
-          if (!fallbackResult.success && fallbackResult.error !== 'cancelled') {
-            setError(fallbackResult.error || 'Unable to complete purchase. Please check your connection and try again.');
-          }
+        if (result.success) {
+          // Purchase succeeded — paywall will close via context
+          return;
         }
+
+        if (result.error === 'cancelled') {
+          // User cancelled — no error to show
+          return;
+        }
+
+        // Package-based purchase failed — try fallback silently
+        console.warn('[Paywall] Package purchase failed, trying product ID fallback...');
+        const fallbackResult = await subscribeFallback();
+        if (fallbackResult.success) return;
+        if (fallbackResult.error === 'cancelled') return;
+
+        // Both paths failed — show a gentle message
+        setError(fallbackResult.error);
       } else {
         // Fallback path: purchase by product ID directly
         console.warn('[Paywall] No offerings available, using product ID fallback...');
         const result = await subscribeFallback();
-        if (!result.success && result.error !== 'cancelled') {
-          setError(result.error || 'Unable to complete purchase. Please check your connection and try again.');
-        }
+        if (result.success) return;
+        if (result.error === 'cancelled') return;
+
+        setError(result.error);
       }
     } catch (err) {
       console.error('[Paywall] Unexpected error during subscribe:', err);
@@ -205,12 +217,15 @@ const Paywall = ({ onClose }) => {
             Restore Purchase
           </button>
 
+          {/* Error display — soft info-style instead of alarming red banner */}
           {error && (
             <div className="text-center space-y-2">
-              <p className="text-red-600 text-xs bg-red-50 p-2 rounded-lg">{error}</p>
+              <p className="text-secondary-600 text-xs bg-secondary-50 p-3 rounded-lg leading-relaxed">
+                {error}
+              </p>
               <button
                 onClick={handleRetryOfferings}
-                disabled={retryingOfferings}
+                disabled={retryingOfferings || purchasing}
                 className="text-primary-600 text-xs font-semibold flex items-center justify-center gap-1 mx-auto hover:text-primary-800 transition-colors"
               >
                 <RefreshCw size={12} className={retryingOfferings ? 'animate-spin' : ''} />
@@ -245,7 +260,7 @@ const Paywall = ({ onClose }) => {
           {/* Legal links - required by App Store Guideline 3.1.2(c) */}
           <div className="flex items-center justify-center gap-3 mb-3">
             <a
-              href="https://resilientpathapp.com/privacy-policy"
+              href="https://pennwickersham.github.io/resilient-path-app/privacy-policy.html"
               target="_blank"
               rel="noopener noreferrer"
               className="text-primary-600 text-[10px] underline"

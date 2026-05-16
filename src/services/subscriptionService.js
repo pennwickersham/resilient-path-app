@@ -30,6 +30,17 @@ function withTimeout(promise, ms) {
 }
 
 /**
+ * Helper: detect user-initiated purchase cancellation across RevenueCat versions.
+ */
+function isPurchaseCancelled(err) {
+  if (!err) return false;
+  // RevenueCat error code 1 = user cancelled
+  if (err.code === 1 || err.code === '1') return true;
+  const msg = (err.message || '').toLowerCase();
+  return msg.includes('cancelled') || msg.includes('canceled') || msg.includes('user cancelled');
+}
+
+/**
  * Dynamically import RevenueCat only on native platforms.
  * Returns null on web/desktop where native IAP isn't available.
  */
@@ -64,7 +75,7 @@ export async function initializeRevenueCat() {
   const apiKey = platform === 'ios' ? REVENUECAT_API_KEY_APPLE : REVENUECAT_API_KEY_GOOGLE;
 
   try {
-    await withTimeout(Purchases.configure({ apiKey }), 5000);
+    await withTimeout(Purchases.configure({ apiKey }), 10000);
     isInitialized = true;
     console.log('[SubscriptionService] RevenueCat initialized for', platform);
   } catch (err) {
@@ -90,7 +101,7 @@ export async function checkSubscriptionStatus() {
   }
 
   try {
-    const { customerInfo } = await withTimeout(Purchases.getCustomerInfo(), 5000);
+    const { customerInfo } = await withTimeout(Purchases.getCustomerInfo(), 8000);
     const entitlements = customerInfo.entitlements.active;
     
     // Check if any entitlement is active
@@ -123,19 +134,22 @@ export async function getOfferings() {
   const Purchases = await getPurchasesModule();
   if (!Purchases) return null;
 
+  const MAX_RETRIES = 3;
+  const DELAYS = [2000, 4000, 6000]; // exponential backoff
   let lastErr = null;
-  for (let attempt = 0; attempt < 2; attempt++) {
+
+  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
     try {
-      const { offerings } = await withTimeout(Purchases.getOfferings(), 6000);
+      const { offerings } = await withTimeout(Purchases.getOfferings(), 10000);
       if (offerings?.current) return offerings.current;
       // If current is null, wait and retry (sandbox can be slow)
-      console.warn(`[SubscriptionService] offerings.current is null (attempt ${attempt + 1})`);
+      console.warn(`[SubscriptionService] offerings.current is null (attempt ${attempt + 1}/${MAX_RETRIES})`);
     } catch (err) {
       lastErr = err;
-      console.warn(`[SubscriptionService] getOfferings attempt ${attempt + 1} failed:`, err.message);
+      console.warn(`[SubscriptionService] getOfferings attempt ${attempt + 1}/${MAX_RETRIES} failed:`, err.message);
     }
-    if (attempt < 1) {
-      await new Promise(r => setTimeout(r, 1500));
+    if (attempt < MAX_RETRIES - 1) {
+      await new Promise(r => setTimeout(r, DELAYS[attempt]));
     }
   }
   console.error('[SubscriptionService] Get offerings failed after retries:', lastErr);
@@ -156,21 +170,21 @@ export async function purchasePackage(pkg) {
   try {
     const { customerInfo } = await withTimeout(
       Purchases.purchasePackage({ aPackage: pkg }),
-      60000
+      90000
     );
     const hasActive = Object.keys(customerInfo.entitlements.active).length > 0;
     return { success: hasActive, customerInfo };
   } catch (err) {
     // User cancellation is not an error
-    if (err.code === 1 || err.message?.includes('cancelled') || err.message?.includes('canceled')) {
+    if (isPurchaseCancelled(err)) {
       return { success: false, error: 'cancelled' };
     }
     if (err.message === 'TIMEOUT') {
       console.error('[SubscriptionService] purchasePackage timed out');
-      return { success: false, error: 'Purchase timed out. Please try again.' };
+      return { success: false, error: 'The purchase is taking longer than expected. Please check your Subscriptions in Settings to confirm, or try again.' };
     }
     console.error('[SubscriptionService] Purchase failed:', err);
-    return { success: false, error: err.message || 'Purchase failed' };
+    return { success: false, error: 'We couldn\'t complete this purchase right now. Please check your internet connection and try again.' };
   }
 }
 
@@ -187,30 +201,30 @@ export async function purchaseStoreProduct(productId) {
   }
 
   try {
-    // Fetch products directly by ID
+    // Fetch products directly by ID — give sandbox extra time
     const { products } = await withTimeout(
       Purchases.getProducts({ productIdentifiers: [productId] }),
-      8000
+      15000
     );
     if (!products || products.length === 0) {
-      return { success: false, error: 'Product not found. Please try again later.' };
+      return { success: false, error: 'The subscription is temporarily unavailable. Please try again in a moment.' };
     }
     const { customerInfo } = await withTimeout(
       Purchases.purchaseStoreProduct({ product: products[0] }),
-      60000
+      90000
     );
     const hasActive = Object.keys(customerInfo.entitlements.active).length > 0;
     return { success: hasActive, customerInfo };
   } catch (err) {
-    if (err.code === 1 || err.message?.includes('cancelled') || err.message?.includes('canceled')) {
+    if (isPurchaseCancelled(err)) {
       return { success: false, error: 'cancelled' };
     }
     if (err.message === 'TIMEOUT') {
       console.error('[SubscriptionService] purchaseStoreProduct timed out');
-      return { success: false, error: 'Purchase timed out. Please try again.' };
+      return { success: false, error: 'The purchase is taking longer than expected. Please check your Subscriptions in Settings to confirm, or try again.' };
     }
     console.error('[SubscriptionService] purchaseStoreProduct failed:', err);
-    return { success: false, error: err.message || 'Purchase failed' };
+    return { success: false, error: 'We couldn\'t complete this purchase right now. Please check your internet connection and try again.' };
   }
 }
 
