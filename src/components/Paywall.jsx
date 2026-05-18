@@ -9,25 +9,38 @@ const Paywall = ({ onClose }) => {
   const [error, setError] = useState(null);
   const [restoreMsg, setRestoreMsg] = useState(null);
   const [retryingOfferings, setRetryingOfferings] = useState(false);
+  const [purchaseElapsed, setPurchaseElapsed] = useState(0);
 
-  // Auto-recovery guard: if purchasing is stuck for 90s, reset it
-  // (sandbox can be very slow — Apple review environment)
+  // Auto-recovery guard: if purchasing is stuck for 35s, show error and reset
+  // (aligns with 30s purchase timeout + 5s buffer)
   const purchaseTimerRef = useRef(null);
+  const elapsedTimerRef = useRef(null);
   useEffect(() => {
     if (purchasing) {
+      setPurchaseElapsed(0);
+      // Tick every second so we can show progressive status
+      elapsedTimerRef.current = setInterval(() => {
+        setPurchaseElapsed(prev => prev + 1);
+      }, 1000);
       purchaseTimerRef.current = setTimeout(() => {
         console.warn('[Paywall] Purchase stuck — auto-recovering');
         setPurchasing(false);
-        // Don't show an error — just silently recover so the UI is usable
-      }, 90000);
+        setError('The purchase could not be completed. Please try again or check Settings → Apple ID → Subscriptions.');
+      }, 35000);
     } else {
+      setPurchaseElapsed(0);
       if (purchaseTimerRef.current) {
         clearTimeout(purchaseTimerRef.current);
         purchaseTimerRef.current = null;
       }
+      if (elapsedTimerRef.current) {
+        clearInterval(elapsedTimerRef.current);
+        elapsedTimerRef.current = null;
+      }
     }
     return () => {
       if (purchaseTimerRef.current) clearTimeout(purchaseTimerRef.current);
+      if (elapsedTimerRef.current) clearInterval(elapsedTimerRef.current);
     };
   }, [purchasing]);
 
@@ -194,7 +207,7 @@ const Paywall = ({ onClose }) => {
             {purchasing ? (
               <>
                 <Loader2 className="animate-spin" size={18} />
-                Processing...
+                {purchaseElapsed >= 8 ? 'Still processing…' : 'Processing...'}
               </>
             ) : (
               <>

@@ -75,6 +75,11 @@ export async function initializeRevenueCat() {
   const apiKey = platform === 'ios' ? REVENUECAT_API_KEY_APPLE : REVENUECAT_API_KEY_GOOGLE;
 
   try {
+    // Enable verbose logging for sandbox debugging
+    try {
+      await Purchases.setLogLevel({ level: 'DEBUG' });
+    } catch (_) { /* ignore if not supported */ }
+
     await withTimeout(Purchases.configure({ apiKey }), 10000);
     isInitialized = true;
     console.log('[SubscriptionService] RevenueCat initialized for', platform);
@@ -170,7 +175,7 @@ export async function purchasePackage(pkg) {
   try {
     const { customerInfo } = await withTimeout(
       Purchases.purchasePackage({ aPackage: pkg }),
-      90000
+      30000
     );
     const hasActive = Object.keys(customerInfo.entitlements.active).length > 0;
     return { success: hasActive, customerInfo };
@@ -181,7 +186,7 @@ export async function purchasePackage(pkg) {
     }
     if (err.message === 'TIMEOUT') {
       console.error('[SubscriptionService] purchasePackage timed out');
-      return { success: false, error: 'The purchase is taking longer than expected. Please check your Subscriptions in Settings to confirm, or try again.' };
+      return { success: false, error: 'The purchase could not be completed. Please try again or check Settings → Apple ID → Subscriptions.' };
     }
     console.error('[SubscriptionService] Purchase failed:', err);
     return { success: false, error: 'We couldn\'t complete this purchase right now. Please check your internet connection and try again.' };
@@ -211,7 +216,7 @@ export async function purchaseStoreProduct(productId) {
     }
     const { customerInfo } = await withTimeout(
       Purchases.purchaseStoreProduct({ product: products[0] }),
-      90000
+      30000
     );
     const hasActive = Object.keys(customerInfo.entitlements.active).length > 0;
     return { success: hasActive, customerInfo };
@@ -221,7 +226,7 @@ export async function purchaseStoreProduct(productId) {
     }
     if (err.message === 'TIMEOUT') {
       console.error('[SubscriptionService] purchaseStoreProduct timed out');
-      return { success: false, error: 'The purchase is taking longer than expected. Please check your Subscriptions in Settings to confirm, or try again.' };
+      return { success: false, error: 'The purchase could not be completed. Please try again or check Settings → Apple ID → Subscriptions.' };
     }
     console.error('[SubscriptionService] purchaseStoreProduct failed:', err);
     return { success: false, error: 'We couldn\'t complete this purchase right now. Please check your internet connection and try again.' };
