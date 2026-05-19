@@ -1,69 +1,58 @@
-import json
+from fhir_client import ECWFhirClient
 
 class ECWExtractor:
     """
-    Scaffolding for extracting patient data from eClinicalWorks.
-    Implementations will vary drastically based on the chosen path (FHIR API vs. RPA).
+    Extracts patient data purely via the official eClinicalWorks SMART on FHIR API.
     """
-    def __init__(self, mode: str = "fhir"):
-        """
-        mode: 'fhir' or 'rpa' or 'extension'
-        """
-        self.mode = mode
-        
+    def __init__(self, fhir_client: ECWFhirClient):
+        self.fhir = fhir_client
+        # Ensure we are authenticated
+        self.fhir.authenticate()
+
     def get_patient_demographics(self, patient_id: str) -> dict:
-        if self.mode == "fhir":
-            return self._fetch_fhir_demographics(patient_id)
-        elif self.mode == "rpa":
-            return self._scrape_active_patient_demographics()
-        else:
-            raise NotImplementedError(f"Mode {self.mode} not supported yet.")
+        print(f"[FHIR] Extracting Demographics for {patient_id}...")
+        patient_data = self.fhir.get_patient(patient_id)
+        
+        # Parse standard FHIR R4 Patient resource
+        name_obj = patient_data.get("name", [{}])[0]
+        name = f"{name_obj.get('given', [''])[0]} {name_obj.get('family', '')}".strip()
+        dob = patient_data.get("birthDate", "Unknown")
+        gender = patient_data.get("gender", "Unknown")
+        
+        return {"name": name, "dob": dob, "gender": gender}
 
     def get_patient_history(self, patient_id: str) -> dict:
-        """
-        Returns problem list, recent medications, and latest progress note.
-        """
-        if self.mode == "fhir":
-            return self._fetch_fhir_history(patient_id)
-        elif self.mode == "rpa":
-            return self._scrape_active_patient_history()
-        else:
-            raise NotImplementedError(f"Mode {self.mode} not supported yet.")
+        print(f"[FHIR] Extracting Clinical History for {patient_id}...")
+        
+        # 1. Fetch Problem List
+        conditions = self.fhir.get_conditions(patient_id)
+        problem_list = []
+        for c in conditions:
+            # FHIR Condition.code.text or Condition.code.coding[0].display
+            code_text = c.get("code", {}).get("text")
+            if not code_text:
+                codings = c.get("code", {}).get("coding", [])
+                if codings:
+                    code_text = codings[0].get("display", "Unknown Condition")
+            if code_text:
+                problem_list.append(code_text)
 
-    # --- FHIR API Methods (Path A) ---
-    def _fetch_fhir_demographics(self, patient_id: str) -> dict:
-        # Placeholder: Call eCW FHIR endpoint https://fhir.eclinicalworks.com/.../Patient/{id}
-        # using SMART on FHIR OAuth2 token
-        print(f"[FHIR] Fetching demographics for {patient_id}")
-        return {"name": "John Doe", "dob": "1980-01-01", "insurance": "Medicare"}
+        # 2. Fetch Active Medications
+        meds = self.fhir.get_medications(patient_id)
+        med_list = []
+        for m in meds:
+            med_text = m.get("medicationCodeableConcept", {}).get("text")
+            if med_text:
+                med_list.append(med_text)
 
-    def _fetch_fhir_history(self, patient_id: str) -> dict:
-        # Placeholder: Call Condition, MedicationRequest, and Encounter endpoints
-        print(f"[FHIR] Fetching history for {patient_id}")
         return {
-            "problem_list": ["Type 2 Diabetes", "Hypertension"],
-            "medications": ["Metformin 500mg", "Lisinopril 10mg"],
-            "latest_note": "Patient reports blood sugars are well controlled. No complaints today."
-        }
-
-    # --- RPA / Screen Scraping Methods (Path B / C) ---
-    def _scrape_active_patient_demographics(self) -> dict:
-        # Placeholder: Use PyAutoGUI or an extension to read the screen DOM or OCR the thick client
-        print("[RPA] Scraping active patient demographics from screen...")
-        return {"name": "Jane Smith", "dob": "1975-05-15", "insurance": "BlueCross"}
-
-    def _scrape_active_patient_history(self) -> dict:
-        # Placeholder: Macro sequence to click 'Problem List', copy text, click 'Medications', copy text.
-        print("[RPA] Scraping active patient history from screen...")
-        return {
-            "problem_list": ["Osteoarthritis of knee", "Obesity"],
-            "medications": ["Ibuprofen 800mg", "Semaglutide 2.4mg"],
-            "latest_note": "Knee pain worsening despite NSAIDs. Discussed MRI and Ortho referral."
+            "problem_list": problem_list,
+            "medications": med_list
         }
 
 # Example Usage:
 if __name__ == "__main__":
-    extractor = ECWExtractor(mode="rpa")
-    demo = extractor.get_patient_demographics("ACTIVE_SCREEN")
-    hist = extractor.get_patient_history("ACTIVE_SCREEN")
-    print(json.dumps({"demographics": demo, "history": hist}, indent=2))
+    client = ECWFhirClient()
+    extractor = ECWExtractor(client)
+    print(extractor.get_patient_demographics("12345"))
+    print(extractor.get_patient_history("12345"))

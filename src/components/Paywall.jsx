@@ -11,8 +11,9 @@ const Paywall = ({ onClose }) => {
   const [retryingOfferings, setRetryingOfferings] = useState(false);
   const [purchaseElapsed, setPurchaseElapsed] = useState(0);
 
-  // Auto-recovery guard: if purchasing is stuck for 35s, show error and reset
-  // (aligns with 30s purchase timeout + 5s buffer)
+  // Auto-recovery guard: if purchasing is stuck for 120s, show error and reset.
+  // Purchase calls no longer have timeouts (StoreKit needs user interaction time),
+  // so this is the safety net for truly stuck purchases.
   const purchaseTimerRef = useRef(null);
   const elapsedTimerRef = useRef(null);
   useEffect(() => {
@@ -23,10 +24,10 @@ const Paywall = ({ onClose }) => {
         setPurchaseElapsed(prev => prev + 1);
       }, 1000);
       purchaseTimerRef.current = setTimeout(() => {
-        console.warn('[Paywall] Purchase stuck — auto-recovering');
+        console.warn('[Paywall] Purchase stuck for 120s — auto-recovering');
         setPurchasing(false);
-        setError('The purchase could not be completed. Please try again or check Settings → Apple ID → Subscriptions.');
-      }, 35000);
+        setError('The purchase is taking too long. Please check Settings → Apple ID → Subscriptions to see if it completed, or try again.');
+      }, 120000);
     } else {
       setPurchaseElapsed(0);
       if (purchaseTimerRef.current) {
@@ -64,38 +65,30 @@ const Paywall = ({ onClose }) => {
     setError(null);
 
     try {
-      // Primary path: purchase via offerings package
+      let result;
+
       if (offerings?.availablePackages?.length) {
+        // Primary path: purchase via offerings package
         const pkg = offerings.availablePackages[0];
-        const result = await subscribe(pkg);
-        
-        if (result.success) {
-          // Purchase succeeded — paywall will close via context
-          return;
-        }
-
-        if (result.error === 'cancelled') {
-          // User cancelled — no error to show
-          return;
-        }
-
-        // Package-based purchase failed — try fallback silently
-        console.warn('[Paywall] Package purchase failed, trying product ID fallback...');
-        const fallbackResult = await subscribeFallback();
-        if (fallbackResult.success) return;
-        if (fallbackResult.error === 'cancelled') return;
-
-        // Both paths failed — show a gentle message
-        setError(fallbackResult.error);
+        result = await subscribe(pkg);
       } else {
-        // Fallback path: purchase by product ID directly
+        // Fallback path: purchase by product ID directly (only when offerings unavailable)
         console.warn('[Paywall] No offerings available, using product ID fallback...');
-        const result = await subscribeFallback();
-        if (result.success) return;
-        if (result.error === 'cancelled') return;
-
-        setError(result.error);
+        result = await subscribeFallback();
       }
+
+      if (result.success) {
+        // Purchase succeeded — paywall will close via context
+        return;
+      }
+
+      if (result.error === 'cancelled') {
+        // User cancelled — no error to show
+        return;
+      }
+
+      // Show the error from the purchase attempt
+      setError(result.error);
     } catch (err) {
       console.error('[Paywall] Unexpected error during subscribe:', err);
       setError('Something went wrong. Please try again.');
@@ -207,7 +200,7 @@ const Paywall = ({ onClose }) => {
             {purchasing ? (
               <>
                 <Loader2 className="animate-spin" size={18} />
-                {purchaseElapsed >= 8 ? 'Still processing…' : 'Processing...'}
+                {purchaseElapsed >= 30 ? 'Almost done…' : purchaseElapsed >= 15 ? 'Connecting to App Store…' : purchaseElapsed >= 5 ? 'Still processing…' : 'Processing...'}
               </>
             ) : (
               <>

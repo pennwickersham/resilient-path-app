@@ -1,11 +1,12 @@
 import json
 from llm_client import LocalGemmaClient
 from extractor import ECWExtractor
+from fhir_client import ECWFhirClient
 from prompts import MedicalPrompts
 import textwrap
 
 def generate_patient_summary(client: LocalGemmaClient, extractor: ECWExtractor, patient_id: str):
-    print(f"\n--- Generating Patient Summary for {patient_id} ---")
+    print(f"\n--- Generating Patient Summary for {patient_id} via FHIR ---")
     history = extractor.get_patient_history(patient_id)
     demo = extractor.get_patient_demographics(patient_id)
     
@@ -23,90 +24,78 @@ def generate_patient_summary(client: LocalGemmaClient, extractor: ECWExtractor, 
     print(">" * 23 + "\n")
 
 
-def generate_prior_auth(client: LocalGemmaClient, extractor: ECWExtractor, patient_id: str, target_request: str):
-    print(f"\n--- Generating Prior Auth for {target_request} ---")
-    history = extractor.get_patient_history(patient_id)
-    demo = extractor.get_patient_demographics(patient_id)
-    
-    user_prompt = f"""
-Patient Demographics: {json.dumps(demo)}
-Medical History & Current Problem List: {json.dumps(history)}
-Target Request (Medication/Procedure): {target_request}
-"""
-    
-    print("\nDrafting letter with Gemma4...")
-    letter = client.generate_completion(
-        system_prompt=MedicalPrompts.PRIOR_AUTH_SYSTEM,
-        user_prompt=user_prompt,
-        temperature=0.1
-    )
-    
-    print("\n>>> PRIOR AUTHORIZATION DRAFT <<<")
-    print(letter)
-    print(">" * 33 + "\n")
-
-
-def run_ambient_encounter(client: LocalGemmaClient):
+def run_ambient_encounter(client: LocalGemmaClient, extractor: ECWExtractor, patient_id: str):
     print("\n--- Starting Ambient Encounter ---")
-    print("NOTE: This requires faster-whisper and a working microphone.")
     
-    # In a real scenario, you'd initialize this once
-    # We use a mocked transcript here if the user doesn't want to actually record right now.
-    mock_recording = input("Do you want to mock the audio recording for testing? (y/n): ")
+    # Mocking audio recording for testing
+    transcript = "Doctor: Hi Jane, how is that knee pain doing? Patient: It's really bad doc, the ibuprofen 800mg isn't touching it anymore. I can barely walk up the stairs. Doctor: I'm sorry to hear that. Given your obesity and the severe osteoarthritis we saw on the x-ray, I think it's time we do an MRI of that knee to see if there's a meniscus tear, and I'll refer you to orthopedics. Patient: Sounds good."
+    print(f"\n[Mock] Recording Audio...\nTranscript: {transcript}")
     
-    if mock_recording.lower() == 'y':
-        transcript = "Doctor: Hi Jane, how is that knee pain doing? Patient: It's really bad doc, the ibuprofen 800mg isn't touching it anymore. I can barely walk up the stairs. Doctor: I'm sorry to hear that. Given your obesity and the severe osteoarthritis we saw on the x-ray, I think it's time we do an MRI of that knee to see if there's a meniscus tear, and I'll refer you to orthopedics. Patient: Sounds good."
-        print(f"\nMock Transcript: {transcript}")
-    else:
-        from ambient_listener import AmbientListener
-        try:
-            listener = AmbientListener(device="cpu") # Or cuda
-            listener.start_recording()
-            input("\nPress Enter to STOP recording...\n")
-            transcript = listener.stop_recording_and_transcribe()
-            print(f"\nReal Transcript: {transcript}")
-        except Exception as e:
-            print(f"Failed to record audio: {e}")
-            return
+    print("\nFetching current problem list from FHIR...")
+    history = extractor.get_patient_history(patient_id)
+    
+    user_prompt = f"Existing Problem List: {json.dumps(history['problem_list'])}\nTranscript:\n{transcript}"
 
-    print("\nGenerating SOAP Note with Gemma4...")
-    soap_note = client.generate_completion(
-        system_prompt=MedicalPrompts.AMBIENT_SOAP_NOTE_SYSTEM,
-        user_prompt=f"Transcript:\n{transcript}",
-        temperature=0.1
+    print("\nGenerating Structured ICD/CPT JSON with Gemma4...")
+    # Using temperature 0.0 to ensure strict JSON compliance
+    ai_response = client.generate_completion(
+        system_prompt=MedicalPrompts.AMBIENT_SOAP_JSON_SYSTEM,
+        user_prompt=user_prompt,
+        temperature=0.0 
     )
     
-    print("\n>>> GENERATED SOAP NOTE <<<")
-    print(soap_note)
-    print(">" * 27 + "\n")
+    print("\n>>> PARSED STRUCTURED CLINICAL DATA <<<")
+    try:
+        # Strip potential markdown formatting if the LLM output ```json ... ```
+        clean_json = ai_response.strip()
+        if clean_json.startswith("```json"):
+            clean_json = clean_json[7:-3].strip()
+        elif clean_json.startswith("```"):
+            clean_json = clean_json[3:-3].strip()
+            
+        data = json.loads(clean_json)
+        
+        print(f"HPI: {textwrap.fill(data.get('subjective_hpi', ''), width=80)}\n")
+        print("DIAGNOSES & PLAN:")
+        for diag in data.get('diagnoses', []):
+            print(f"  - Condition: {diag.get('condition')} [ICD-10: {diag.get('icd_10')}]")
+            print(f"    Status:    {diag.get('status')}")
+            print(f"    Plan:      {diag.get('plan')}")
+            if diag.get('cpt_codes'):
+                print(f"    CPT Codes: {', '.join(diag.get('cpt_codes'))}")
+            print("")
+            
+        print(f"FOLLOW UP: {data.get('follow_up', '')}")
+    except json.JSONDecodeError as e:
+        print("Error: Gemma4 failed to output valid JSON. Raw output was:")
+        print(ai_response)
+        
+    print(">" * 39 + "\n")
 
 
 def main():
-    # Initialize the LLM Client (assuming LM Studio/Ollama is running locally)
-    client = LocalGemmaClient(base_url="http://localhost:11434/v1")
+    # Initialize the clients
+    llm_client = LocalGemmaClient(base_url="http://localhost:11434/v1")
     
-    # Initialize Extractor (Mocking RPA mode for testing)
-    extractor = ECWExtractor(mode="rpa")
+    # This will use the env vars if set, otherwise falls back to mocking
+    fhir_client = ECWFhirClient() 
+    extractor = ECWExtractor(fhir_client)
     
-    patient_id = "ACTIVE_SCREEN"
+    patient_id = "12345" # Example FHIR ID
     
     while True:
-        print("\n==== eClinicalWorks + Gemma4 Local AI ===")
+        print("\n==== eCW FHIR + Gemma4 Ambient AI ===")
         print("1. Generate Patient History Summary")
-        print("2. Generate Prior Authorization")
-        print("3. Start Ambient Listening Encounter (Replace Sunoh)")
-        print("4. Exit")
+        print("2. Start Ambient Encounter (Structured ICD-10/CPT Extraction)")
+        print("3. Exit")
         
-        choice = input("Select an option (1-4): ")
+        choice = input("Select an option (1-3): ")
         
         if choice == "1":
-            generate_patient_summary(client, extractor, patient_id)
+            generate_patient_summary(llm_client, extractor, patient_id)
         elif choice == "2":
-            target = input("Enter target medication or procedure for Prior Auth (e.g. 'MRI Left Knee'): ")
-            generate_prior_auth(client, extractor, patient_id, target)
+            run_ambient_encounter(llm_client, extractor, patient_id)
         elif choice == "3":
-            run_ambient_encounter(client)
-        elif choice == "4":
             print("Exiting...")
             break
         else:

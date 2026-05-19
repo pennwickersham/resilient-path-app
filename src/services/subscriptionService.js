@@ -2,13 +2,12 @@
  * Subscription Service — RevenueCat Integration
  * 
  * Handles all RevenueCat interactions for the Resilient Path app.
- * Product: resilient.path.app ($3.99/month with 7-day free trial)
+ * Product: com.resilientpath.app.monthly ($3.99/month with 7-day free trial)
  */
 import { Capacitor } from '@capacitor/core';
 
 // ─── CONFIGURATION ───────────────────────────────────────────────
-// Replace with your RevenueCat Public SDK API keys from:
-// RevenueCat Dashboard → Project Settings → API Keys
+// RevenueCat Public SDK API keys
 const REVENUECAT_API_KEY_APPLE = 'appl_UjGQPFdDQoVvqOlLOVwglfkZqrG';
 const REVENUECAT_API_KEY_GOOGLE = 'goog_rsFTBscYVROFrHgGivMAhhRwiEn';
 
@@ -20,7 +19,8 @@ let isInitialized = false;
 
 /**
  * Helper: race a promise against a timeout.
- * Rejects with 'TIMEOUT' if the promise doesn't resolve in time.
+ * Used only for non-interactive calls (init, status checks, offerings).
+ * NEVER wrap purchase calls in a timeout — StoreKit needs user interaction time.
  */
 function withTimeout(promise, ms) {
   return Promise.race([
@@ -30,14 +30,32 @@ function withTimeout(promise, ms) {
 }
 
 /**
+ * Helper: deep-clone an object to ensure it's a plain JS object.
+ * RevenueCat package/product objects from React state may contain
+ * non-serializable properties that break the Capacitor native bridge.
+ * JSON.parse(JSON.stringify()) strips all non-serializable data and
+ * creates a clean object that the bridge can serialize to native.
+ */
+function deepClone(obj) {
+  try {
+    return JSON.parse(JSON.stringify(obj));
+  } catch (e) {
+    console.warn('[SubscriptionService] deepClone failed, returning original:', e);
+    return obj;
+  }
+}
+
+/**
  * Helper: detect user-initiated purchase cancellation across RevenueCat versions.
  */
 function isPurchaseCancelled(err) {
   if (!err) return false;
   // RevenueCat error code 1 = user cancelled
   if (err.code === 1 || err.code === '1') return true;
-  const msg = (err.message || '').toLowerCase();
-  return msg.includes('cancelled') || msg.includes('canceled') || msg.includes('user cancelled');
+  if (err.userCancelled === true) return true;
+  const msg = (err.message || err.readableErrorCode || '').toLowerCase();
+  return msg.includes('cancelled') || msg.includes('canceled') || msg.includes('user cancelled')
+    || msg.includes('purchase_cancelled');
 }
 
 /**
@@ -163,6 +181,14 @@ export async function getOfferings() {
 
 /**
  * Initiate a purchase for the given package.
+ * 
+ * IMPORTANT: No timeout wrapper on the purchase call itself.
+ * StoreKit shows a system dialog that requires user interaction (Face ID,
+ * password, confirmation). Timing out would kill a legitimate purchase.
+ * 
+ * The package object is deep-cloned before passing to the Capacitor bridge
+ * to prevent serialization issues with React state objects.
+ * 
  * @param {Object} pkg — A RevenueCat package object from getOfferings()
  * @returns {{ success: boolean, customerInfo?: Object, error?: string }}
  */
@@ -173,29 +199,42 @@ export async function purchasePackage(pkg) {
   }
 
   try {
-    const { customerInfo } = await withTimeout(
-      Purchases.purchasePackage({ aPackage: pkg }),
-      30000
-    );
+    // Sync any pending transactions before starting a new purchase
+    // This clears stale sandbox transactions that can block new purchases
+    try {
+      await withTimeout(Purchases.syncPurchases(), 5000);
+    } catch (_) { /* non-critical */ }
+
+    // Deep-clone the package to ensure it's a plain JS object
+    // React state objects can have non-serializable properties that
+    // cause the Capacitor native bridge to hang silently
+    const cleanPkg = deepClone(pkg);
+    
+    console.log('[SubscriptionService] Starting purchasePackage...');
+    const { customerInfo } = await Purchases.purchasePackage({ aPackage: cleanPkg });
+    console.log('[SubscriptionService] purchasePackage completed');
+    
     const hasActive = Object.keys(customerInfo.entitlements.active).length > 0;
     return { success: hasActive, customerInfo };
   } catch (err) {
     // User cancellation is not an error
     if (isPurchaseCancelled(err)) {
+      console.log('[SubscriptionService] Purchase cancelled by user');
       return { success: false, error: 'cancelled' };
     }
-    if (err.message === 'TIMEOUT') {
-      console.error('[SubscriptionService] purchasePackage timed out');
-      return { success: false, error: 'The purchase could not be completed. Please try again or check Settings → Apple ID → Subscriptions.' };
-    }
     console.error('[SubscriptionService] Purchase failed:', err);
-    return { success: false, error: 'We couldn\'t complete this purchase right now. Please check your internet connection and try again.' };
+    console.error('[SubscriptionService] Error details — code:', err.code, 'message:', err.message, 'readableErrorCode:', err.readableErrorCode);
+    return { success: false, error: err.message || 'We couldn\'t complete this purchase right now. Please try again.' };
   }
 }
 
 /**
  * Fallback: purchase by product identifier directly.
  * Used when offerings-based purchase fails (e.g. sandbox environment).
+ * 
+ * No timeout on the purchase call — StoreKit needs user interaction time.
+ * Product object is deep-cloned before passing to the Capacitor bridge.
+ * 
  * @param {string} productId — The StoreKit product identifier
  * @returns {{ success: boolean, customerInfo?: Object, error?: string }}
  */
@@ -206,6 +245,11 @@ export async function purchaseStoreProduct(productId) {
   }
 
   try {
+    // Sync any pending transactions first
+    try {
+      await withTimeout(Purchases.syncPurchases(), 5000);
+    } catch (_) { /* non-critical */ }
+
     // Fetch products directly by ID — give sandbox extra time
     const { products } = await withTimeout(
       Purchases.getProducts({ productIdentifiers: [productId] }),
@@ -214,22 +258,24 @@ export async function purchaseStoreProduct(productId) {
     if (!products || products.length === 0) {
       return { success: false, error: 'The subscription is temporarily unavailable. Please try again in a moment.' };
     }
-    const { customerInfo } = await withTimeout(
-      Purchases.purchaseStoreProduct({ product: products[0] }),
-      30000
-    );
+
+    // Deep-clone the product to prevent Capacitor bridge serialization issues
+    const cleanProduct = deepClone(products[0]);
+    
+    console.log('[SubscriptionService] Starting purchaseStoreProduct...');
+    const { customerInfo } = await Purchases.purchaseStoreProduct({ product: cleanProduct });
+    console.log('[SubscriptionService] purchaseStoreProduct completed');
+    
     const hasActive = Object.keys(customerInfo.entitlements.active).length > 0;
     return { success: hasActive, customerInfo };
   } catch (err) {
     if (isPurchaseCancelled(err)) {
+      console.log('[SubscriptionService] Purchase cancelled by user');
       return { success: false, error: 'cancelled' };
     }
-    if (err.message === 'TIMEOUT') {
-      console.error('[SubscriptionService] purchaseStoreProduct timed out');
-      return { success: false, error: 'The purchase could not be completed. Please try again or check Settings → Apple ID → Subscriptions.' };
-    }
     console.error('[SubscriptionService] purchaseStoreProduct failed:', err);
-    return { success: false, error: 'We couldn\'t complete this purchase right now. Please check your internet connection and try again.' };
+    console.error('[SubscriptionService] Error details — code:', err.code, 'message:', err.message, 'readableErrorCode:', err.readableErrorCode);
+    return { success: false, error: err.message || 'We couldn\'t complete this purchase right now. Please try again.' };
   }
 }
 
