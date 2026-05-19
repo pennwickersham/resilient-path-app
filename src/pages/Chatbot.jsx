@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 import { Send, KeyRound, AlertCircle, Loader2, ShieldOff } from 'lucide-react';
 
 const Chatbot = () => {
@@ -69,7 +69,7 @@ const Chatbot = () => {
     setIsLoading(true);
 
     try {
-      const ai = new GoogleGenerativeAI(apiKey);
+      const ai = new GoogleGenAI({ apiKey });
 
       // Build the system prompt with context
       const systemInstruction = `
@@ -110,30 +110,29 @@ const Chatbot = () => {
       let response;
       let retries = 0;
       const maxRetries = 5;
-      // VERIFIED AVAILABLE via ListModels API query on 2026-04-24.
-      // All Gemini 1.5 models have been retired and return 404.
-      const modelQueue = ['gemini-2.5-flash', 'gemini-2.0-flash-001', 'gemini-2.5-pro'];
+      // Updated model queue – retired models removed, current stable models used.
+      // gemini-2.5-flash: primary, GA until Oct 2026+
+      // gemini-2.5-flash-lite: lightweight fallback, GA
+      // gemini-2.5-pro: premium fallback, GA
+      const modelQueue = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.5-pro'];
       let currentModelIndex = 0;
       
       while (retries < maxRetries) {
         const currentModelName = modelQueue[currentModelIndex];
         try {
-          const model = ai.getGenerativeModel({ 
+          const result = await ai.models.generateContent({
             model: currentModelName,
-            systemInstruction: systemInstruction 
-          }, { apiVersion: 'v1beta' });
-
-          const result = await model.generateContent({
             contents: [
               ...history,
               { role: 'user', parts: [{ text: userMessage }] }
             ],
-            generationConfig: {
+            config: {
+              systemInstruction: systemInstruction,
               temperature: 0.3,
             }
           });
           
-          response = result.response;
+          response = result;
           break; // Success!
         } catch (err) {
           retries++;
@@ -155,12 +154,21 @@ const Chatbot = () => {
         }
       }
 
-      // Extract text, handling both standard and thinking-model responses
+      // Extract text from the new SDK response
       let replyText = '';
       try {
-        replyText = response.text();
+        // In @google/genai, response.text is a property (not a method)
+        replyText = response.text;
       } catch (e) {
         // Fallback: manually extract text parts from candidates
+        const parts = response?.candidates?.[0]?.content?.parts || [];
+        replyText = parts
+          .filter(p => p.text && !p.thought)
+          .map(p => p.text)
+          .join('\n') || "I'm sorry, I couldn't generate a response.";
+      }
+      if (!replyText) {
+        // If .text was undefined/empty, try candidates fallback
         const parts = response?.candidates?.[0]?.content?.parts || [];
         replyText = parts
           .filter(p => p.text && !p.thought)

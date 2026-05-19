@@ -1,7 +1,7 @@
 {
   "name": "resilient-path-app",
   "private": true,
-  "version": "2.2.6",
+  "version": "2.2.7",
   "type": "module",
   "main": "dist-electron/main.js",
   "scripts": {
@@ -31,6 +31,7 @@
     "@capacitor/filesystem": "^8.1.2",
     "@capacitor/ios": "^8.3.0",
     "@capacitor/share": "^8.0.1",
+    "@google/genai": "^2.4.0",
     "@google/generative-ai": "^0.24.1",
     "@revenuecat/purchases-capacitor": "^13.0.1",
     "clsx": "^2.1.1",
