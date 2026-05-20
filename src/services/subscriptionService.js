@@ -3,6 +3,16 @@
  * 
  * Handles all RevenueCat interactions for the Resilient Path app.
  * Product: com.resilientpath.app.monthly ($3.99/month with 7-day free trial)
+ * 
+ * CRITICAL FIX (Build 41): Removed JSON.parse/JSON.stringify deep-cloning of 
+ * package/product objects. Deep-cloning strips native metadata that the 
+ * Capacitor bridge needs to match JS objects to their StoreKit counterparts.
+ * When the native side can't find the matching product, the purchase call
+ * hangs silently — causing the "infinite spinner" Apple keeps rejecting.
+ * 
+ * Additionally, the primary purchase path on iOS now uses purchaseStoreProduct
+ * with a freshly-fetched product (not stored in React state) to ensure the
+ * native bridge always receives a proper native-backed object.
  */
 import { Capacitor } from '@capacitor/core';
 
@@ -27,22 +37,6 @@ function withTimeout(promise, ms) {
     promise,
     new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT')), ms)),
   ]);
-}
-
-/**
- * Helper: deep-clone an object to ensure it's a plain JS object.
- * RevenueCat package/product objects from React state may contain
- * non-serializable properties that break the Capacitor native bridge.
- * JSON.parse(JSON.stringify()) strips all non-serializable data and
- * creates a clean object that the bridge can serialize to native.
- */
-function deepClone(obj) {
-  try {
-    return JSON.parse(JSON.stringify(obj));
-  } catch (e) {
-    console.warn('[SubscriptionService] deepClone failed, returning original:', e);
-    return obj;
-  }
 }
 
 /**
@@ -180,14 +174,20 @@ export async function getOfferings() {
 }
 
 /**
- * Initiate a purchase for the given package.
+ * Purchase a subscription — robust, multi-strategy approach.
  * 
- * IMPORTANT: No timeout wrapper on the purchase call itself.
- * StoreKit shows a system dialog that requires user interaction (Face ID,
- * password, confirmation). Timing out would kill a legitimate purchase.
+ * Strategy:
+ *   1. Try purchaseStoreProduct with a FRESHLY-FETCHED product (most reliable)
+ *   2. Fall back to purchasePackage with the original package (no cloning)
  * 
- * The package object is deep-cloned before passing to the Capacitor bridge
- * to prevent serialization issues with React state objects.
+ * Why freshly-fetched product first? 
+ *   RevenueCat package objects stored in React state may lose their native 
+ *   backing over time or across re-renders. Fetching a fresh product by ID
+ *   right before purchase guarantees the Capacitor bridge receives a proper 
+ *   native-backed object that StoreKit can process.
+ *
+ * NEVER deep-clone (JSON.parse/JSON.stringify) package or product objects.
+ * This strips native metadata the Capacitor bridge needs, causing silent hangs.
  * 
  * @param {Object} pkg — A RevenueCat package object from getOfferings()
  * @returns {{ success: boolean, customerInfo?: Object, error?: string }}
@@ -198,21 +198,56 @@ export async function purchasePackage(pkg) {
     return { success: false, error: 'Purchases not available on this platform' };
   }
 
+  // Extract the product identifier from the package for the fresh-fetch strategy
+  const productId = pkg?.product?.identifier || pkg?.product?.productId || PRODUCT_ID;
+  
   try {
-    // Sync any pending transactions before starting a new purchase
-    // This clears stale sandbox transactions that can block new purchases
+    // Sync any pending transactions before starting a new purchase.
+    // This clears stale sandbox transactions that can block new purchases.
+    // Non-critical — don't let sync failure block the purchase.
     try {
       await withTimeout(Purchases.syncPurchases(), 5000);
-    } catch (_) { /* non-critical */ }
+      console.log('[SubscriptionService] syncPurchases completed');
+    } catch (syncErr) {
+      console.warn('[SubscriptionService] syncPurchases failed (non-critical):', syncErr.message);
+    }
 
-    // Deep-clone the package to ensure it's a plain JS object
-    // React state objects can have non-serializable properties that
-    // cause the Capacitor native bridge to hang silently
-    const cleanPkg = deepClone(pkg);
-    
-    console.log('[SubscriptionService] Starting purchasePackage...');
-    const { customerInfo } = await Purchases.purchasePackage({ aPackage: cleanPkg });
-    console.log('[SubscriptionService] purchasePackage completed');
+    // ── STRATEGY 1: Fresh product fetch + purchaseStoreProduct ──
+    // This is the most reliable path because it ensures the native bridge
+    // gets a product object it just created (not one sitting in React state).
+    console.log(`[SubscriptionService] Strategy 1: Fetching fresh product for ${productId}...`);
+    try {
+      const { products } = await withTimeout(
+        Purchases.getProducts({ productIdentifiers: [productId] }),
+        10000
+      );
+      
+      if (products && products.length > 0) {
+        const freshProduct = products[0];
+        console.log('[SubscriptionService] Strategy 1: Starting purchaseStoreProduct with fresh product...');
+        const { customerInfo } = await Purchases.purchaseStoreProduct({ product: freshProduct });
+        console.log('[SubscriptionService] Strategy 1: purchaseStoreProduct completed');
+        
+        const hasActive = Object.keys(customerInfo.entitlements.active).length > 0;
+        return { success: hasActive, customerInfo };
+      } else {
+        console.warn('[SubscriptionService] Strategy 1: No products returned, falling through to Strategy 2');
+      }
+    } catch (err) {
+      if (isPurchaseCancelled(err)) {
+        console.log('[SubscriptionService] Purchase cancelled by user');
+        return { success: false, error: 'cancelled' };
+      }
+      console.warn('[SubscriptionService] Strategy 1 failed:', err.message, '— trying Strategy 2');
+    }
+
+    // ── STRATEGY 2: Direct purchasePackage with original object ──
+    // Pass the original package object directly — DO NOT deep-clone.
+    // React useState does NOT create Proxy wrappers (that's Vue),
+    // so the original object should work fine with the native bridge.
+    console.log('[SubscriptionService] Strategy 2: Starting purchasePackage with original pkg...');
+    const { customerInfo } = await Purchases.purchasePackage({ aPackage: pkg });
+    console.log('[SubscriptionService] Strategy 2: purchasePackage completed');
     
     const hasActive = Object.keys(customerInfo.entitlements.active).length > 0;
     return { success: hasActive, customerInfo };
@@ -224,21 +259,22 @@ export async function purchasePackage(pkg) {
     }
     console.error('[SubscriptionService] Purchase failed:', err);
     console.error('[SubscriptionService] Error details — code:', err.code, 'message:', err.message, 'readableErrorCode:', err.readableErrorCode);
-    return { success: false, error: err.message || 'We couldn\'t complete this purchase right now. Please try again.' };
+    return { success: false, error: 'We couldn\'t complete this purchase right now. Please try again.' };
   }
 }
 
 /**
  * Fallback: purchase by product identifier directly.
- * Used when offerings-based purchase fails (e.g. sandbox environment).
+ * Used when offerings-based purchase isn't available.
  * 
+ * Fetches a fresh product by ID, then purchases it.
  * No timeout on the purchase call — StoreKit needs user interaction time.
- * Product object is deep-cloned before passing to the Capacitor bridge.
+ * NO deep-cloning — pass the fresh product directly to the bridge.
  * 
  * @param {string} productId — The StoreKit product identifier
  * @returns {{ success: boolean, customerInfo?: Object, error?: string }}
  */
-export async function purchaseStoreProduct(productId) {
+export async function purchaseStoreProduct(productId = PRODUCT_ID) {
   const Purchases = await getPurchasesModule();
   if (!Purchases) {
     return { success: false, error: 'Purchases not available on this platform' };
@@ -250,7 +286,8 @@ export async function purchaseStoreProduct(productId) {
       await withTimeout(Purchases.syncPurchases(), 5000);
     } catch (_) { /* non-critical */ }
 
-    // Fetch products directly by ID — give sandbox extra time
+    // Fetch a fresh product directly by ID — give sandbox extra time
+    console.log(`[SubscriptionService] Fetching product: ${productId}`);
     const { products } = await withTimeout(
       Purchases.getProducts({ productIdentifiers: [productId] }),
       15000
@@ -259,11 +296,10 @@ export async function purchaseStoreProduct(productId) {
       return { success: false, error: 'The subscription is temporarily unavailable. Please try again in a moment.' };
     }
 
-    // Deep-clone the product to prevent Capacitor bridge serialization issues
-    const cleanProduct = deepClone(products[0]);
-    
+    // Pass the fresh product directly to the bridge — DO NOT deep-clone
+    const product = products[0];
     console.log('[SubscriptionService] Starting purchaseStoreProduct...');
-    const { customerInfo } = await Purchases.purchaseStoreProduct({ product: cleanProduct });
+    const { customerInfo } = await Purchases.purchaseStoreProduct({ product });
     console.log('[SubscriptionService] purchaseStoreProduct completed');
     
     const hasActive = Object.keys(customerInfo.entitlements.active).length > 0;
@@ -275,7 +311,7 @@ export async function purchaseStoreProduct(productId) {
     }
     console.error('[SubscriptionService] purchaseStoreProduct failed:', err);
     console.error('[SubscriptionService] Error details — code:', err.code, 'message:', err.message, 'readableErrorCode:', err.readableErrorCode);
-    return { success: false, error: err.message || 'We couldn\'t complete this purchase right now. Please try again.' };
+    return { success: false, error: 'We couldn\'t complete this purchase right now. Please try again.' };
   }
 }
 
