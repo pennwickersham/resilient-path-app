@@ -1,36 +1,21 @@
 import { useState, useEffect, useRef } from 'react';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { Send, KeyRound, AlertCircle, Loader2, ShieldOff } from 'lucide-react';
+import { Send, AlertCircle, Loader2, ShieldOff } from 'lucide-react';
+
+// Proxy URL — points to the Cloudflare Worker that holds the API key server-side.
+// The API key NEVER appears in client code.
+const PROXY_URL = import.meta.env.VITE_PROXY_URL || '';
 
 const Chatbot = () => {
   const [messages, setMessages] = useState([
     { role: 'model', content: "Hello! I'm here to support you. Ask me anything about the Resilient Path program, chronic pain management, or your medications." }
   ]);
   const [input, setInput] = useState('');
-  // API key is injected at build time by Appflow Secrets → Vite replaces
-  // import.meta.env.VITE_GEMINI_API_KEY with the literal value in the
-  // production JS bundle.  The key is NEVER stored in source code or Git.
-  // Users can also enter their own key via localStorage.
-  const buildTimeKey = import.meta.env.VITE_GEMINI_API_KEY || '';
-  const storedKey = typeof window !== 'undefined'
-    ? localStorage.getItem('resilientPathGeminiKey') || ''
-    : '';
-  const initialKey = storedKey || buildTimeKey;
-  const [apiKey, setApiKey] = useState(initialKey);
-  const [isKeySet, setIsKeySet] = useState(initialKey.length > 0);
   const [isLoading, setIsLoading] = useState(false);
   const [contextFiles, setContextFiles] = useState({ book: '', workbook: '' });
   
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    // Check for API key in local storage
-    const storedKey = localStorage.getItem('resilientPathGeminiKey');
-    if (storedKey) {
-      setApiKey(storedKey);
-      setIsKeySet(true);
-    }
-
     // Preload context texts
     const loadContext = async () => {
       try {
@@ -53,15 +38,8 @@ const Chatbot = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const saveApiKey = () => {
-    if (apiKey.trim().length > 10) {
-      localStorage.setItem('resilientPathGeminiKey', apiKey.trim());
-      setIsKeySet(true);
-    }
-  };
-
   const handleSend = async () => {
-    if (!input.trim() || !isKeySet || isLoading) return;
+    if (!input.trim() || isLoading) return;
 
     const userMessage = input.trim();
     setInput('');
@@ -69,8 +47,6 @@ const Chatbot = () => {
     setIsLoading(true);
 
     try {
-      const ai = new GoogleGenerativeAI(apiKey);
-
       // Build the system prompt with context
       const systemInstruction = `
         You are a highly empathetic, professional medical assistant aiding patients using the "Managing Life with Chronic Pain: The Resilient Path" program. 
@@ -107,41 +83,56 @@ const Chatbot = () => {
       }));
 
       // Multi-Model Fallback & Retry logic
-      let response;
+      let responseData;
       let retries = 0;
       const maxRetries = 5;
-      // Updated model queue – retired models removed, current stable models used.
-      // gemini-2.5-flash: primary, GA until Oct 2026+
-      // gemini-2.5-flash-lite: lightweight fallback, GA
-      // gemini-2.5-pro: premium fallback, GA
-      const modelQueue = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.5-pro'];
+      // Updated model queue — May 2026
+      // gemini-3.5-flash: latest frontier model, stable (launched 2026-05-19)
+      // gemini-2.5-flash: proven workhorse, still GA
+      // gemini-2.5-pro: premium fallback, still GA
+      const modelQueue = ['gemini-3.5-flash', 'gemini-2.5-flash', 'gemini-2.5-pro'];
       let currentModelIndex = 0;
       
       while (retries < maxRetries) {
         const currentModelName = modelQueue[currentModelIndex];
         try {
-          const model = ai.getGenerativeModel({ 
-            model: currentModelName,
-            systemInstruction: systemInstruction 
-          });
-
-          const result = await model.generateContent({
+          const requestBody = {
             contents: [
               ...history,
               { role: 'user', parts: [{ text: userMessage }] }
             ],
+            systemInstruction: {
+              parts: [{ text: systemInstruction }]
+            },
             generationConfig: {
               temperature: 0.3,
             }
-          });
-          
-          response = result.response;
+          };
+
+          const res = await fetch(
+            `${PROXY_URL}/v1beta/models/${currentModelName}:generateContent`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(requestBody),
+            }
+          );
+
+          if (!res.ok) {
+            const errorBody = await res.text();
+            const err = new Error(`HTTP ${res.status}: ${errorBody}`);
+            err.status = res.status;
+            throw err;
+          }
+
+          responseData = await res.json();
           break; // Success!
         } catch (err) {
           retries++;
           const errorText = err.message || "";
-          const is503 = errorText.includes('503') || errorText.includes('demand');
-          const is404 = errorText.includes('404') || errorText.includes('not found') || errorText.includes('not supported');
+          const status = err.status || 0;
+          const is503 = status === 503 || errorText.includes('503') || errorText.includes('demand');
+          const is404 = status === 404 || errorText.includes('404') || errorText.includes('not found') || errorText.includes('not supported');
           
           if ((is503 || is404) && retries < maxRetries) {
             if (currentModelIndex < modelQueue.length - 1) {
@@ -157,18 +148,14 @@ const Chatbot = () => {
         }
       }
 
-      // Extract text using standard .text() method
+      // Extract text from response JSON
       let replyText = '';
-      try {
-        replyText = response.text();
-      } catch (e) {
-        // Fallback: manually extract text parts from candidates
-        const parts = response?.candidates?.[0]?.content?.parts || [];
-        replyText = parts
-          .filter(p => p.text)
-          .map(p => p.text)
-          .join('\n') || "I'm sorry, I couldn't generate a response.";
-      }
+      const parts = responseData?.candidates?.[0]?.content?.parts || [];
+      replyText = parts
+        .filter(p => p.text && !p.thought)
+        .map(p => p.text)
+        .join('\n') || "I'm sorry, I couldn't generate a response.";
+
       setMessages(prev => [...prev, { role: 'model', content: replyText }]);
 
     } catch (error) {
@@ -222,29 +209,16 @@ const Chatbot = () => {
     );
   }
 
-  if (!isKeySet) {
+  // Check proxy URL is configured
+  if (!PROXY_URL) {
     return (
       <div className="flex flex-col items-center justify-center h-full p-6 text-center animate-in fade-in duration-500">
         <div className="bg-white p-8 rounded-2xl shadow-sm border border-secondary-200 max-w-md w-full">
-          <KeyRound size={48} className="text-secondary-400 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-primary-900 mb-2">Connect AI Assistant</h2>
-          <p className="text-secondary-600 text-sm mb-6">
-            To use the Resilient Path Chatbot, please enter your Gemini API Key. Your key is stored securely on your local device and is never sent anywhere except directly to Google.
+          <AlertCircle size={48} className="text-amber-400 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-primary-900 mb-2">AI Service Not Configured</h2>
+          <p className="text-secondary-600 text-sm mb-4">
+            The AI assistant is not yet connected. Please contact support if this issue persists.
           </p>
-          <input
-            type="password"
-            placeholder="Enter your Gemini API Key"
-            className="w-full border border-secondary-300 rounded-xl p-3 text-secondary-800 focus:ring-2 focus:ring-primary-500 mb-4"
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && saveApiKey()}
-          />
-          <button 
-            onClick={saveApiKey}
-            className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 rounded-xl transition duration-200 shadow-sm"
-          >
-            Save Key & Start Chatting
-          </button>
         </div>
       </div>
     );
