@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { Send, KeyRound, AlertCircle, Loader2, ShieldOff } from 'lucide-react';
 
 const Chatbot = () => {
@@ -69,7 +69,7 @@ const Chatbot = () => {
     setIsLoading(true);
 
     try {
-      const ai = new GoogleGenAI({ apiKey });
+      const ai = new GoogleGenerativeAI(apiKey);
 
       // Build the system prompt with context
       const systemInstruction = `
@@ -120,19 +120,22 @@ const Chatbot = () => {
       while (retries < maxRetries) {
         const currentModelName = modelQueue[currentModelIndex];
         try {
-          const result = await ai.models.generateContent({
+          const model = ai.getGenerativeModel({ 
             model: currentModelName,
+            systemInstruction: systemInstruction 
+          });
+
+          const result = await model.generateContent({
             contents: [
               ...history,
               { role: 'user', parts: [{ text: userMessage }] }
             ],
-            config: {
-              systemInstruction: systemInstruction,
+            generationConfig: {
               temperature: 0.3,
             }
           });
           
-          response = result;
+          response = result.response;
           break; // Success!
         } catch (err) {
           retries++;
@@ -154,24 +157,15 @@ const Chatbot = () => {
         }
       }
 
-      // Extract text from the new SDK response
+      // Extract text using standard .text() method
       let replyText = '';
       try {
-        // In @google/genai, response.text is a property (not a method)
-        replyText = response.text;
+        replyText = response.text();
       } catch (e) {
         // Fallback: manually extract text parts from candidates
         const parts = response?.candidates?.[0]?.content?.parts || [];
         replyText = parts
-          .filter(p => p.text && !p.thought)
-          .map(p => p.text)
-          .join('\n') || "I'm sorry, I couldn't generate a response.";
-      }
-      if (!replyText) {
-        // If .text was undefined/empty, try candidates fallback
-        const parts = response?.candidates?.[0]?.content?.parts || [];
-        replyText = parts
-          .filter(p => p.text && !p.thought)
+          .filter(p => p.text)
           .map(p => p.text)
           .join('\n') || "I'm sorry, I couldn't generate a response.";
       }
