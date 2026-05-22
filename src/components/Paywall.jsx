@@ -11,7 +11,7 @@ const Paywall = ({ onClose }) => {
   const [retryingOfferings, setRetryingOfferings] = useState(false);
   const [purchaseElapsed, setPurchaseElapsed] = useState(0);
 
-  // Auto-recovery guard: if purchasing is stuck for 60s, show error and reset.
+  // Auto-recovery guard: if purchasing is stuck for 45s, show error and reset.
   // Purchase calls no longer have timeouts (StoreKit needs user interaction time),
   // so this is the safety net for truly stuck purchases.
   const purchaseTimerRef = useRef(null);
@@ -24,10 +24,10 @@ const Paywall = ({ onClose }) => {
         setPurchaseElapsed(prev => prev + 1);
       }, 1000);
       purchaseTimerRef.current = setTimeout(() => {
-        console.warn('[Paywall] Purchase stuck for 60s — auto-recovering');
+        console.warn('[Paywall] Purchase stuck for 45s — auto-recovering');
         setPurchasing(false);
         setError('The purchase is taking too long. Please check Settings → Apple ID → Subscriptions to see if it completed, or try again.');
-      }, 60000);
+      }, 45000);
     } else {
       setPurchaseElapsed(0);
       if (purchaseTimerRef.current) {
@@ -200,7 +200,7 @@ const Paywall = ({ onClose }) => {
             {purchasing ? (
               <>
                 <Loader2 className="animate-spin" size={18} />
-                {purchaseElapsed >= 30 ? 'Almost done…' : purchaseElapsed >= 15 ? 'Connecting to App Store…' : purchaseElapsed >= 5 ? 'Still processing…' : 'Processing...'}
+                {purchaseElapsed >= 30 ? 'Almost done…' : purchaseElapsed >= 15 ? 'Connecting to App Store…' : purchaseElapsed >= 8 ? 'Contacting App Store…' : purchaseElapsed >= 3 ? 'Starting purchase…' : 'Processing...'}
               </>
             ) : (
               <>

@@ -202,15 +202,11 @@ export async function purchasePackage(pkg) {
   const productId = pkg?.product?.identifier || pkg?.product?.productId || PRODUCT_ID;
   
   try {
-    // Sync any pending transactions before starting a new purchase.
-    // This clears stale sandbox transactions that can block new purchases.
-    // Non-critical — don't let sync failure block the purchase.
-    try {
-      await withTimeout(Purchases.syncPurchases(), 5000);
-      console.log('[SubscriptionService] syncPurchases completed');
-    } catch (syncErr) {
-      console.warn('[SubscriptionService] syncPurchases failed (non-critical):', syncErr.message);
-    }
+    // Sync any pending transactions — fire-and-forget, NEVER block the purchase path.
+    // This clears stale sandbox transactions but must not add perceived latency.
+    Purchases.syncPurchases()
+      .then(() => console.log('[SubscriptionService] syncPurchases completed (background)'))
+      .catch((e) => console.warn('[SubscriptionService] syncPurchases failed (non-critical):', e.message));
 
     // ── STRATEGY 1: Fresh product fetch + purchaseStoreProduct ──
     // This is the most reliable path because it ensures the native bridge
@@ -281,10 +277,10 @@ export async function purchaseStoreProduct(productId = PRODUCT_ID) {
   }
 
   try {
-    // Sync any pending transactions first
-    try {
-      await withTimeout(Purchases.syncPurchases(), 5000);
-    } catch (_) { /* non-critical */ }
+    // Sync any pending transactions — fire-and-forget, NEVER block the purchase path
+    Purchases.syncPurchases()
+      .then(() => console.log('[SubscriptionService] syncPurchases completed (background)'))
+      .catch(() => { /* non-critical */ });
 
     // Fetch a fresh product directly by ID — give sandbox extra time
     console.log(`[SubscriptionService] Fetching product: ${productId}`);
