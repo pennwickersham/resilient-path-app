@@ -4,15 +4,17 @@
  * Handles all RevenueCat interactions for the Resilient Path app.
  * Product: com.resilientpath.app.monthly ($3.99/month with 7-day free trial)
  * 
- * CRITICAL FIX (Build 41): Removed JSON.parse/JSON.stringify deep-cloning of 
- * package/product objects. Deep-cloning strips native metadata that the 
- * Capacitor bridge needs to match JS objects to their StoreKit counterparts.
- * When the native side can't find the matching product, the purchase call
- * hangs silently — causing the "infinite spinner" Apple keeps rejecting.
+ * BUILD 43 FIXES:
+ * - Removed syncPurchases from purchase path entirely. Even fire-and-forget,
+ *   it can cause StoreKit state changes that interfere with an in-progress purchase.
+ *   syncPurchases is now only called once during init (background).
+ * - Increased product fetch timeouts (10s→20s) for Apple's slow sandbox.
+ * - Added automatic single-retry with 2s delay on purchase errors.
+ * - Improved error messages to sound like guidance, not bugs.
  * 
- * Additionally, the primary purchase path on iOS now uses purchaseStoreProduct
- * with a freshly-fetched product (not stored in React state) to ensure the
- * native bridge always receives a proper native-backed object.
+ * PREVIOUS FIX (Build 42):
+ * - Removed JSON.parse/JSON.stringify deep-cloning of package/product objects.
+ * - Primary purchase path uses purchaseStoreProduct with freshly-fetched product.
  */
 import { Capacitor } from '@capacitor/core';
 
@@ -53,6 +55,13 @@ function isPurchaseCancelled(err) {
 }
 
 /**
+ * Helper: delay for the given number of milliseconds.
+ */
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
  * Dynamically import RevenueCat only on native platforms.
  * Returns null on web/desktop where native IAP isn't available.
  */
@@ -72,6 +81,7 @@ async function getPurchasesModule() {
 
 /**
  * Initialize RevenueCat SDK. Call once on app startup.
+ * syncPurchases is called here (and ONLY here) to clear stale sandbox transactions.
  */
 export async function initializeRevenueCat() {
   if (isInitialized) return;
@@ -95,6 +105,12 @@ export async function initializeRevenueCat() {
     await withTimeout(Purchases.configure({ apiKey }), 10000);
     isInitialized = true;
     console.log('[SubscriptionService] RevenueCat initialized for', platform);
+
+    // Sync purchases once during init — clears stale sandbox transactions.
+    // This is the ONLY place we call syncPurchases. Never during a purchase flow.
+    Purchases.syncPurchases()
+      .then(() => console.log('[SubscriptionService] syncPurchases completed (init)'))
+      .catch((e) => console.warn('[SubscriptionService] syncPurchases failed (non-critical):', e.message));
   } catch (err) {
     console.error('[SubscriptionService] Init failed:', err);
     // Mark as initialized even on failure to prevent retries that hang
@@ -174,20 +190,20 @@ export async function getOfferings() {
 }
 
 /**
- * Purchase a subscription — robust, multi-strategy approach.
+ * Core purchase logic — attempts to purchase with retry.
  * 
  * Strategy:
  *   1. Try purchaseStoreProduct with a FRESHLY-FETCHED product (most reliable)
  *   2. Fall back to purchasePackage with the original package (no cloning)
  * 
- * Why freshly-fetched product first? 
- *   RevenueCat package objects stored in React state may lose their native 
- *   backing over time or across re-renders. Fetching a fresh product by ID
- *   right before purchase guarantees the Capacitor bridge receives a proper 
- *   native-backed object that StoreKit can process.
+ * If both strategies fail with a non-cancel error, automatically retries
+ * once after a 2-second delay before returning an error.
+ * 
+ * CRITICAL: No syncPurchases here — it was removed in Build 43 because
+ * even fire-and-forget calls can cause StoreKit state mutations that
+ * interfere with the purchase flow.
  *
  * NEVER deep-clone (JSON.parse/JSON.stringify) package or product objects.
- * This strips native metadata the Capacitor bridge needs, causing silent hangs.
  * 
  * @param {Object} pkg — A RevenueCat package object from getOfferings()
  * @returns {{ success: boolean, customerInfo?: Object, error?: string }}
@@ -198,16 +214,10 @@ export async function purchasePackage(pkg) {
     return { success: false, error: 'Purchases not available on this platform' };
   }
 
-  // Extract the product identifier from the package for the fresh-fetch strategy
   const productId = pkg?.product?.identifier || pkg?.product?.productId || PRODUCT_ID;
-  
-  try {
-    // Sync any pending transactions — fire-and-forget, NEVER block the purchase path.
-    // This clears stale sandbox transactions but must not add perceived latency.
-    Purchases.syncPurchases()
-      .then(() => console.log('[SubscriptionService] syncPurchases completed (background)'))
-      .catch((e) => console.warn('[SubscriptionService] syncPurchases failed (non-critical):', e.message));
 
+  // Attempt purchase with automatic retry on failure
+  const attemptPurchase = async () => {
     // ── STRATEGY 1: Fresh product fetch + purchaseStoreProduct ──
     // This is the most reliable path because it ensures the native bridge
     // gets a product object it just created (not one sitting in React state).
@@ -215,7 +225,7 @@ export async function purchasePackage(pkg) {
     try {
       const { products } = await withTimeout(
         Purchases.getProducts({ productIdentifiers: [productId] }),
-        10000
+        20000  // 20s — sandbox can be very slow
       );
       
       if (products && products.length > 0) {
@@ -239,23 +249,41 @@ export async function purchasePackage(pkg) {
 
     // ── STRATEGY 2: Direct purchasePackage with original object ──
     // Pass the original package object directly — DO NOT deep-clone.
-    // React useState does NOT create Proxy wrappers (that's Vue),
-    // so the original object should work fine with the native bridge.
     console.log('[SubscriptionService] Strategy 2: Starting purchasePackage with original pkg...');
     const { customerInfo } = await Purchases.purchasePackage({ aPackage: pkg });
     console.log('[SubscriptionService] Strategy 2: purchasePackage completed');
     
     const hasActive = Object.keys(customerInfo.entitlements.active).length > 0;
     return { success: hasActive, customerInfo };
+  };
+
+  try {
+    return await attemptPurchase();
   } catch (err) {
-    // User cancellation is not an error
     if (isPurchaseCancelled(err)) {
       console.log('[SubscriptionService] Purchase cancelled by user');
       return { success: false, error: 'cancelled' };
     }
-    console.error('[SubscriptionService] Purchase failed:', err);
-    console.error('[SubscriptionService] Error details — code:', err.code, 'message:', err.message, 'readableErrorCode:', err.readableErrorCode);
-    return { success: false, error: 'We couldn\'t complete this purchase right now. Please try again.' };
+
+    // First attempt failed — retry once after 2s delay
+    console.warn('[SubscriptionService] First purchase attempt failed:', err.message, '— retrying in 2s...');
+    console.warn('[SubscriptionService] Error details — code:', err.code, 'readableErrorCode:', err.readableErrorCode);
+    
+    try {
+      await delay(2000);
+      return await attemptPurchase();
+    } catch (retryErr) {
+      if (isPurchaseCancelled(retryErr)) {
+        console.log('[SubscriptionService] Purchase cancelled by user (retry)');
+        return { success: false, error: 'cancelled' };
+      }
+      console.error('[SubscriptionService] Purchase failed after retry:', retryErr);
+      console.error('[SubscriptionService] Retry error details — code:', retryErr.code, 'message:', retryErr.message);
+      return { 
+        success: false, 
+        error: 'Unable to connect to the App Store right now. Please check your internet connection and payment method in Settings → Apple ID, then try again.' 
+      };
+    }
   }
 }
 
@@ -266,6 +294,8 @@ export async function purchasePackage(pkg) {
  * Fetches a fresh product by ID, then purchases it.
  * No timeout on the purchase call — StoreKit needs user interaction time.
  * NO deep-cloning — pass the fresh product directly to the bridge.
+ * NO syncPurchases — removed in Build 43.
+ * Automatic single-retry on failure.
  * 
  * @param {string} productId — The StoreKit product identifier
  * @returns {{ success: boolean, customerInfo?: Object, error?: string }}
@@ -276,17 +306,12 @@ export async function purchaseStoreProduct(productId = PRODUCT_ID) {
     return { success: false, error: 'Purchases not available on this platform' };
   }
 
-  try {
-    // Sync any pending transactions — fire-and-forget, NEVER block the purchase path
-    Purchases.syncPurchases()
-      .then(() => console.log('[SubscriptionService] syncPurchases completed (background)'))
-      .catch(() => { /* non-critical */ });
-
+  const attemptPurchase = async () => {
     // Fetch a fresh product directly by ID — give sandbox extra time
     console.log(`[SubscriptionService] Fetching product: ${productId}`);
     const { products } = await withTimeout(
       Purchases.getProducts({ productIdentifiers: [productId] }),
-      15000
+      25000  // 25s — extra generous for sandbox
     );
     if (!products || products.length === 0) {
       return { success: false, error: 'The subscription is temporarily unavailable. Please try again in a moment.' };
@@ -300,14 +325,33 @@ export async function purchaseStoreProduct(productId = PRODUCT_ID) {
     
     const hasActive = Object.keys(customerInfo.entitlements.active).length > 0;
     return { success: hasActive, customerInfo };
+  };
+
+  try {
+    return await attemptPurchase();
   } catch (err) {
     if (isPurchaseCancelled(err)) {
       console.log('[SubscriptionService] Purchase cancelled by user');
       return { success: false, error: 'cancelled' };
     }
-    console.error('[SubscriptionService] purchaseStoreProduct failed:', err);
-    console.error('[SubscriptionService] Error details — code:', err.code, 'message:', err.message, 'readableErrorCode:', err.readableErrorCode);
-    return { success: false, error: 'We couldn\'t complete this purchase right now. Please try again.' };
+
+    // First attempt failed — retry once after 2s delay
+    console.warn('[SubscriptionService] First purchaseStoreProduct attempt failed:', err.message, '— retrying in 2s...');
+    
+    try {
+      await delay(2000);
+      return await attemptPurchase();
+    } catch (retryErr) {
+      if (isPurchaseCancelled(retryErr)) {
+        console.log('[SubscriptionService] Purchase cancelled by user (retry)');
+        return { success: false, error: 'cancelled' };
+      }
+      console.error('[SubscriptionService] purchaseStoreProduct failed after retry:', retryErr);
+      return { 
+        success: false, 
+        error: 'Unable to connect to the App Store right now. Please check your internet connection and payment method in Settings → Apple ID, then try again.' 
+      };
+    }
   }
 }
 

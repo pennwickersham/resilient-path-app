@@ -87,11 +87,11 @@ const Paywall = ({ onClose }) => {
         return;
       }
 
-      // Show the error from the purchase attempt
-      setError(result.error);
+      // Show a guidance-style message rather than a raw error
+      setError(result.error || 'Please check your internet connection and try again.');
     } catch (err) {
       console.error('[Paywall] Unexpected error during subscribe:', err);
-      setError('Something went wrong. Please try again.');
+      setError('Please check your internet connection and payment method, then try again.');
     } finally {
       setPurchasing(false);
     }
@@ -223,19 +223,19 @@ const Paywall = ({ onClose }) => {
             Restore Purchase
           </button>
 
-          {/* Error display — soft info-style instead of alarming red banner */}
+          {/* Error display — guidance-style, not alarming */}
           {error && (
-            <div className="text-center space-y-2">
-              <p className="text-secondary-600 text-xs bg-secondary-50 p-3 rounded-lg leading-relaxed">
+            <div className="text-center space-y-2.5">
+              <p className="text-secondary-600 text-xs bg-secondary-50 p-3 rounded-xl leading-relaxed border border-secondary-100">
                 {error}
               </p>
               <button
-                onClick={handleRetryOfferings}
-                disabled={retryingOfferings || purchasing}
-                className="text-primary-600 text-xs font-semibold flex items-center justify-center gap-1 mx-auto hover:text-primary-800 transition-colors"
+                onClick={handleSubscribe}
+                disabled={purchasing}
+                className="w-full bg-secondary-100 hover:bg-secondary-200 text-secondary-700 font-semibold text-sm py-2.5 px-4 rounded-xl transition-colors flex items-center justify-center gap-1.5"
               >
-                <RefreshCw size={12} className={retryingOfferings ? 'animate-spin' : ''} />
-                Retry
+                <RefreshCw size={14} className={purchasing ? 'animate-spin' : ''} />
+                Try Again
               </button>
             </div>
           )}

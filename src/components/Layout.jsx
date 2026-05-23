@@ -65,14 +65,17 @@ const Layout = () => {
         <Paywall onClose={() => setShowPaywall(false)} />
       )}
 
-      {/* Bottom Navigation */}
+      {/* Bottom Navigation — uses left-0/right-0 instead of w-full to prevent
+           horizontal overflow on iPhone. Fixed elements escape parent overflow:hidden,
+           so explicit viewport-anchored positioning is safer. */}
       <nav 
-        className="fixed bottom-0 w-full max-w-3xl bg-white border-t border-secondary-100 flex justify-around items-center z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]"
+        className="fixed bottom-0 left-0 right-0 bg-white border-t border-secondary-100 z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]"
         style={{ 
           height: 'calc(4rem + env(safe-area-inset-bottom))',
           paddingBottom: 'env(safe-area-inset-bottom)'
         }}
       >
+        <div className="flex justify-around items-center h-full max-w-3xl mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isLocked = item.gated && !isSubscribed && !isLoading;
@@ -97,6 +100,7 @@ const Layout = () => {
             </NavLink>
           );
         })}
+        </div>
       </nav>
     </div>
   );
