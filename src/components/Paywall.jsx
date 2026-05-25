@@ -3,7 +3,7 @@ import { Shield, BookOpen, MessageCircle, ClipboardList, CheckCircle, Loader2, R
 import { useSubscription } from '../context/SubscriptionContext';
 
 const Paywall = ({ onClose }) => {
-  const { offerings, offeringsLoading, subscribe, subscribeFallback, restore, refreshOfferings } = useSubscription();
+  const { offerings, offeringsLoading, subscribe, subscribeFallback, restore, refreshOfferings, refreshStatus } = useSubscription();
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
   const [error, setError] = useState(null);
@@ -11,39 +11,64 @@ const Paywall = ({ onClose }) => {
   const [retryingOfferings, setRetryingOfferings] = useState(false);
   const [purchaseElapsed, setPurchaseElapsed] = useState(0);
 
-  // Auto-recovery guard: if purchasing is stuck for 45s, show error and reset.
-  // Purchase calls no longer have timeouts (StoreKit needs user interaction time),
-  // so this is the safety net for truly stuck purchases.
-  const purchaseTimerRef = useRef(null);
+  // ─── NO TIMEOUT ON PURCHASES ───────────────────────────────────
+  // BUILD 44 FIX: Removed the 45-second auto-recovery timeout entirely.
+  // Apple's sandbox environment can take 60-90+ seconds to process a
+  // purchase. Our artificial timeout was firing and showing an error
+  // message ("The purchase is taking too long") which Apple flagged as
+  // a bug in every review.
+  //
+  // Instead, we now:
+  //   1. Let the purchase call run indefinitely (StoreKit will timeout on its own)
+  //   2. Poll getCustomerInfo() every 8 seconds to catch purchases that
+  //      complete but whose callback is lost by the Capacitor bridge
+  //   3. Show gentle, progressive status messages (never error messages)
+  //   4. Provide a "Cancel" option after 10 seconds so the user isn't trapped
+  // ────────────────────────────────────────────────────────────────
+
   const elapsedTimerRef = useRef(null);
+  const pollingRef = useRef(null);
+  const purchaseAbortedRef = useRef(false);
+
   useEffect(() => {
     if (purchasing) {
       setPurchaseElapsed(0);
-      // Tick every second so we can show progressive status
+      purchaseAbortedRef.current = false;
+
+      // Tick every second for progressive status display
       elapsedTimerRef.current = setInterval(() => {
         setPurchaseElapsed(prev => prev + 1);
       }, 1000);
-      purchaseTimerRef.current = setTimeout(() => {
-        console.warn('[Paywall] Purchase stuck for 45s — auto-recovering');
-        setPurchasing(false);
-        setError('The purchase is taking too long. Please check Settings → Apple ID → Subscriptions to see if it completed, or try again.');
-      }, 45000);
+
+      // Poll customerInfo every 8 seconds — catches purchases that
+      // complete in StoreKit but whose JS callback is never fired.
+      pollingRef.current = setInterval(async () => {
+        try {
+          console.log('[Paywall] Polling customerInfo for silent purchase completion...');
+          await refreshStatus();
+          // If refreshStatus detects an active subscription, the context
+          // will set isSubscribed=true and close the paywall automatically.
+        } catch (e) {
+          // Polling errors are non-critical — just log and continue
+          console.warn('[Paywall] Polling error (non-critical):', e.message);
+        }
+      }, 8000);
     } else {
       setPurchaseElapsed(0);
-      if (purchaseTimerRef.current) {
-        clearTimeout(purchaseTimerRef.current);
-        purchaseTimerRef.current = null;
-      }
       if (elapsedTimerRef.current) {
         clearInterval(elapsedTimerRef.current);
         elapsedTimerRef.current = null;
       }
+      if (pollingRef.current) {
+        clearInterval(pollingRef.current);
+        pollingRef.current = null;
+      }
     }
     return () => {
-      if (purchaseTimerRef.current) clearTimeout(purchaseTimerRef.current);
       if (elapsedTimerRef.current) clearInterval(elapsedTimerRef.current);
+      if (pollingRef.current) clearInterval(pollingRef.current);
     };
-  }, [purchasing]);
+  }, [purchasing, refreshStatus]);
 
   // When the paywall opens and offerings are null, attempt to fetch them
   useEffect(() => {
@@ -83,18 +108,27 @@ const Paywall = ({ onClose }) => {
       }
 
       if (result.error === 'cancelled') {
-        // User cancelled — no error to show
+        // User cancelled — no error to show, just reset
         return;
       }
 
-      // Show a guidance-style message rather than a raw error
+      // Only show errors from actual purchase failures (not timeouts)
+      // These are soft guidance messages, not alarming errors.
       setError(result.error || 'Please check your internet connection and try again.');
     } catch (err) {
       console.error('[Paywall] Unexpected error during subscribe:', err);
+      // Don't show scary error messages — keep it soft
       setError('Please check your internet connection and payment method, then try again.');
     } finally {
       setPurchasing(false);
     }
+  };
+
+  // Allow user to cancel a stuck purchase without showing an error
+  const handleCancelPurchase = () => {
+    purchaseAbortedRef.current = true;
+    setPurchasing(false);
+    // Don't show any error — just quietly reset
   };
 
   const handleRestore = async () => {
@@ -116,6 +150,16 @@ const Paywall = ({ onClose }) => {
     } finally {
       setRestoring(false);
     }
+  };
+
+  // Progressive status messages — reassuring, never alarming
+  const getStatusMessage = () => {
+    if (purchaseElapsed >= 60) return 'Still working with the App Store…';
+    if (purchaseElapsed >= 30) return 'Processing with the App Store…';
+    if (purchaseElapsed >= 15) return 'Connecting to the App Store…';
+    if (purchaseElapsed >= 8) return 'Contacting the App Store…';
+    if (purchaseElapsed >= 3) return 'Starting purchase…';
+    return 'Processing…';
   };
 
   return (
@@ -200,7 +244,7 @@ const Paywall = ({ onClose }) => {
             {purchasing ? (
               <>
                 <Loader2 className="animate-spin" size={18} />
-                {purchaseElapsed >= 30 ? 'Almost done…' : purchaseElapsed >= 15 ? 'Connecting to App Store…' : purchaseElapsed >= 8 ? 'Contacting App Store…' : purchaseElapsed >= 3 ? 'Starting purchase…' : 'Processing...'}
+                {getStatusMessage()}
               </>
             ) : (
               <>
@@ -209,6 +253,16 @@ const Paywall = ({ onClose }) => {
               </>
             )}
           </button>
+
+          {/* Cancel button — appears after 10 seconds of purchasing, lets user exit without error */}
+          {purchasing && purchaseElapsed >= 10 && (
+            <button
+              onClick={handleCancelPurchase}
+              className="w-full text-secondary-400 text-xs hover:text-secondary-600 transition-colors py-1"
+            >
+              Cancel
+            </button>
+          )}
 
           <button
             onClick={handleRestore}
