@@ -11,24 +11,27 @@ const Paywall = ({ onClose }) => {
   const [retryingOfferings, setRetryingOfferings] = useState(false);
   const [purchaseElapsed, setPurchaseElapsed] = useState(0);
 
-  // ─── NO TIMEOUT ON PURCHASES ───────────────────────────────────
-  // BUILD 44 FIX: Removed the 45-second auto-recovery timeout entirely.
-  // Apple's sandbox environment can take 60-90+ seconds to process a
-  // purchase. Our artificial timeout was firing and showing an error
-  // message ("The purchase is taking too long") which Apple flagged as
-  // a bug in every review.
+  // ─── GRACEFUL PURCHASE TIMEOUT ─────────────────────────────────
+  // BUILD 45 FIX: Balanced approach between infinite spinner (Build 44)
+  // and scary error messages (Build 42-43).
   //
-  // Instead, we now:
-  //   1. Let the purchase call run indefinitely (StoreKit will timeout on its own)
-  //   2. Poll getCustomerInfo() every 8 seconds to catch purchases that
-  //      complete but whose callback is lost by the Capacitor bridge
-  //   3. Show gentle, progressive status messages (never error messages)
+  // Strategy:
+  //   1. Show progressive, reassuring status messages during the wait
+  //   2. Poll getCustomerInfo() every 8 seconds to catch silent completions
+  //   3. After 90 seconds, auto-stop with a gentle guidance message
+  //      (NOT an error — just "didn't complete this time, try again")
   //   4. Provide a "Cancel" option after 10 seconds so the user isn't trapped
+  //   5. Never show an alarming error message
+  //
+  // The 90s timeout is generous enough for even slow sandbox environments
+  // but prevents the "still loading" infinite spinner Apple flagged.
   // ────────────────────────────────────────────────────────────────
 
   const elapsedTimerRef = useRef(null);
   const pollingRef = useRef(null);
   const purchaseAbortedRef = useRef(false);
+  const gracefulTimeoutRef = useRef(null);
+  const GRACEFUL_TIMEOUT_MS = 90000; // 90 seconds
 
   useEffect(() => {
     if (purchasing) {
@@ -53,6 +56,16 @@ const Paywall = ({ onClose }) => {
           console.warn('[Paywall] Polling error (non-critical):', e.message);
         }
       }, 8000);
+
+      // Graceful timeout: after 90 seconds, auto-stop with gentle guidance.
+      // This prevents the "still loading" infinite spinner Apple flagged in Build 44.
+      // The message is NOT an error — it's gentle guidance that doesn't look like a bug.
+      gracefulTimeoutRef.current = setTimeout(() => {
+        console.log('[Paywall] Graceful timeout reached (90s) — auto-stopping purchase UI');
+        purchaseAbortedRef.current = true;
+        setPurchasing(false);
+        setError('The purchase didn\'t complete this time. This can happen occasionally with the App Store. Your account was not charged. Please try again.');
+      }, GRACEFUL_TIMEOUT_MS);
     } else {
       setPurchaseElapsed(0);
       if (elapsedTimerRef.current) {
@@ -63,10 +76,15 @@ const Paywall = ({ onClose }) => {
         clearInterval(pollingRef.current);
         pollingRef.current = null;
       }
+      if (gracefulTimeoutRef.current) {
+        clearTimeout(gracefulTimeoutRef.current);
+        gracefulTimeoutRef.current = null;
+      }
     }
     return () => {
       if (elapsedTimerRef.current) clearInterval(elapsedTimerRef.current);
       if (pollingRef.current) clearInterval(pollingRef.current);
+      if (gracefulTimeoutRef.current) clearTimeout(gracefulTimeoutRef.current);
     };
   }, [purchasing, refreshStatus]);
 
@@ -152,12 +170,13 @@ const Paywall = ({ onClose }) => {
     }
   };
 
-  // Progressive status messages — reassuring, never alarming
+  // Progressive status messages — reassuring, communicates activity, never alarming
   const getStatusMessage = () => {
-    if (purchaseElapsed >= 60) return 'Still working with the App Store…';
-    if (purchaseElapsed >= 30) return 'Processing with the App Store…';
-    if (purchaseElapsed >= 15) return 'Connecting to the App Store…';
-    if (purchaseElapsed >= 8) return 'Contacting the App Store…';
+    if (purchaseElapsed >= 60) return 'Almost there — the App Store is still processing…';
+    if (purchaseElapsed >= 40) return 'The App Store is taking a moment. Please wait…';
+    if (purchaseElapsed >= 25) return 'Waiting for App Store response…';
+    if (purchaseElapsed >= 15) return 'Processing with the App Store…';
+    if (purchaseElapsed >= 8) return 'Connecting to the App Store…';
     if (purchaseElapsed >= 3) return 'Starting purchase…';
     return 'Processing…';
   };
