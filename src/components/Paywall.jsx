@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Shield, BookOpen, MessageCircle, ClipboardList, CheckCircle, Loader2, RotateCcw, RefreshCw } from 'lucide-react';
 import { useSubscription } from '../context/SubscriptionContext';
+import IAPDiagnostic from './IAPDiagnostic';
 
 const Paywall = ({ onClose }) => {
   const { offerings, offeringsLoading, subscribe, subscribeFallback, restore, refreshOfferings, refreshStatus } = useSubscription();
@@ -10,6 +11,9 @@ const Paywall = ({ onClose }) => {
   const [restoreMsg, setRestoreMsg] = useState(null);
   const [retryingOfferings, setRetryingOfferings] = useState(false);
   const [purchaseElapsed, setPurchaseElapsed] = useState(0);
+  const [showDiagnostic, setShowDiagnostic] = useState(false);
+  const tapCountRef = useRef(0);
+  const tapTimerRef = useRef(null);
 
   // ─── GRACEFUL PURCHASE TIMEOUT ─────────────────────────────────
   // BUILD 45 FIX: Balanced approach between infinite spinner (Build 44)
@@ -183,6 +187,7 @@ const Paywall = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-300">
+      {showDiagnostic && <IAPDiagnostic onClose={() => setShowDiagnostic(false)} />}
       <div className="bg-white rounded-3xl shadow-2xl max-w-sm w-full overflow-hidden max-h-[90vh] overflow-y-auto">
         
         {/* Header with gradient */}
@@ -191,7 +196,18 @@ const Paywall = ({ onClose }) => {
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
           
           <div className="relative z-10">
-            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-3 backdrop-blur-sm">
+            <div
+              className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-3 backdrop-blur-sm"
+              onClick={() => {
+                tapCountRef.current += 1;
+                if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
+                tapTimerRef.current = setTimeout(() => { tapCountRef.current = 0; }, 2000);
+                if (tapCountRef.current >= 5) {
+                  tapCountRef.current = 0;
+                  setShowDiagnostic(true);
+                }
+              }}
+            >
               <Shield className="text-white" size={32} />
             </div>
             <h2 className="text-white text-xl font-bold mb-1">Unlock Resilient Path</h2>
