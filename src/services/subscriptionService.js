@@ -28,6 +28,7 @@ const PRODUCT_ID = 'com.resilientpath.app.monthly';
 // ─── STATE ───────────────────────────────────────────────────────
 let purchasesModule = null;
 let isInitialized = false;
+let isConfiguredSuccessfully = false;
 
 /**
  * Helper: race a promise against a timeout.
@@ -104,6 +105,7 @@ export async function initializeRevenueCat() {
 
     await withTimeout(Purchases.configure({ apiKey }), 10000);
     isInitialized = true;
+    isConfiguredSuccessfully = true;
     console.log('[SubscriptionService] RevenueCat initialized for', platform);
 
     // Sync purchases once during init — clears stale sandbox transactions.
@@ -113,8 +115,38 @@ export async function initializeRevenueCat() {
       .catch((e) => console.warn('[SubscriptionService] syncPurchases failed (non-critical):', e.message));
   } catch (err) {
     console.error('[SubscriptionService] Init failed:', err);
-    // Mark as initialized even on failure to prevent retries that hang
+    // DO NOT mark as initialized on failure — allow retries via ensureConfigured()
+    // This was a critical bug: previously set isInitialized = true on failure,
+    // causing ALL subsequent RevenueCat calls to fail silently.
+  }
+}
+
+/**
+ * Ensure RevenueCat SDK is configured before making API calls.
+ * This handles the case where initializeRevenueCat() failed at startup
+ * (e.g., timing issue, race condition, network error).
+ * 
+ * Called by purchasePackage and purchaseStoreProduct before any purchase attempt.
+ */
+async function ensureConfigured() {
+  if (isConfiguredSuccessfully) return true;
+  
+  const Purchases = await getPurchasesModule();
+  if (!Purchases) return false;
+  
+  const platform = Capacitor.getPlatform();
+  const apiKey = platform === 'ios' ? REVENUECAT_API_KEY_APPLE : REVENUECAT_API_KEY_GOOGLE;
+  
+  console.log('[SubscriptionService] ensureConfigured: SDK not configured, attempting configure...');
+  try {
+    await Purchases.configure({ apiKey });
     isInitialized = true;
+    isConfiguredSuccessfully = true;
+    console.log('[SubscriptionService] ensureConfigured: SUCCESS — SDK now configured');
+    return true;
+  } catch (err) {
+    console.error('[SubscriptionService] ensureConfigured: FAILED —', err.message);
+    return false;
   }
 }
 
@@ -214,6 +246,11 @@ export async function purchasePackage(pkg) {
     return { success: false, error: 'Purchases not available on this platform' };
   }
 
+  // Ensure SDK is configured — critical fix for startup race condition
+  if (!(await ensureConfigured())) {
+    return { success: false, error: 'Unable to connect to the subscription service. Please restart the app and try again.' };
+  }
+
   const productId = pkg?.product?.identifier || pkg?.product?.productId || PRODUCT_ID;
 
   // Attempt purchase with automatic retry on failure
@@ -304,6 +341,11 @@ export async function purchaseStoreProduct(productId = PRODUCT_ID) {
   const Purchases = await getPurchasesModule();
   if (!Purchases) {
     return { success: false, error: 'Purchases not available on this platform' };
+  }
+
+  // Ensure SDK is configured — critical fix for startup race condition
+  if (!(await ensureConfigured())) {
+    return { success: false, error: 'Unable to connect to the subscription service. Please restart the app and try again.' };
   }
 
   const attemptPurchase = async () => {
