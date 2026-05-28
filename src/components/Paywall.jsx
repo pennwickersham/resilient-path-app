@@ -270,10 +270,9 @@ const Paywall = ({ onClose }) => {
             </p>
             <p className="text-secondary-500 text-sm mt-1">Auto-renewing monthly subscription</p>
             
-            {/* SUBORDINATE: Free trial — smaller font, lighter color */}
             <div className="mt-3 pt-3 border-t border-secondary-100">
               <p className="text-secondary-400 text-xs">
-                Includes a 7-day free trial. Cancel anytime.
+                Cancel anytime. Payment will be charged to your Apple ID account.
               </p>
             </div>
           </div>
@@ -282,7 +281,7 @@ const Paywall = ({ onClose }) => {
         {/* CTA Buttons */}
         <div className="p-5 pt-3 space-y-3">
           <button
-            id="start-free-trial-btn"
+            id="subscribe-btn"
             onClick={handleSubscribe}
             disabled={purchasing}
             className="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-primary-600/30 transition-all duration-200 active:scale-[0.98] disabled:opacity-60 flex items-center justify-center gap-2"
