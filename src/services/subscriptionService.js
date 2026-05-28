@@ -165,6 +165,9 @@ export async function checkSubscriptionStatus() {
     return { isActive: true, isTrialing: false, expirationDate: null };
   }
 
+  // Ensure SDK is configured — needed for polling to work after startup init failure
+  await ensureConfigured();
+
   try {
     const { customerInfo } = await withTimeout(Purchases.getCustomerInfo(), 8000);
     const entitlements = customerInfo.entitlements.active;

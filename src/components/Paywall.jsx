@@ -4,7 +4,7 @@ import { useSubscription } from '../context/SubscriptionContext';
 import IAPDiagnostic from './IAPDiagnostic';
 
 const Paywall = ({ onClose }) => {
-  const { offerings, offeringsLoading, subscribe, subscribeFallback, restore, refreshOfferings, refreshStatus } = useSubscription();
+  const { isSubscribed, offerings, offeringsLoading, subscribe, subscribeFallback, restore, refreshOfferings, refreshStatus } = useSubscription();
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
   const [error, setError] = useState(null);
@@ -99,6 +99,17 @@ const Paywall = ({ onClose }) => {
       refreshOfferings().finally(() => setRetryingOfferings(false));
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // AUTO-CLOSE: If the background polling detects the subscription became active
+  // (e.g., purchase completed on StoreKit but the Capacitor bridge dropped the callback),
+  // automatically close the paywall. This is the critical fix for the "purchase hangs" issue.
+  useEffect(() => {
+    if (isSubscribed && purchasing) {
+      console.log('[Paywall] Subscription detected via polling — auto-closing paywall');
+      setPurchasing(false);
+      onClose();
+    }
+  }, [isSubscribed, purchasing, onClose]);
 
   const handleRetryOfferings = async () => {
     setRetryingOfferings(true);
