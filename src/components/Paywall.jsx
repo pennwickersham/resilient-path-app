@@ -100,11 +100,24 @@ const Paywall = ({ onClose }) => {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // AUTO-CLOSE: If the background polling detects the subscription became active
-  // (e.g., purchase completed on StoreKit but the Capacitor bridge dropped the callback),
-  // automatically close the paywall. This is the critical fix for the "purchase hangs" issue.
+  // Track whether user was unsubscribed when purchasing started.
+  // This prevents the auto-close from firing when isSubscribed was already true
+  // from the fail-open init logic (root cause of Build 49 rejection).
+  const wasUnsubscribedRef = useRef(false);
+
   useEffect(() => {
-    if (isSubscribed && purchasing) {
+    if (purchasing) {
+      // Capture subscription state at the moment purchasing begins
+      wasUnsubscribedRef.current = !isSubscribed;
+    }
+  }, [purchasing]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // AUTO-CLOSE: Only when subscription status TRANSITIONS from inactive → active
+  // during a purchase session. Won't fire if isSubscribed was already true at start.
+  // BUILD 50 FIX: Build 49 auto-closed immediately because fail-open init set
+  // isSubscribed=true, then purchasing=true triggered the effect.
+  useEffect(() => {
+    if (isSubscribed && purchasing && wasUnsubscribedRef.current) {
       console.log('[Paywall] Subscription detected via polling — auto-closing paywall');
       setPurchasing(false);
       onClose();
@@ -356,7 +369,7 @@ const Paywall = ({ onClose }) => {
           <div className="bg-secondary-50 rounded-xl p-3 mb-3 text-[10px] text-secondary-500 leading-relaxed">
             <p className="font-semibold text-secondary-600 mb-1">Resilient Path Monthly Subscription</p>
             <p>• Duration: 1 month, auto-renewing</p>
-            <p>• Price: $3.99/month (after 7-day free trial)</p>
+            <p>• Price: $3.99/month</p>
             <p>• Payment charged to your Apple ID at confirmation of purchase</p>
             <p>• Subscription renews unless cancelled at least 24 hours before the end of the current period</p>
             <p>• Manage or cancel in iPhone Settings → Apple ID → Subscriptions</p>

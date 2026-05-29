@@ -188,8 +188,11 @@ export async function checkSubscriptionStatus() {
     return { isActive: hasActive, isTrialing, expirationDate };
   } catch (err) {
     console.error('[SubscriptionService] Status check failed:', err);
-    // On error (including timeout), grant access to avoid locking out users
-    return { isActive: true, isTrialing: false, expirationDate: null };
+    // BUILD 50 FIX: Return isActive: false on error instead of fail-open.
+    // The old fail-open (isActive: true) caused the auto-close effect in Paywall
+    // to fire immediately, dismissing the paywall before the payment sheet appeared.
+    // Users with real subscriptions can restore via the Restore Purchase button.
+    return { isActive: false, isTrialing: false, expirationDate: null };
   }
 }
 
