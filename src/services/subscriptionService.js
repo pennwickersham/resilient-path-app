@@ -29,6 +29,7 @@ const PRODUCT_ID = 'com.resilientpath.app.monthly';
 let purchasesModule = null;
 let isInitialized = false;
 let isConfiguredSuccessfully = false;
+let customerInfoListenerRemover = null;
 
 /**
  * Helper: race a promise against a timeout.
@@ -109,15 +110,63 @@ export async function initializeRevenueCat() {
     console.log('[SubscriptionService] RevenueCat initialized for', platform);
 
     // Sync purchases once during init — clears stale sandbox transactions.
-    // This is the ONLY place we call syncPurchases. Never during a purchase flow.
     Purchases.syncPurchases()
       .then(() => console.log('[SubscriptionService] syncPurchases completed (init)'))
       .catch((e) => console.warn('[SubscriptionService] syncPurchases failed (non-critical):', e.message));
   } catch (err) {
     console.error('[SubscriptionService] Init failed:', err);
     // DO NOT mark as initialized on failure — allow retries via ensureConfigured()
-    // This was a critical bug: previously set isInitialized = true on failure,
-    // causing ALL subsequent RevenueCat calls to fail silently.
+  }
+}
+
+/**
+ * Register a listener for CustomerInfo updates from RevenueCat.
+ * BUILD 51: This is the RECOMMENDED way to detect purchases that complete
+ * on StoreKit but whose Capacitor bridge callback is dropped.
+ * The listener fires whenever customer info changes — including after
+ * a purchase, even if purchaseStoreProduct() never resolves.
+ *
+ * @param {Function} onUpdate — called with { isActive, isTrialing } whenever status changes
+ * @returns {Function} cleanup function to remove the listener
+ */
+export async function setupCustomerInfoListener(onUpdate) {
+  const Purchases = await getPurchasesModule();
+  if (!Purchases) return () => {};
+
+  // Ensure SDK is configured before adding listener
+  await ensureConfigured();
+
+  try {
+    // Remove any existing listener first
+    if (customerInfoListenerRemover) {
+      try { customerInfoListenerRemover.remove(); } catch (_) {}
+      customerInfoListenerRemover = null;
+    }
+
+    customerInfoListenerRemover = await Purchases.addCustomerInfoUpdateListener(
+      ({ customerInfo }) => {
+        console.log('[SubscriptionService] CustomerInfo listener fired');
+        const entitlements = customerInfo?.entitlements?.active || {};
+        const hasActive = Object.keys(entitlements).length > 0;
+        let isTrialing = false;
+        if (hasActive) {
+          const first = Object.values(entitlements)[0];
+          isTrialing = first?.periodType === 'TRIAL';
+        }
+        console.log('[SubscriptionService] Listener: isActive =', hasActive, ', isTrialing =', isTrialing);
+        onUpdate({ isActive: hasActive, isTrialing });
+      }
+    );
+    console.log('[SubscriptionService] CustomerInfo listener registered ✓');
+    return () => {
+      if (customerInfoListenerRemover) {
+        try { customerInfoListenerRemover.remove(); } catch (_) {}
+        customerInfoListenerRemover = null;
+      }
+    };
+  } catch (err) {
+    console.warn('[SubscriptionService] Failed to add CustomerInfo listener:', err.message);
+    return () => {};
   }
 }
 
@@ -188,10 +237,56 @@ export async function checkSubscriptionStatus() {
     return { isActive: hasActive, isTrialing, expirationDate };
   } catch (err) {
     console.error('[SubscriptionService] Status check failed:', err);
-    // BUILD 50 FIX: Return isActive: false on error instead of fail-open.
-    // The old fail-open (isActive: true) caused the auto-close effect in Paywall
-    // to fire immediately, dismissing the paywall before the payment sheet appeared.
-    // Users with real subscriptions can restore via the Restore Purchase button.
+    return { isActive: false, isTrialing: false, expirationDate: null };
+  }
+}
+
+/**
+ * BUILD 51: Invalidate cache then check status — forces a fresh server fetch.
+ * Used during purchase polling to detect purchases that completed on StoreKit
+ * but whose callback was dropped by the Capacitor bridge.
+ * 
+ * getCustomerInfo() normally returns CACHED data which may not reflect
+ * a purchase that just completed. invalidateCustomerInfoCache() forces
+ * the next call to fetch fresh data from RevenueCat's servers.
+ */
+export async function invalidateAndCheckStatus() {
+  const Purchases = await getPurchasesModule();
+  if (!Purchases) return { isActive: false, isTrialing: false, expirationDate: null };
+
+  await ensureConfigured();
+
+  try {
+    // Invalidate cache so getCustomerInfo fetches fresh from server
+    try {
+      await Purchases.invalidateCustomerInfoCache();
+    } catch (_) {
+      // Some older plugin versions may not have this method
+      console.warn('[SubscriptionService] invalidateCustomerInfoCache not available');
+    }
+
+    // Also call syncPurchases to ensure StoreKit transactions are synced
+    try {
+      await withTimeout(Purchases.syncPurchases(), 5000);
+    } catch (_) {
+      // Non-critical — continue to getCustomerInfo anyway
+    }
+
+    const { customerInfo } = await withTimeout(Purchases.getCustomerInfo(), 10000);
+    const entitlements = customerInfo.entitlements.active;
+    const hasActive = Object.keys(entitlements).length > 0;
+    
+    let isTrialing = false;
+    let expirationDate = null;
+    if (hasActive) {
+      const firstEntitlement = Object.values(entitlements)[0];
+      isTrialing = firstEntitlement.periodType === 'TRIAL';
+      expirationDate = firstEntitlement.expirationDate || null;
+    }
+
+    return { isActive: hasActive, isTrialing, expirationDate };
+  } catch (err) {
+    console.error('[SubscriptionService] invalidateAndCheckStatus failed:', err);
     return { isActive: false, isTrialing: false, expirationDate: null };
   }
 }

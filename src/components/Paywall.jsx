@@ -4,7 +4,7 @@ import { useSubscription } from '../context/SubscriptionContext';
 import IAPDiagnostic from './IAPDiagnostic';
 
 const Paywall = ({ onClose }) => {
-  const { isSubscribed, offerings, offeringsLoading, subscribe, subscribeFallback, restore, refreshOfferings, refreshStatus } = useSubscription();
+  const { isSubscribed, offerings, offeringsLoading, subscribe, subscribeFallback, restore, refreshOfferings, refreshStatus, refreshStatusWithSync } = useSubscription();
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
   const [error, setError] = useState(null);
@@ -47,19 +47,22 @@ const Paywall = ({ onClose }) => {
         setPurchaseElapsed(prev => prev + 1);
       }, 1000);
 
-      // Poll customerInfo every 8 seconds — catches purchases that
-      // complete in StoreKit but whose JS callback is never fired.
+      // BUILD 51: Poll every 4 seconds with cache invalidation + syncPurchases.
+      // This catches purchases that complete in StoreKit but whose JS callback
+      // is never fired (known Capacitor bridge issue).
+      // Primary detection is via addCustomerInfoUpdateListener in SubscriptionContext;
+      // this polling is the backup safety net.
       pollingRef.current = setInterval(async () => {
         try {
-          console.log('[Paywall] Polling customerInfo for silent purchase completion...');
-          await refreshStatus();
-          // If refreshStatus detects an active subscription, the context
-          // will set isSubscribed=true and close the paywall automatically.
+          console.log('[Paywall] Polling with cache invalidation for silent purchase completion...');
+          await refreshStatusWithSync();
+          // If refreshStatusWithSync detects an active subscription, the context
+          // will set isSubscribed=true and close the paywall via the auto-close effect.
         } catch (e) {
           // Polling errors are non-critical — just log and continue
           console.warn('[Paywall] Polling error (non-critical):', e.message);
         }
-      }, 8000);
+      }, 4000);
 
       // Graceful timeout: after 90 seconds, auto-stop with gentle guidance.
       // This prevents the "still loading" infinite spinner Apple flagged in Build 44.
@@ -90,7 +93,7 @@ const Paywall = ({ onClose }) => {
       if (pollingRef.current) clearInterval(pollingRef.current);
       if (gracefulTimeoutRef.current) clearTimeout(gracefulTimeoutRef.current);
     };
-  }, [purchasing, refreshStatus]);
+  }, [purchasing, refreshStatusWithSync]);
 
   // When the paywall opens and offerings are null, attempt to fetch them
   useEffect(() => {

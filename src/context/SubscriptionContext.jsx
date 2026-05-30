@@ -2,6 +2,8 @@ import { createContext, useContext, useState, useEffect, useCallback } from 'rea
 import {
   initializeRevenueCat,
   checkSubscriptionStatus,
+  invalidateAndCheckStatus,
+  setupCustomerInfoListener,
   getOfferings,
   purchasePackage,
   purchaseStoreProduct,
@@ -89,6 +91,28 @@ export function SubscriptionProvider({ children }) {
     return () => clearTimeout(timeoutId);
   }, []);
 
+  // BUILD 51: Register CustomerInfo listener — the RECOMMENDED way to detect
+  // purchases that complete on StoreKit but whose Capacitor bridge callback is dropped.
+  // This listener fires in real-time when customer info changes, unlike polling.
+  useEffect(() => {
+    let cleanup = () => {};
+
+    async function registerListener() {
+      cleanup = await setupCustomerInfoListener(({ isActive, isTrialing: trial }) => {
+        console.log('[SubscriptionContext] CustomerInfo listener update: isActive =', isActive);
+        setIsSubscribed(isActive);
+        setIsTrialing(trial);
+        if (isActive) {
+          // Auto-close paywall when subscription detected via listener
+          setShowPaywall(false);
+        }
+      });
+    }
+
+    registerListener();
+    return () => cleanup();
+  }, []);
+
   // Allow Paywall to trigger a re-fetch of offerings
   const refreshOfferings = useCallback(async () => {
     setOfferingsLoading(true);
@@ -139,6 +163,16 @@ export function SubscriptionProvider({ children }) {
     setIsTrialing(status.isTrialing);
   }, []);
 
+  // BUILD 51: Aggressive refresh that invalidates cache + syncs purchases
+  // before checking status. Used during purchase polling to catch purchases
+  // that completed on StoreKit but aren't reflected in cached customerInfo.
+  const refreshStatusWithSync = useCallback(async () => {
+    const status = await invalidateAndCheckStatus();
+    setIsSubscribed(status.isActive);
+    setIsTrialing(status.isTrialing);
+    return status;
+  }, []);
+
   const value = {
     isSubscribed,
     isTrialing,
@@ -152,6 +186,7 @@ export function SubscriptionProvider({ children }) {
     restore,
     refreshOfferings,
     refreshStatus,
+    refreshStatusWithSync,
   };
 
   return (
