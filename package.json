@@ -7,8 +7,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "desktop:dev": "vite",
-    "desktop:build": "vite build && electron-builder",
+    "desktop:dev": "vite --mode electron",
+    "desktop:build": "vite build --mode electron && electron-builder",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -31,8 +31,7 @@
     "@capacitor/filesystem": "^8.1.2",
     "@capacitor/ios": "^8.3.0",
     "@capacitor/share": "^8.0.1",
-
-    "@revenuecat/purchases-capacitor": "^13.0.1",
+    "@revenuecat/purchases-capacitor": "^13.1.4",
     "clsx": "^2.1.1",
     "lucide-react": "^1.7.0",
     "react": "^19.2.4",

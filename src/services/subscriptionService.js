@@ -4,17 +4,16 @@
  * Handles all RevenueCat interactions for the Resilient Path app.
  * Product: com.resilientpath.app.monthly ($3.99/month with 7-day free trial)
  * 
- * BUILD 43 FIXES:
- * - Removed syncPurchases from purchase path entirely. Even fire-and-forget,
- *   it can cause StoreKit state changes that interfere with an in-progress purchase.
- *   syncPurchases is now only called once during init (background).
- * - Increased product fetch timeouts (10s→20s) for Apple's slow sandbox.
- * - Added automatic single-retry with 2s delay on purchase errors.
- * - Improved error messages to sound like guidance, not bugs.
- * 
- * PREVIOUS FIX (Build 42):
- * - Removed JSON.parse/JSON.stringify deep-cloning of package/product objects.
- * - Primary purchase path uses purchaseStoreProduct with freshly-fetched product.
+ * BUILD 53 ARCHITECTURE (fixes Guideline 2.1b rejection):
+ * - Purchase calls are FIRE-AND-FORGET. The UI never awaits the purchase promise.
+ *   Detection of a completed purchase happens entirely through:
+ *   1. addCustomerInfoUpdateListener (primary, instant)
+ *   2. invalidateAndCheckStatus polling (backup, every 3s)
+ *   3. The purchase promise resolving (tertiary, best-effort)
+ * - syncPurchases is ONLY called during init(). NEVER during purchase or polling.
+ *   Even fire-and-forget, it causes StoreKit state mutations that interfere.
+ * - No deep-cloning of package/product objects.
+ * - Automatic single-retry with 2s delay on purchase errors.
  */
 import { Capacitor } from '@capacitor/core';
 
@@ -242,13 +241,16 @@ export async function checkSubscriptionStatus() {
 }
 
 /**
- * BUILD 51: Invalidate cache then check status — forces a fresh server fetch.
+ * BUILD 53: Invalidate cache then check status — forces a fresh server fetch.
  * Used during purchase polling to detect purchases that completed on StoreKit
  * but whose callback was dropped by the Capacitor bridge.
  * 
  * getCustomerInfo() normally returns CACHED data which may not reflect
  * a purchase that just completed. invalidateCustomerInfoCache() forces
  * the next call to fetch fresh data from RevenueCat's servers.
+ * 
+ * CRITICAL: Do NOT call syncPurchases() here. It causes StoreKit state
+ * mutations that interfere with an in-progress purchase (Build 43 lesson).
  */
 export async function invalidateAndCheckStatus() {
   const Purchases = await getPurchasesModule();
@@ -265,12 +267,9 @@ export async function invalidateAndCheckStatus() {
       console.warn('[SubscriptionService] invalidateCustomerInfoCache not available');
     }
 
-    // Also call syncPurchases to ensure StoreKit transactions are synced
-    try {
-      await withTimeout(Purchases.syncPurchases(), 5000);
-    } catch (_) {
-      // Non-critical — continue to getCustomerInfo anyway
-    }
+    // NOTE: syncPurchases() was intentionally REMOVED here in Build 53.
+    // It was re-introduced in Build 51 but causes StoreKit state conflicts
+    // with active purchases — the exact problem Apple keeps rejecting for.
 
     const { customerInfo } = await withTimeout(Purchases.getCustomerInfo(), 10000);
     const entitlements = customerInfo.entitlements.active;
@@ -325,6 +324,10 @@ export async function getOfferings() {
 /**
  * Core purchase logic — attempts to purchase with retry.
  * 
+ * BUILD 53: This function is called FIRE-AND-FORGET from the UI layer.
+ * The UI does NOT await this — it detects completion via the
+ * CustomerInfo listener and cache-busted polling instead.
+ * 
  * Strategy:
  *   1. Try purchaseStoreProduct with a FRESHLY-FETCHED product (most reliable)
  *   2. Fall back to purchasePackage with the original package (no cloning)
@@ -332,10 +335,7 @@ export async function getOfferings() {
  * If both strategies fail with a non-cancel error, automatically retries
  * once after a 2-second delay before returning an error.
  * 
- * CRITICAL: No syncPurchases here — it was removed in Build 43 because
- * even fire-and-forget calls can cause StoreKit state mutations that
- * interfere with the purchase flow.
- *
+ * CRITICAL: No syncPurchases anywhere in the purchase path.
  * NEVER deep-clone (JSON.parse/JSON.stringify) package or product objects.
  * 
  * @param {Object} pkg — A RevenueCat package object from getOfferings()

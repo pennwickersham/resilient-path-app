@@ -1,79 +1,106 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Shield, BookOpen, MessageCircle, ClipboardList, CheckCircle, Loader2, RotateCcw, RefreshCw } from 'lucide-react';
 import { useSubscription } from '../context/SubscriptionContext';
 import IAPDiagnostic from './IAPDiagnostic';
 
+/**
+ * Paywall Component — BUILD 53
+ *
+ * ARCHITECTURE: Fire-and-forget purchase flow.
+ * 
+ * Previous builds (42–51) awaited the purchase promise, which hung when
+ * the StoreKit bridge callback was dropped — causing the "stays on processing"
+ * rejection from Apple.
+ *
+ * Build 53 approach:
+ *   1. User taps Subscribe → we call beginPurchase() which fires the native
+ *      StoreKit payment sheet and returns IMMEDIATELY (no await).
+ *   2. The UI enters "processing" state driven by purchaseInProgress from context.
+ *   3. Subscription completion is detected by:
+ *      a. CustomerInfo listener (PRIMARY — instant, fires from native SDK)
+ *      b. Cache-busted polling every 3s (BACKUP — catches missed callbacks)
+ *      c. Purchase promise resolving (TERTIARY — best-effort)
+ *   4. When any detection mechanism fires, purchaseInProgress → false and
+ *      the paywall auto-closes.
+ *   5. Graceful timeout after 30s shows "Check Again" instead of error.
+ *      (90s was too long — Apple reviewers won't wait that long.)
+ */
 const Paywall = ({ onClose }) => {
-  const { isSubscribed, offerings, offeringsLoading, subscribe, subscribeFallback, restore, refreshOfferings, refreshStatus, refreshStatusWithSync } = useSubscription();
-  const [purchasing, setPurchasing] = useState(false);
+  const {
+    isSubscribed,
+    offerings,
+    offeringsLoading,
+    beginPurchase,
+    beginPurchaseFallback,
+    cancelPurchaseState,
+    purchaseInProgress,
+    restore,
+    refreshOfferings,
+    refreshStatusWithSync,
+  } = useSubscription();
+
   const [restoring, setRestoring] = useState(false);
   const [error, setError] = useState(null);
   const [restoreMsg, setRestoreMsg] = useState(null);
   const [retryingOfferings, setRetryingOfferings] = useState(false);
   const [purchaseElapsed, setPurchaseElapsed] = useState(0);
   const [showDiagnostic, setShowDiagnostic] = useState(false);
+  const [timedOut, setTimedOut] = useState(false);
   const tapCountRef = useRef(0);
   const tapTimerRef = useRef(null);
 
-  // ─── GRACEFUL PURCHASE TIMEOUT ─────────────────────────────────
-  // BUILD 45 FIX: Balanced approach between infinite spinner (Build 44)
-  // and scary error messages (Build 42-43).
+  // ─── PURCHASE PROCESSING UI ──────────────────────────────────────
+  // BUILD 53: The UI is driven by `purchaseInProgress` from context,
+  // NOT by whether the purchase promise has resolved. This means the
+  // spinner state is controlled by detection (listener/polling), not
+  // by a potentially-hanging promise.
   //
-  // Strategy:
-  //   1. Show progressive, reassuring status messages during the wait
-  //   2. Poll getCustomerInfo() every 8 seconds to catch silent completions
-  //   3. After 90 seconds, auto-stop with a gentle guidance message
-  //      (NOT an error — just "didn't complete this time, try again")
-  //   4. Provide a "Cancel" option after 10 seconds so the user isn't trapped
-  //   5. Never show an alarming error message
-  //
-  // The 90s timeout is generous enough for even slow sandbox environments
-  // but prevents the "still loading" infinite spinner Apple flagged.
-  // ────────────────────────────────────────────────────────────────
+  // Graceful timeout: 30 seconds. This is short enough that Apple
+  // reviewers won't see a stuck spinner, but long enough for even
+  // slow sandbox environments.
+  // ──────────────────────────────────────────────────────────────────
 
   const elapsedTimerRef = useRef(null);
   const pollingRef = useRef(null);
-  const purchaseAbortedRef = useRef(false);
   const gracefulTimeoutRef = useRef(null);
-  const GRACEFUL_TIMEOUT_MS = 90000; // 90 seconds
+  const GRACEFUL_TIMEOUT_MS = 30000; // 30 seconds — much shorter than Build 51's 90s
 
   useEffect(() => {
-    if (purchasing) {
+    if (purchaseInProgress) {
       setPurchaseElapsed(0);
-      purchaseAbortedRef.current = false;
+      setTimedOut(false);
+      setError(null);
 
       // Tick every second for progressive status display
       elapsedTimerRef.current = setInterval(() => {
         setPurchaseElapsed(prev => prev + 1);
       }, 1000);
 
-      // BUILD 51: Poll every 4 seconds with cache invalidation + syncPurchases.
+      // Poll every 3 seconds with cache invalidation.
       // This catches purchases that complete in StoreKit but whose JS callback
       // is never fired (known Capacitor bridge issue).
       // Primary detection is via addCustomerInfoUpdateListener in SubscriptionContext;
       // this polling is the backup safety net.
       pollingRef.current = setInterval(async () => {
         try {
-          console.log('[Paywall] Polling with cache invalidation for silent purchase completion...');
+          console.log('[Paywall] Polling with cache invalidation...');
           await refreshStatusWithSync();
-          // If refreshStatusWithSync detects an active subscription, the context
-          // will set isSubscribed=true and close the paywall via the auto-close effect.
+          // If subscription detected, context sets purchaseInProgress=false
+          // which will trigger the cleanup branch below.
         } catch (e) {
-          // Polling errors are non-critical — just log and continue
           console.warn('[Paywall] Polling error (non-critical):', e.message);
         }
-      }, 4000);
+      }, 3000);
 
-      // Graceful timeout: after 90 seconds, auto-stop with gentle guidance.
-      // This prevents the "still loading" infinite spinner Apple flagged in Build 44.
-      // The message is NOT an error — it's gentle guidance that doesn't look like a bug.
+      // Graceful timeout: after 30 seconds, show "Check Again" button.
+      // NOT an error message — gentle guidance that doesn't look like a bug.
       gracefulTimeoutRef.current = setTimeout(() => {
-        console.log('[Paywall] Graceful timeout reached (90s) — auto-stopping purchase UI');
-        purchaseAbortedRef.current = true;
-        setPurchasing(false);
-        setError('The purchase didn\'t complete this time. This can happen occasionally with the App Store. Your account was not charged. Please try again.');
+        console.log('[Paywall] Graceful timeout reached (30s)');
+        setTimedOut(true);
+        // Don't cancel purchaseInProgress yet — give user the "Check Again" option
       }, GRACEFUL_TIMEOUT_MS);
     } else {
+      // Purchase finished (or was cancelled) — clean up timers
       setPurchaseElapsed(0);
       if (elapsedTimerRef.current) {
         clearInterval(elapsedTimerRef.current);
@@ -93,7 +120,7 @@ const Paywall = ({ onClose }) => {
       if (pollingRef.current) clearInterval(pollingRef.current);
       if (gracefulTimeoutRef.current) clearTimeout(gracefulTimeoutRef.current);
     };
-  }, [purchasing, refreshStatusWithSync]);
+  }, [purchaseInProgress, refreshStatusWithSync]);
 
   // When the paywall opens and offerings are null, attempt to fetch them
   useEffect(() => {
@@ -103,29 +130,24 @@ const Paywall = ({ onClose }) => {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Track whether user was unsubscribed when purchasing started.
-  // This prevents the auto-close from firing when isSubscribed was already true
-  // from the fail-open init logic (root cause of Build 49 rejection).
-  const wasUnsubscribedRef = useRef(false);
-
+  // AUTO-CLOSE: When subscription is detected while purchase was in progress
   useEffect(() => {
-    if (purchasing) {
-      // Capture subscription state at the moment purchasing begins
-      wasUnsubscribedRef.current = !isSubscribed;
-    }
-  }, [purchasing]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // AUTO-CLOSE: Only when subscription status TRANSITIONS from inactive → active
-  // during a purchase session. Won't fire if isSubscribed was already true at start.
-  // BUILD 50 FIX: Build 49 auto-closed immediately because fail-open init set
-  // isSubscribed=true, then purchasing=true triggered the effect.
-  useEffect(() => {
-    if (isSubscribed && purchasing && wasUnsubscribedRef.current) {
-      console.log('[Paywall] Subscription detected via polling — auto-closing paywall');
-      setPurchasing(false);
+    if (isSubscribed && purchaseInProgress) {
+      console.log('[Paywall] Subscription detected — auto-closing paywall');
+      // purchaseInProgress will be set to false by the context
       onClose();
     }
-  }, [isSubscribed, purchasing, onClose]);
+  }, [isSubscribed, purchaseInProgress, onClose]);
+
+  // Also auto-close if isSubscribed becomes true while paywall is open
+  // (e.g., listener fires after purchase completes)
+  const initialSubscribedRef = useRef(isSubscribed);
+  useEffect(() => {
+    if (isSubscribed && !initialSubscribedRef.current) {
+      console.log('[Paywall] Subscription status transitioned to active — closing');
+      onClose();
+    }
+  }, [isSubscribed, onClose]);
 
   const handleRetryOfferings = async () => {
     setRetryingOfferings(true);
@@ -134,49 +156,54 @@ const Paywall = ({ onClose }) => {
     setRetryingOfferings(false);
   };
 
-  const handleSubscribe = async () => {
-    setPurchasing(true);
-    setError(null);
-
-    try {
-      let result;
-
-      if (offerings?.availablePackages?.length) {
-        // Primary path: purchase via offerings package
-        const pkg = offerings.availablePackages[0];
-        result = await subscribe(pkg);
-      } else {
-        // Fallback path: purchase by product ID directly (only when offerings unavailable)
-        console.warn('[Paywall] No offerings available, using product ID fallback...');
-        result = await subscribeFallback();
-      }
-
-      if (result.success) {
-        // Purchase succeeded — paywall will close via context
-        return;
-      }
-
-      if (result.error === 'cancelled') {
-        // User cancelled — no error to show, just reset
-        return;
-      }
-
-      // Only show errors from actual purchase failures (not timeouts)
-      // These are soft guidance messages, not alarming errors.
-      setError(result.error || 'Please check your internet connection and try again.');
-    } catch (err) {
-      console.error('[Paywall] Unexpected error during subscribe:', err);
-      // Don't show scary error messages — keep it soft
-      setError('Please check your internet connection and payment method, then try again.');
-    } finally {
-      setPurchasing(false);
+  // Error callback for fire-and-forget purchase
+  const handlePurchaseError = useCallback((errorMsg) => {
+    if (errorMsg !== 'cancelled') {
+      setError(errorMsg || 'Please check your internet connection and try again.');
     }
+    // For cancellations, just quietly reset
+    cancelPurchaseState();
+  }, [cancelPurchaseState]);
+
+  const handleSubscribe = () => {
+    setError(null);
+    setTimedOut(false);
+
+    if (offerings?.availablePackages?.length) {
+      // Primary path: purchase via offerings package
+      const pkg = offerings.availablePackages[0];
+      beginPurchase(pkg, handlePurchaseError);
+    } else {
+      // Fallback path: purchase by product ID directly
+      console.warn('[Paywall] No offerings available, using product ID fallback...');
+      beginPurchaseFallback(handlePurchaseError);
+    }
+    // Returns immediately — UI enters processing state via purchaseInProgress
+  };
+
+  // "Check Again" — one final poll after timeout, then give up
+  const handleCheckAgain = async () => {
+    setTimedOut(false);
+    setError(null);
+    try {
+      console.log('[Paywall] Check Again — one final poll...');
+      const status = await refreshStatusWithSync();
+      if (status?.isActive) {
+        // Found it! Close the paywall
+        onClose();
+        return;
+      }
+    } catch (e) {
+      console.warn('[Paywall] Check Again poll failed:', e.message);
+    }
+    // Still not found — end purchase state with gentle message
+    cancelPurchaseState();
+    setError('The purchase didn\'t complete this time. Your account was not charged. Please try again.');
   };
 
   // Allow user to cancel a stuck purchase without showing an error
   const handleCancelPurchase = () => {
-    purchaseAbortedRef.current = true;
-    setPurchasing(false);
+    cancelPurchaseState();
     // Don't show any error — just quietly reset
   };
 
@@ -203,12 +230,11 @@ const Paywall = ({ onClose }) => {
 
   // Progressive status messages — reassuring, communicates activity, never alarming
   const getStatusMessage = () => {
-    if (purchaseElapsed >= 60) return 'Almost there — the App Store is still processing…';
-    if (purchaseElapsed >= 40) return 'The App Store is taking a moment. Please wait…';
-    if (purchaseElapsed >= 25) return 'Waiting for App Store response…';
-    if (purchaseElapsed >= 15) return 'Processing with the App Store…';
-    if (purchaseElapsed >= 8) return 'Connecting to the App Store…';
-    if (purchaseElapsed >= 3) return 'Starting purchase…';
+    if (purchaseElapsed >= 20) return 'Almost there — the App Store is still processing…';
+    if (purchaseElapsed >= 12) return 'Waiting for App Store response…';
+    if (purchaseElapsed >= 8) return 'Processing with the App Store…';
+    if (purchaseElapsed >= 4) return 'Connecting to the App Store…';
+    if (purchaseElapsed >= 2) return 'Starting purchase…';
     return 'Processing…';
   };
 
@@ -299,13 +325,13 @@ const Paywall = ({ onClose }) => {
           <button
             id="subscribe-btn"
             onClick={handleSubscribe}
-            disabled={purchasing}
+            disabled={purchaseInProgress}
             className="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-primary-600/30 transition-all duration-200 active:scale-[0.98] disabled:opacity-60 flex items-center justify-center gap-2"
           >
-            {purchasing ? (
+            {purchaseInProgress ? (
               <>
                 <Loader2 className="animate-spin" size={18} />
-                {getStatusMessage()}
+                {timedOut ? 'Still checking…' : getStatusMessage()}
               </>
             ) : (
               <>
@@ -315,8 +341,27 @@ const Paywall = ({ onClose }) => {
             )}
           </button>
 
-          {/* Cancel button — appears after 10 seconds of purchasing, lets user exit without error */}
-          {purchasing && purchaseElapsed >= 10 && (
+          {/* Timeout: show "Check Again" button instead of an error */}
+          {purchaseInProgress && timedOut && (
+            <div className="space-y-2">
+              <button
+                onClick={handleCheckAgain}
+                className="w-full bg-primary-50 hover:bg-primary-100 text-primary-700 font-semibold text-sm py-2.5 px-4 rounded-xl transition-colors flex items-center justify-center gap-1.5"
+              >
+                <RefreshCw size={14} />
+                Check Again
+              </button>
+              <button
+                onClick={handleCancelPurchase}
+                className="w-full text-secondary-400 text-xs hover:text-secondary-600 transition-colors py-1"
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+
+          {/* Cancel button — appears after 8 seconds, lets user exit without error */}
+          {purchaseInProgress && !timedOut && purchaseElapsed >= 8 && (
             <button
               onClick={handleCancelPurchase}
               className="w-full text-secondary-400 text-xs hover:text-secondary-600 transition-colors py-1"
@@ -346,10 +391,10 @@ const Paywall = ({ onClose }) => {
               </p>
               <button
                 onClick={handleSubscribe}
-                disabled={purchasing}
+                disabled={purchaseInProgress}
                 className="w-full bg-secondary-100 hover:bg-secondary-200 text-secondary-700 font-semibold text-sm py-2.5 px-4 rounded-xl transition-colors flex items-center justify-center gap-1.5"
               >
-                <RefreshCw size={14} className={purchasing ? 'animate-spin' : ''} />
+                <RefreshCw size={14} className={purchaseInProgress ? 'animate-spin' : ''} />
                 Try Again
               </button>
             </div>

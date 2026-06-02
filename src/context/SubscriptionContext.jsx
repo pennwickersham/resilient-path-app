@@ -21,6 +21,7 @@ export function SubscriptionProvider({ children }) {
   const [offerings, setOfferings] = useState(null);
   const [offeringsLoading, setOfferingsLoading] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
+  const [purchaseInProgress, setPurchaseInProgress] = useState(false);
 
   // Initialize RevenueCat and check status on mount
   useEffect(() => {
@@ -103,8 +104,10 @@ export function SubscriptionProvider({ children }) {
         setIsSubscribed(isActive);
         setIsTrialing(trial);
         if (isActive) {
-          // Auto-close paywall when subscription detected via listener
+          // Auto-close paywall and stop purchase state when subscription detected via listener
+          // This is the PRIMARY detection mechanism for the fire-and-forget architecture.
           setShowPaywall(false);
+          setPurchaseInProgress(false);
         }
       });
     }
@@ -127,25 +130,84 @@ export function SubscriptionProvider({ children }) {
     }
   }, []);
 
-  const subscribe = useCallback(async (pkg) => {
-    if (!pkg) return { success: false, error: 'No package provided' };
-    
-    const result = await purchasePackage(pkg);
-    if (result.success) {
-      setIsSubscribed(true);
-      setShowPaywall(false);
+  /**
+   * BUILD 53: FIRE-AND-FORGET purchase via offerings package.
+   * Launches the purchase and returns immediately with { initiated: true }.
+   * The actual subscription detection happens via:
+   *   1. CustomerInfo listener (above)
+   *   2. Polling in Paywall via refreshStatusWithSync
+   *   3. Best-effort: purchase promise resolving
+   *
+   * The purchase promise runs in the background. If it resolves with
+   * success, we update state as a tertiary signal. If it fails, we
+   * set an error callback so the Paywall can show guidance.
+   */
+  const beginPurchase = useCallback((pkg, onError) => {
+    if (!pkg) {
+      if (onError) onError('No package provided');
+      return;
     }
-    return result;
+
+    setPurchaseInProgress(true);
+    console.log('[SubscriptionContext] beginPurchase: firing purchase (non-blocking)');
+
+    // Fire and forget — DO NOT await
+    purchasePackage(pkg)
+      .then((result) => {
+        console.log('[SubscriptionContext] Purchase promise resolved:', result.success);
+        if (result.success) {
+          // Tertiary detection — listener/polling usually catch this first
+          setIsSubscribed(true);
+          setShowPaywall(false);
+          setPurchaseInProgress(false);
+        } else if (result.error === 'cancelled') {
+          console.log('[SubscriptionContext] User cancelled purchase');
+          setPurchaseInProgress(false);
+        } else if (result.error) {
+          console.warn('[SubscriptionContext] Purchase error:', result.error);
+          if (onError) onError(result.error);
+          // Don't reset purchaseInProgress here — let the Paywall handle it
+          // because the subscription might still complete via listener/polling
+        }
+      })
+      .catch((err) => {
+        console.error('[SubscriptionContext] Purchase promise rejected:', err);
+        // This is the "promise never resolves" escape hatch — it shouldn't
+        // happen often, but if it does, the Paywall timeout handles it.
+      });
   }, []);
 
-  // Fallback: purchase by product ID when offerings aren't available
-  const subscribeFallback = useCallback(async () => {
-    const result = await purchaseStoreProduct(PRODUCT_ID);
-    if (result.success) {
-      setIsSubscribed(true);
-      setShowPaywall(false);
-    }
-    return result;
+  /**
+   * BUILD 53: FIRE-AND-FORGET purchase by product ID (fallback).
+   * Same fire-and-forget pattern as beginPurchase.
+   */
+  const beginPurchaseFallback = useCallback((onError) => {
+    setPurchaseInProgress(true);
+    console.log('[SubscriptionContext] beginPurchaseFallback: firing purchase (non-blocking)');
+
+    purchaseStoreProduct(PRODUCT_ID)
+      .then((result) => {
+        console.log('[SubscriptionContext] Fallback purchase promise resolved:', result.success);
+        if (result.success) {
+          setIsSubscribed(true);
+          setShowPaywall(false);
+          setPurchaseInProgress(false);
+        } else if (result.error === 'cancelled') {
+          console.log('[SubscriptionContext] User cancelled purchase (fallback)');
+          setPurchaseInProgress(false);
+        } else if (result.error) {
+          console.warn('[SubscriptionContext] Fallback purchase error:', result.error);
+          if (onError) onError(result.error);
+        }
+      })
+      .catch((err) => {
+        console.error('[SubscriptionContext] Fallback purchase promise rejected:', err);
+      });
+  }, []);
+
+  // Cancel a purchase-in-progress (user wants to dismiss)
+  const cancelPurchaseState = useCallback(() => {
+    setPurchaseInProgress(false);
   }, []);
 
   const restore = useCallback(async () => {
@@ -163,15 +225,21 @@ export function SubscriptionProvider({ children }) {
     setIsTrialing(status.isTrialing);
   }, []);
 
-  // BUILD 51: Aggressive refresh that invalidates cache + syncs purchases
-  // before checking status. Used during purchase polling to catch purchases
-  // that completed on StoreKit but aren't reflected in cached customerInfo.
+  // BUILD 53: Aggressive refresh that invalidates cache before checking status.
+  // Used during purchase polling to catch purchases that completed on StoreKit
+  // but aren't reflected in cached customerInfo.
+  // NOTE: syncPurchases was removed from this path in Build 53.
   const refreshStatusWithSync = useCallback(async () => {
     const status = await invalidateAndCheckStatus();
     setIsSubscribed(status.isActive);
     setIsTrialing(status.isTrialing);
+    if (status.isActive && purchaseInProgress) {
+      // Purchase detected via polling — stop purchase state
+      console.log('[SubscriptionContext] Subscription detected via polling — ending purchase state');
+      setPurchaseInProgress(false);
+    }
     return status;
-  }, []);
+  }, [purchaseInProgress]);
 
   const value = {
     isSubscribed,
@@ -181,8 +249,10 @@ export function SubscriptionProvider({ children }) {
     offeringsLoading,
     showPaywall,
     setShowPaywall,
-    subscribe,
-    subscribeFallback,
+    purchaseInProgress,
+    beginPurchase,
+    beginPurchaseFallback,
+    cancelPurchaseState,
     restore,
     refreshOfferings,
     refreshStatus,
