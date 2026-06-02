@@ -3,6 +3,7 @@ import { Send, AlertCircle, Loader2, ShieldOff } from 'lucide-react';
 
 // Proxy URL — points to the Cloudflare Worker that holds the API key server-side.
 // The API key NEVER appears in client code.
+// Set VITE_PROXY_URL in .env (local) or Appflow Environment (cloud builds).
 const PROXY_URL = import.meta.env.VITE_PROXY_URL || '';
 
 const Chatbot = () => {
