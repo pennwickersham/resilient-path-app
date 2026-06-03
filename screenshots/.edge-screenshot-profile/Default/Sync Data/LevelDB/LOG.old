@@ -1,0 +1,6 @@
+2026/06/02-16:38:09.096 98a0 Reusing MANIFEST C:\Users\pennw\OneDrive\Documents\Google agent manager\resilient-path-app\screenshots\.edge-screenshot-profile\Default\Sync Data\LevelDB/MANIFEST-000001
+2026/06/02-16:38:09.100 98a0 Recovering log #4
+2026/06/02-16:38:09.102 98a0 Reusing old log C:\Users\pennw\OneDrive\Documents\Google agent manager\resilient-path-app\screenshots\.edge-screenshot-profile\Default\Sync Data\LevelDB/000004.log 
+2026/06/02-16:38:30.555 98a0 Level-0 table #8: started
+2026/06/02-16:38:30.560 98a0 Level-0 table #8: 118654 bytes OK
+2026/06/02-16:38:30.563 98a0 Delete type=0 #4

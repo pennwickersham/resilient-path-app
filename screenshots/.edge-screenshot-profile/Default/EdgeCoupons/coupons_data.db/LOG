@@ -1,0 +1,15 @@
+2026/06/02-16:40:51.485 6f8c Reusing MANIFEST C:\Users\pennw\OneDrive\Documents\Google agent manager\resilient-path-app\screenshots\.edge-screenshot-profile\Default\EdgeCoupons/coupons_data.db/MANIFEST-000001
+2026/06/02-16:40:51.491 6f8c Recovering log #16
+2026/06/02-16:40:51.492 6f8c Reusing old log C:\Users\pennw\OneDrive\Documents\Google agent manager\resilient-path-app\screenshots\.edge-screenshot-profile\Default\EdgeCoupons/coupons_data.db/000016.log 
+2026/06/02-16:40:52.842 9d4c Level-0 table #20: started
+2026/06/02-16:40:52.848 9d4c Level-0 table #20: 682828 bytes OK
+2026/06/02-16:40:52.855 9d4c Delete type=0 #16
+2026/06/02-16:40:52.857 9d4c Compacting 4@0 + 1@1 files
+2026/06/02-16:40:52.863 9d4c Generated table #21@0: 4 keys, 682735 bytes
+2026/06/02-16:40:52.864 9d4c Compacted 4@0 + 1@1 files => 682735 bytes
+2026/06/02-16:40:52.867 9d4c compacted to: files[ 0 1 1 0 0 0 0 ]
+2026/06/02-16:40:52.869 9d4c Delete type=2 #8
+2026/06/02-16:40:52.869 9d4c Delete type=2 #11
+2026/06/02-16:40:52.869 9d4c Delete type=2 #14
+2026/06/02-16:40:52.869 9d4c Delete type=2 #17
+2026/06/02-16:40:52.870 9d4c Delete type=2 #20

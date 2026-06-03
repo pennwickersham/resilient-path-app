@@ -27,12 +27,17 @@ export function SubscriptionProvider({ children }) {
   useEffect(() => {
     let didTimeout = false;
 
-    // Timeout guard: if init takes too long, fail-open
-    // Extended to 15s to accommodate slow sandbox environments
+    // BUILD 55: Timeout guard — FAIL-CLOSED instead of fail-open.
+    // Previous builds set isSubscribed=true on timeout, which made Apple
+    // reviewers appear "already subscribed" in the slow sandbox environment.
+    // Apple rejected because "no purchase flow appeared" — the reviewer
+    // was never shown the paywall.
+    // Now we fail-closed: if init is slow, the user sees the paywall and
+    // can attempt a purchase. Real subscribers are detected once SDK loads.
     const timeoutId = setTimeout(() => {
       didTimeout = true;
-      console.warn('[SubscriptionContext] Init timed out — granting access');
-      setIsSubscribed(true);
+      console.warn('[SubscriptionContext] Init timed out — failing closed (paywall visible)');
+      setIsSubscribed(false);
       setIsLoading(false);
     }, 15000);
 
@@ -51,8 +56,9 @@ export function SubscriptionProvider({ children }) {
         fetchOfferingsWithRetry(didTimeout);
       } catch (err) {
         console.error('[SubscriptionContext] Init error:', err);
-        // Fail-open: don't lock out users on error
-        if (!didTimeout) setIsSubscribed(true);
+        // BUILD 55: Fail-closed on error — show paywall so reviewer can test IAP.
+        // Real subscribers will be detected when SDK eventually initializes.
+        if (!didTimeout) setIsSubscribed(false);
       } finally {
         clearTimeout(timeoutId);
         if (!didTimeout) setIsLoading(false);

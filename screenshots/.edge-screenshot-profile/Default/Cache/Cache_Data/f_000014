@@ -1,0 +1,1993 @@
+export const workbookData = [
+	{
+		moduleId: 1,
+		title: "Module 1: Redefining Your Pain Experience",
+		summary: "Welcome to the first step in transforming your understanding of pain. This module introduces the modern, holistic definition of pain: it is a personal sensory and emotional experience influenced by biological, psychological, and social factors. Validating your experience is the foundation for your resilient path forward.",
+		patientNote: "Your pain is real, it is valid, and it is uniquely yours — understanding it is the first step to managing it.",
+		exerciseTitle: "My Biopsychosocial Pain Map",
+		sections: [
+			{
+				sectionTitle: "Section 1: The \"Bio\" (My Body)",
+				fields: [
+					{
+						id: "m1_s1_q1",
+						type: "textarea",
+						label: "What are the physical sensations you experience (e.g., burning, aching, throbbing, stabbing)?"
+					},
+					{
+						id: "m1_s1_q2",
+						type: "textarea",
+						label: "In which parts of your body do you feel these sensations?"
+					},
+					{
+						id: "m1_s1_q3",
+						type: "textarea",
+						label: "What physical factors seem to make your pain worse?"
+					},
+					{
+						id: "m1_s1_q4",
+						type: "textarea",
+						label: "What physical factors seem to make your pain better?"
+					},
+					{
+						id: "m1_s1_q5",
+						type: "textarea",
+						label: "What other physical symptoms often accompany your pain?"
+					}
+				]
+			},
+			{
+				sectionTitle: "Section 2: The \"Psycho\" (My Thoughts and Feelings)",
+				fields: [
+					{
+						id: "m1_s2_q1",
+						type: "textarea",
+						label: "What are the most common thoughts or beliefs you have about your pain?"
+					},
+					{
+						id: "m1_s2_q2",
+						type: "textarea",
+						label: "What emotions does your pain typically bring up for you?"
+					},
+					{
+						id: "m1_s2_q3",
+						type: "textarea",
+						label: "What are your biggest worries or fears related to your pain?"
+					},
+					{
+						id: "m1_s2_q4",
+						type: "textarea",
+						label: "What coping strategies do you currently use to manage the emotional side of pain?"
+					}
+				]
+			},
+			{
+				sectionTitle: "Section 3: The \"Social\" (My World)",
+				fields: [
+					{
+						id: "m1_s3_q1",
+						type: "textarea",
+						label: "How does your pain affect your relationships with close family?"
+					},
+					{
+						id: "m1_s3_q2",
+						type: "textarea",
+						label: "How does your pain affect your friendships and social life?"
+					},
+					{
+						id: "m1_s3_q3",
+						type: "textarea",
+						label: "How does your pain impact your work, school, or ability to volunteer?"
+					},
+					{
+						id: "m1_s3_q4",
+						type: "textarea",
+						label: "Who in your life seems to understand what you're going through? Who struggles to understand?"
+					},
+					{
+						id: "m1_s3_q5",
+						type: "textarea",
+						label: "What are some social or environmental factors that make your pain harder to manage?"
+					}
+				]
+			},
+			{
+				sectionTitle: "Reflection Prompt",
+				fields: [
+					{
+						id: "m1_s4_q1",
+						type: "textarea",
+						label: "Take a moment to look at your completed Pain Map. What connections can you see between the three sections?"
+					},
+					{
+						id: "m1_s4_q2",
+						type: "textarea",
+						label: "How do the \"ingredients\" from one section influence the others? For example, have you noticed how a specific worry (Psycho) might lead to increased muscle tension (Bio)? Or how feeling misunderstood by a loved one (Social) can make you feel more sad and frustrated (Psycho)?"
+					},
+					{
+						id: "m1_s4_q3",
+						type: "textarea",
+						label: "Write down one or two connections you've observed in your own life:"
+					}
+				]
+			}
+		]
+	},
+	{
+		moduleId: 2,
+		title: "Module 2: The Science of Your Hurt",
+		summary: "Understanding how you hurt helps move from fearing pain to managing it. This module explores how your nervous system can become over-reactive (central sensitization), turning up the 'volume' on signals even without new damage. Understanding 'hurt vs. harm' is a powerful shift in perspective.",
+		patientNote: "Learning that your nervous system can change gives you the power to help it heal.",
+		exerciseTitle: "Translating the Science to You",
+		sections: [
+			{
+				sectionTitle: "1. Allodynia Checklist",
+				fields: [
+					{
+						id: "m2_s1_q1",
+						type: "checkbox",
+						label: "The light touch of clothing or bedsheets on your skin."
+					},
+					{
+						id: "m2_s1_q2",
+						type: "checkbox",
+						label: "The sensation of water from a shower hitting your body."
+					},
+					{
+						id: "m2_s1_q3",
+						type: "checkbox",
+						label: "A gentle breeze or change in temperature on your skin."
+					},
+					{
+						id: "m2_s1_q4",
+						type: "checkbox",
+						label: "A gentle pat or hug from a loved one."
+					},
+					{
+						id: "m2_s1_q5_text",
+						type: "text",
+						label: "Other examples? Please describe:"
+					}
+				]
+			},
+			{
+				sectionTitle: "2. Hyperalgesia Checklist",
+				fields: [
+					{
+						id: "m2_s2_q1",
+						type: "checkbox",
+						label: "Do you find that minor bumps, scrapes, or pressure feel much more painful than expected?"
+					},
+					{
+						id: "m2_s2_q2",
+						type: "checkbox",
+						label: "When you get a paper cut or stub your toe, does the pain seem unusually intense or last exceptionally long?"
+					},
+					{
+						id: "m2_s2_q3_text",
+						type: "text",
+						label: "Other examples? Please describe:"
+					}
+				]
+			},
+			{
+				sectionTitle: "3. Spreading Pain Reflection",
+				fields: [{
+					id: "m2_s3_q1",
+					type: "textarea",
+					label: "Think back to when your pain first started. Was it confined to one specific area?"
+				}, {
+					id: "m2_s3_q2",
+					type: "textarea",
+					label: "Has your pain spread beyond that original area over time? If so, describe where the pain has spread."
+				}]
+			},
+			{
+				sectionTitle: "Reflection Prompt",
+				fields: [{
+					id: "m2_s4_q1",
+					type: "textarea",
+					label: "How does the idea that your nervous system can become 'overprotective' and 'stuck on high alert' change how you think about your pain? Does it make the distinction between 'hurt' (the sensation you feel) and 'harm' (actual tissue damage) any clearer?"
+				}]
+			}
+		]
+	},
+	{
+		moduleId: 3,
+		title: "Module 3: When Your Alarm System Goes Wrong",
+		summary: "Chronic pain can become a self-perpetuating vicious cycle, where initial pain leads to muscle guarding (splinting), which then creates more pain. This module helps you identify and interrupt these patterns, preventing your nervous system from remaining stuck on high alert.",
+		patientNote: "Recognizing these cycles is not about blame — it’s about finding the places where you can gently intervene.",
+		exerciseTitle: "Identifying Your Vicious Cycles",
+		sections: [{
+			sectionTitle: "Trace Your Pain Cycle",
+			fields: [
+				{
+					id: "m3_s1_q1",
+					type: "textarea",
+					label: "1. The Initial Pain: Describe the pain you first felt. Where was it? What did it feel like?"
+				},
+				{
+					id: "m3_s1_q2",
+					type: "textarea",
+					label: "2. The Body's Reaction (Muscle Guarding): How did your body react to that pain? Did you notice your muscles tensing up?"
+				},
+				{
+					id: "m3_s1_q3",
+					type: "textarea",
+					label: "3. The New Pain (From the Spasm): How did that muscle tension or spasm feel? Did it create its own separate pain?"
+				},
+				{
+					id: "m3_s1_q4",
+					type: "textarea",
+					label: "4. The Overall Effect: How did this new pain affect your original pain and emotional state?"
+				}
+			]
+		}, {
+			sectionTitle: "Reflection Prompts",
+			fields: [{
+				id: "m3_s2_q0",
+				type: "textarea",
+				label: "What triggers your vicious cycles, and how can you break them?"
+			}, {
+				id: "m3_s2_q1",
+				type: "textarea",
+				label: "What is one small, gentle step you could take to interrupt this cycle the next time you feel it starting? (e.g., using heat, deep breathing, distraction)"
+			}]
+		}]
+	},
+	{
+		moduleId: 4,
+		title: "Module 4: Naming Your Pain",
+		summary: "Pain isn't just one thing—it has different 'flavors' (nociceptive, neuropathic, and nociplastic). Understanding the specific type of pain you are experiencing is crucial for choosing the most effective treatments and communicating clearly with your healthcare team.",
+		patientNote: "Putting the right words to your pain helps your doctor truly understand what you’re living with.",
+		exerciseTitle: "Your Pain's Vocabulary",
+		sections: [{
+			sectionTitle: "Check all the words that describe the sensations you experience:",
+			fields: [
+				{
+					id: "m4_s1_q1",
+					type: "checkbox",
+					label: "Aching"
+				},
+				{
+					id: "m4_s1_q2",
+					type: "checkbox",
+					label: "Burning"
+				},
+				{
+					id: "m4_s1_q3",
+					type: "checkbox",
+					label: "Widespread"
+				},
+				{
+					id: "m4_s1_q4",
+					type: "checkbox",
+					label: "Throbbing"
+				},
+				{
+					id: "m4_s1_q5",
+					type: "checkbox",
+					label: "Shooting"
+				},
+				{
+					id: "m4_s1_q6",
+					type: "checkbox",
+					label: "Diffuse"
+				},
+				{
+					id: "m4_s1_q7",
+					type: "checkbox",
+					label: "Cramping"
+				},
+				{
+					id: "m4_s1_q8",
+					type: "checkbox",
+					label: "Stabbing"
+				},
+				{
+					id: "m4_s1_q9",
+					type: "checkbox",
+					label: "Deep aching"
+				},
+				{
+					id: "m4_s1_q10",
+					type: "checkbox",
+					label: "Sharp with movement"
+				},
+				{
+					id: "m4_s1_q11",
+					type: "checkbox",
+					label: "Electric shocks"
+				},
+				{
+					id: "m4_s1_q12",
+					type: "checkbox",
+					label: "Heightened sensitivity to touch/pressure/sound/light"
+				},
+				{
+					id: "m4_s1_q13",
+					type: "checkbox",
+					label: "Dull"
+				},
+				{
+					id: "m4_s1_q14",
+					type: "checkbox",
+					label: "Tingling / Pins and needles / Numbness"
+				},
+				{
+					id: "m4_s1_q15",
+					type: "checkbox",
+					label: "Accompanied by severe fatigue or brain fog"
+				},
+				{
+					id: "m4_s1_q16",
+					type: "checkbox",
+					label: "Tender"
+				},
+				{
+					id: "m4_s1_q17",
+					type: "checkbox",
+					label: "Nagging"
+				},
+				{
+					id: "m4_s1_q18",
+					type: "checkbox",
+					label: "Exhausting"
+				},
+				{
+					id: "m4_s1_q19",
+					type: "checkbox",
+					label: "Penetrating"
+				}
+			]
+		}, {
+			sectionTitle: "Reflection & Action Prompt",
+			fields: [
+				{
+					id: "m4_s2_q0",
+					type: "textarea",
+					label: "Does seeing the words categorized like this help you understand your own pain better? Do you see how you might have a \"mixed pain state\"?"
+				},
+				{
+					id: "m4_s2_q1",
+					type: "textarea",
+					label: "List the top 3 words you would use to communicate your pain to your doctor."
+				},
+				{
+					id: "m4_s2_q2",
+					type: "textarea",
+					label: "Take this completed worksheet with you to your next doctor's appointment. When your doctor asks you to describe your pain, use these specific words to provide important clues to guide your diagnosis and treatment plan."
+				}
+			]
+		}]
+	},
+	{
+		moduleId: 5,
+		title: "Module 5: The Physical Toll",
+		summary: "Chronic pain often carries a heavy physical burden beyond the pain itself, including profound fatigue and sleep disruption. This module helps you track the interconnected patterns of pain, sleep, and activity to find ways to break these exhausting physical cycles.",
+		patientNote: "Tracking your patterns day by day reveals insights that even the best doctor’s visit can miss.",
+		exerciseTitle: "The Weekly Symptom and Activity Tracker",
+		sections: [
+			{
+				sectionTitle: "Weekly Symptom Tracker (1-10)",
+				fields: [
+					{
+						id: "m5_trk_s1",
+						type: "text",
+						label: "Monday (Pain/Fatigue/Mood):"
+					},
+					{
+						id: "m5_trk_s2",
+						type: "text",
+						label: "Tuesday (Pain/Fatigue/Mood):"
+					},
+					{
+						id: "m5_trk_s3",
+						type: "text",
+						label: "Wednesday (Pain/Fatigue/Mood):"
+					},
+					{
+						id: "m5_trk_s4",
+						type: "text",
+						label: "Thursday (Pain/Fatigue/Mood):"
+					},
+					{
+						id: "m5_trk_s5",
+						type: "text",
+						label: "Friday (Pain/Fatigue/Mood):"
+					},
+					{
+						id: "m5_trk_s6",
+						type: "text",
+						label: "Saturday (Pain/Fatigue/Mood):"
+					},
+					{
+						id: "m5_trk_s7",
+						type: "text",
+						label: "Sunday (Pain/Fatigue/Mood):"
+					}
+				]
+			},
+			{
+				sectionTitle: "Weekly Activity Tracker",
+				fields: [
+					{
+						id: "m5_act_s1",
+						type: "text",
+						label: "Monday Activities:"
+					},
+					{
+						id: "m5_act_s2",
+						type: "text",
+						label: "Tuesday Activities:"
+					},
+					{
+						id: "m5_act_s3",
+						type: "text",
+						label: "Wednesday Activities:"
+					},
+					{
+						id: "m5_act_s4",
+						type: "text",
+						label: "Thursday Activities:"
+					},
+					{
+						id: "m5_act_s5",
+						type: "text",
+						label: "Friday Activities:"
+					},
+					{
+						id: "m5_act_s6",
+						type: "text",
+						label: "Saturday Activities:"
+					},
+					{
+						id: "m5_act_s7",
+						type: "text",
+						label: "Sunday Activities:"
+					}
+				]
+			},
+			{
+				sectionTitle: "Reflection Prompt",
+				fields: [
+					{
+						id: "m5_s1_q0",
+						type: "textarea",
+						label: "At the end of the week, take some time to review your completed tracker. Look for connections and patterns. What do you notice?"
+					},
+					{
+						id: "m5_s1_q1",
+						type: "textarea",
+						label: "After a night of poor sleep, what typically happens to your pain and fatigue levels the next day?"
+					},
+					{
+						id: "m5_s1_q2",
+						type: "textarea",
+						label: "On days when your pain is higher, how does that affect your mood and your activity levels?"
+					},
+					{
+						id: "m5_s1_q3",
+						type: "textarea",
+						label: "Are there any activities or foods that consistently seem to make you feel better or worse?"
+					},
+					{
+						id: "m5_s1_q4",
+						type: "textarea",
+						label: "Write down one key pattern you observed this week:"
+					}
+				]
+			}
+		]
+	},
+	{
+		moduleId: 6,
+		title: "Module 6: Navigating the Emotional Storm",
+		summary: "Emotions like fear, sadness, and frustration are normal responses to pain. This module uses CBT principles to show how your thoughts can trigger cycles of emotional and physical suffering, helping you build more helpful, balanced ways of thinking.",
+		patientNote: "Your emotions about pain are not weakness — they are information you can learn to work with.",
+		exerciseTitle: "The 'Thoughts-Feelings-Body-Actions' Cycle",
+		sections: [{
+			sectionTitle: "Trace Your Emotional Cycle",
+			fields: [
+				{
+					id: "m6_s1_q1",
+					type: "textarea",
+					label: "1. The situation: Briefly describe the situation or flare-up."
+				},
+				{
+					id: "m6_s1_q2",
+					type: "textarea",
+					label: "2. The automatic thought: What was the very first thought or belief that popped into your head about the pain?"
+				},
+				{
+					id: "m6_s1_q3",
+					type: "textarea",
+					label: "3. The resulting feeling(s) and body sensations: What emotion(s) did that thought create? What happened in your body?"
+				},
+				{
+					id: "m6_s1_q4",
+					type: "textarea",
+					label: "4. The subsequent action: What did you do as a result of these thoughts and feelings?"
+				}
+			]
+		}, {
+			sectionTitle: "Reflection Prompt",
+			fields: [
+				{
+					id: "m6_s2_q0",
+					type: "textarea",
+					label: "Look at the cycle you just described. It can feel like a powerful, unstoppable chain reaction. But you have the power to intervene at any link in the chain. How could you intervene in this cycle next time?"
+				},
+				{
+					id: "m6_s2_q1",
+					type: "textarea",
+					label: "What is a more helpful, balanced thought you could practice? (e.g., \"My back is stiff this morning, which is frustrating. I will do my gentle stretches and then tackle my most important task first. I can manage this.\")"
+				},
+				{
+					id: "m6_s2_q2",
+					type: "textarea",
+					label: "What is one small action you could take that would align more with your values, even with the pain? (e.g., \"Instead of going back to bed, I will make a cup of tea and sit in a comfortable chair for 10 minutes.\")"
+				},
+				{
+					id: "m6_s2_q3",
+					type: "textarea",
+					label: "Write down one specific intervention you could try:"
+				}
+			]
+		}]
+	},
+	{
+		moduleId: 7,
+		title: "Module 7: Clearing the 'Pain Fog'",
+		summary: "'Pain fog' is a real physiological consequence of your brain's limited resources being consumed by pain. This module identifies your specific cognitive challenges and helps you build a practical toolkit of strategies to manage them effectively.",
+		patientNote: "Brain fog doesn’t mean you’re losing your mind — it means your brain is working overtime to protect you.",
+		exerciseTitle: "My Cognitive Tool Kit",
+		sections: [{
+			sectionTitle: "Pain Fog Tracker",
+			fields: [
+				{
+					id: "m7_fog_1",
+					type: "text",
+					label: "Monday (Brain Fog level / Cognitive challenges):"
+				},
+				{
+					id: "m7_fog_2",
+					type: "text",
+					label: "Tuesday (Brain Fog level / Cognitive challenges):"
+				},
+				{
+					id: "m7_fog_3",
+					type: "text",
+					label: "Wednesday (Brain Fog level / Cognitive challenges):"
+				},
+				{
+					id: "m7_fog_4",
+					type: "text",
+					label: "Thursday (Brain Fog level / Cognitive challenges):"
+				},
+				{
+					id: "m7_fog_5",
+					type: "text",
+					label: "Friday (Brain Fog level / Cognitive challenges):"
+				},
+				{
+					id: "m7_fog_6",
+					type: "text",
+					label: "Saturday (Brain Fog level / Cognitive challenges):"
+				},
+				{
+					id: "m7_fog_7",
+					type: "text",
+					label: "Sunday (Brain Fog level / Cognitive challenges):"
+				}
+			]
+		}, {
+			sectionTitle: "Brainstorm Strategies",
+			fields: [
+				{
+					id: "m7_s1_q1",
+					type: "textarea",
+					label: "My Biggest Challenge #1:"
+				},
+				{
+					id: "m7_s1_q2",
+					type: "textarea",
+					label: "My strategy to try for Challenge #1 (e.g., use a calendar, single-tasking):"
+				},
+				{
+					id: "m7_s1_q3",
+					type: "textarea",
+					label: "My Biggest Challenge #2:"
+				},
+				{
+					id: "m7_s1_q4",
+					type: "textarea",
+					label: "My strategy to try for Challenge #2 (e.g., turn off TV to focus, take mental breaks):"
+				}
+			]
+		}]
+	},
+	{
+		moduleId: 8,
+		title: "Module 8: Pain in Your World",
+		summary: "Chronic pain ripples through your relationships, work, and identity. Acknowledging what has changed is the first step toward forging a new, meaningful identity that incorporates the reality of pain and expresses your core values in adapted ways.",
+		patientNote: "Who you are at your core hasn’t changed — only the way you express it needs to adapt.",
+		exerciseTitle: "Relationship and Role Mapping",
+		sections: [
+			{
+				sectionTitle: "Roles & Core Values",
+				fields: [
+					{
+						id: "m8_s1_q1",
+						type: "textarea",
+						label: "List 3-5 roles that were central to your identity before chronic pain (e.g., marathon runner, project manager)."
+					},
+					{
+						id: "m8_s1_q2",
+						type: "textarea",
+						label: "How have these roles changed? What has been lost or modified?"
+					},
+					{
+						id: "m8_s1_q3",
+						type: "text",
+						label: "Identify a Core Value from a lost role:"
+					},
+					{
+						id: "m8_s1_q4",
+						type: "textarea",
+						label: "A new, adapted way to express this Core Value with your current abilities:"
+					}
+				]
+			},
+			{
+				sectionTitle: "Key Relationships",
+				fields: [{
+					id: "m8_s2_q1",
+					type: "textarea",
+					label: "Describe the dynamics of 1-2 key relationships before chronic pain."
+				}, {
+					id: "m8_s2_q2",
+					type: "textarea",
+					label: "Describe how chronic pain has affected these dynamics. How have these key relationships and interactions been impacted?"
+				}]
+			},
+			{
+				sectionTitle: "Reflection Prompt",
+				fields: [
+					{
+						id: "m8_s3_q0",
+						type: "textarea",
+						label: "It is completely normal for the exercise above to bring up feelings of sadness or grief. Take a moment to acknowledge whatever emotions are present without judgment. This is a valid and important part of your experience."
+					},
+					{
+						id: "m8_s3_q1",
+						type: "textarea",
+						label: "Choose one of your core values or a quality from a role you listed (e.g., \"being a caring parent,\" \"being a creative person,\" \"being a supportive friend\"). This value hasn't disappeared, even if the way you express it has to change. How can you express that core value in a new, adapted way that works with your current abilities?"
+					},
+					{
+						id: "m8_s3_q2",
+						type: "textarea",
+						label: "Example: \"My role as an 'avid hiker' has changed. But the underlying value was 'connecting with nature.' A new, adapted way to express this is to create a small container garden on my patio or to find an accessible park bench where I can sit and enjoy the outdoors for 15 minutes.\""
+					}
+				]
+			}
+		]
+	},
+	{
+		moduleId: 9,
+		title: "Module 9: Building Your Healthcare Alliance",
+		summary: "You are the captain of your professional care team. This module provides tools to organize your medical information and make every appointment more productive through clear preparation and assertive, prepared communication. Being seen, heard, and validated by your healthcare team is fundamental to effective care.",
+		patientNote: "Walking into your next appointment prepared transforms you from a passive patient into an active partner.",
+		exerciseTitle: "Appointment Preparation Kit",
+		sections: [{
+			sectionTitle: "Before Your Next Visit",
+			fields: [
+				{
+					id: "m9_s1_q1",
+					type: "textarea",
+					label: "My top 3 goals for this visit (what are the most important things to accomplish):"
+				},
+				{
+					id: "m9_s1_q2",
+					type: "textarea",
+					label: "Symptom update: Average pain level, better/worse/same, words that describe it, what makes it better/worse."
+				},
+				{
+					id: "m9_s1_q3",
+					type: "textarea",
+					label: "Function update: Sleep, energy, mood, ability to do daily activities."
+				},
+				{
+					id: "m9_s1_q4",
+					type: "textarea",
+					label: "Medication update: Are current medications helping? Any side effects?"
+				},
+				{
+					id: "m9_s1_q5",
+					type: "textarea",
+					label: "My specific questions for the doctor:"
+				}
+			]
+		}, {
+			sectionTitle: "6. My Notes from the Visit & Our Plan",
+			fields: [
+				{
+					id: "m9_s2_q1",
+					type: "textarea",
+					label: "New Prescriptions/Changes:"
+				},
+				{
+					id: "m9_s2_q2",
+					type: "textarea",
+					label: "Tests Ordered:"
+				},
+				{
+					id: "m9_s2_q3",
+					type: "textarea",
+					label: "Referrals Made:"
+				},
+				{
+					id: "m9_s2_q4",
+					type: "textarea",
+					label: "Next Steps for Me:"
+				},
+				{
+					id: "m9_s2_q5",
+					type: "text",
+					label: "Follow-up Appointment:"
+				}
+			]
+		}]
+	},
+	{
+		moduleId: 10,
+		title: "Module 10: Your Medication Tool Kit",
+		summary: "Medications are just one tool in your management plan. This module helps you track your prescriptions and supplements accurately, focusing on finding the right balance of benefit and functional improvement while identifying potential side effects.",
+		patientNote: "Medications work best when you understand exactly what each one is doing for you.",
+		exerciseTitle: "Medication Reflection",
+		sections: [
+			{
+				sectionTitle: "Medication Log",
+				fields: [
+					{
+						id: "m10_log_1",
+						type: "text",
+						label: "Medication 1: Name, Dose, and Time"
+					},
+					{
+						id: "m10_log_2",
+						type: "text",
+						label: "Medication 1: Effectiveness/Notes"
+					},
+					{
+						id: "m10_log_3",
+						type: "text",
+						label: "Medication 2: Name, Dose, and Time"
+					},
+					{
+						id: "m10_log_4",
+						type: "text",
+						label: "Medication 2: Effectiveness/Notes"
+					},
+					{
+						id: "m10_log_5",
+						type: "text",
+						label: "Medication 3: Name, Dose, and Time"
+					},
+					{
+						id: "m10_log_6",
+						type: "text",
+						label: "Medication 3: Effectiveness/Notes"
+					},
+					{
+						id: "m10_log_7",
+						type: "text",
+						label: "Medication 4: Name, Dose, and Time"
+					},
+					{
+						id: "m10_log_8",
+						type: "text",
+						label: "Medication 4: Effectiveness/Notes"
+					},
+					{
+						id: "m10_log_9",
+						type: "text",
+						label: "Medication 5: Name, Dose, and Time"
+					},
+					{
+						id: "m10_log_10",
+						type: "text",
+						label: "Medication 5: Effectiveness/Notes"
+					},
+					{
+						id: "m10_log_11",
+						type: "text",
+						label: "Medication 6: Name, Dose, and Time"
+					},
+					{
+						id: "m10_log_12",
+						type: "text",
+						label: "Medication 6: Effectiveness/Notes"
+					},
+					{
+						id: "m10_log_13",
+						type: "text",
+						label: "Medication 7: Name, Dose, and Time"
+					},
+					{
+						id: "m10_log_14",
+						type: "text",
+						label: "Medication 7: Effectiveness/Notes"
+					},
+					{
+						id: "m10_log_15",
+						type: "text",
+						label: "Medication 8: Name, Dose, and Time"
+					},
+					{
+						id: "m10_log_16",
+						type: "text",
+						label: "Medication 8: Effectiveness/Notes"
+					},
+					{
+						id: "m10_log_17",
+						type: "text",
+						label: "Medication 9: Name, Dose, and Time"
+					},
+					{
+						id: "m10_log_18",
+						type: "text",
+						label: "Medication 9: Effectiveness/Notes"
+					},
+					{
+						id: "m10_log_19",
+						type: "text",
+						label: "Medication 10: Name, Dose, and Time"
+					},
+					{
+						id: "m10_log_20",
+						type: "text",
+						label: "Medication 10: Effectiveness/Notes"
+					}
+				]
+			},
+			{
+				sectionTitle: "Response to Medications",
+				fields: [
+					{
+						id: "m10_resp_q1",
+						type: "textarea",
+						label: "Which medications seem to be helping the most? How can you tell?"
+					},
+					{
+						id: "m10_resp_q2",
+						type: "textarea",
+						label: "Which medications seem to be less effective or not working? What have you noticed?"
+					},
+					{
+						id: "m10_resp_q3",
+						type: "textarea",
+						label: "Have you noticed any patterns in how you respond to your medications (e.g., time of day, taken with food, interactions)?"
+					}
+				]
+			},
+			{
+				sectionTitle: "Assessing Your Regimen",
+				fields: [
+					{
+						id: "m10_s1_q1",
+						type: "textarea",
+						label: "Are there any side effects you've experienced that you haven't discussed with your doctor yet?"
+					},
+					{
+						id: "m10_s1_q2",
+						type: "textarea",
+						label: "Are your medications helping you meet functional goals (sleeping better, walking, hobbies)?"
+					},
+					{
+						id: "m10_s1_q3",
+						type: "textarea",
+						label: "Any questions about medications to add to your Appointment Prep Kit?"
+					}
+				]
+			}
+		]
+	},
+	{
+		moduleId: 11,
+		title: "Module 11: Exploring Interventional Options",
+		summary: "When medications and other therapies aren’t providing enough relief, interventional procedures like injections or implanted devices can target the source of pain more directly. This module helps you approach these options with realistic expectations and guides your conversation with your doctor to ensure you have all the information needed for shared decision-making.",
+		patientNote: "When other treatments aren’t enough, knowing the right questions to ask empowers you to make the best decision for your body.",
+		exerciseTitle: "Shared Decision-Making",
+		sections: [
+			{
+				sectionTitle: "Evaluating a Procedure",
+				fields: [
+					{
+						id: "m11_s1_q1",
+						type: "textarea",
+						label: "1. The goal: What is the specific goal of this procedure for me?"
+					},
+					{
+						id: "m11_s1_q2",
+						type: "textarea",
+						label: "2. Potential benefits: What are the potential positive outcomes?"
+					},
+					{
+						id: "m11_s1_q3",
+						type: "textarea",
+						label: "3. Risks and alternatives: What are the common/rare risks and alternative options?"
+					},
+					{
+						id: "m11_s1_q4",
+						type: "textarea",
+						label: "4. Likelihood of success and duration of relief:"
+					}
+				]
+			},
+			{
+				sectionTitle: "The Procedure Process and Recovery",
+				fields: [
+					{
+						id: "m11_s2_q0",
+						type: "text",
+						label: "Use this section to document the specific procedure being discussed and to plan for your recovery. Bring these notes to your pre-procedure appointment."
+					},
+					{
+						id: "m11_s2_q1",
+						type: "textarea",
+						label: "What is the exact procedure being considered or performed? Describe it in your own words after discussing with your doctor."
+					},
+					{
+						id: "m11_s2_q2",
+						type: "textarea",
+						label: "What are the post-procedure recovery steps or limitations you need to plan for?"
+					},
+					{
+						id: "m11_s2_q3",
+						type: "textarea",
+						label: "What questions do you still have for your doctor about the procedure and recovery?"
+					}
+				]
+			},
+			{
+				sectionTitle: "Final Thoughts",
+				fields: [{
+					id: "m11_s3_q1",
+					type: "textarea",
+					label: "Considering benefits against risks, what is your initial feeling? What are your biggest hopes and fears?"
+				}, {
+					id: "m11_s3_q2",
+					type: "textarea",
+					label: "What other questions do you need answered before making a final decision?"
+				}]
+			}
+		]
+	},
+	{
+		moduleId: 12,
+		title: "Module 12: Movement as Your Medicine",
+		summary: "Appropriate movement is a potent medicine for chronic pain. Understanding the difference between 'hurt' and 'harm' helps you use pacing and graded activity to gradually teach your body and brain that movement is safe and beneficial for long-term health.",
+		patientNote: "Every small, safe movement you make is a message to your brain that your body can be trusted.",
+		exerciseTitle: "Overcoming Fear of Movement",
+		sections: [
+			{
+				sectionTitle: "Weekly Activity Log",
+				fields: [
+					{
+						id: "m12_act_1",
+						type: "text",
+						label: "Monday Activity Log:"
+					},
+					{
+						id: "m12_act_2",
+						type: "text",
+						label: "Tuesday Activity Log:"
+					},
+					{
+						id: "m12_act_3",
+						type: "text",
+						label: "Wednesday Activity Log:"
+					},
+					{
+						id: "m12_act_4",
+						type: "text",
+						label: "Thursday Activity Log:"
+					},
+					{
+						id: "m12_act_5",
+						type: "text",
+						label: "Friday Activity Log:"
+					},
+					{
+						id: "m12_act_6",
+						type: "text",
+						label: "Saturday Activity Log:"
+					},
+					{
+						id: "m12_act_7",
+						type: "text",
+						label: "Sunday Activity Log:"
+					}
+				]
+			},
+			{
+				sectionTitle: "Graded Activity Reflection",
+				fields: [{
+					id: "m12_s1_q1",
+					type: "text",
+					label: "My chosen gentle activity (e.g., walking, stretching):"
+				}, {
+					id: "m12_s1_q2",
+					type: "text",
+					label: "My baseline (time/reps I can do without causing a flare):"
+				}]
+			},
+			{
+				sectionTitle: "Confronting Kinesiophobia (Fear of Movement)",
+				fields: [
+					{
+						id: "m12_s2_q1",
+						type: "textarea",
+						label: "What movement or activity do you avoid out of fear?"
+					},
+					{
+						id: "m12_s2_q2",
+						type: "textarea",
+						label: "What is your \"worst-case scenario\" thought when considering it?"
+					},
+					{
+						id: "m12_s2_q3",
+						type: "textarea",
+						label: "What is a more realistic/balanced \"hurt vs. harm\" thought you can replace it with?"
+					},
+					{
+						id: "m12_s2_q4",
+						type: "textarea",
+						label: "What is one incredibly small, safe version of this movement you could try as a first step?"
+					}
+				]
+			},
+			{
+				sectionTitle: "End of Week Reflection Log",
+				fields: [{
+					id: "m12_s3_q1",
+					type: "textarea",
+					label: "Looking back at this week, what did you successfully accomplish and how did your body respond?"
+				}, {
+					id: "m12_s3_q2",
+					type: "textarea",
+					label: "Based on how your body responded this week, are you ready to slightly increase your baseline for next week? If so, what would that look like? If not, what adjustments might help?"
+				}]
+			}
+		]
+	},
+	{
+		moduleId: 13,
+		title: "Module 13: Fueling Your Body for Resilience",
+		summary: "Your nutrition can either fuel the flames of inflammation or help to tame them. This module explores the gut-brain axis and helps you build an anti-inflammatory diet that supports your overall well-being and long-term health.",
+		patientNote: "What you eat can either calm or fuel the fire of inflammation — and small changes add up.",
+		exerciseTitle: "Food and Symptom Diary",
+		sections: [
+			{
+				sectionTitle: "Detailed Food and Symptom Diary",
+				fields: [
+					{
+						id: "m13_log_1",
+						type: "text",
+						label: "Day 1: Breakfast, Lunch, Dinner"
+					},
+					{
+						id: "m13_log_2",
+						type: "text",
+						label: "Day 1: Snacks & Corresponding Symptoms"
+					},
+					{
+						id: "m13_log_3",
+						type: "text",
+						label: "Day 2: Breakfast, Lunch, Dinner"
+					},
+					{
+						id: "m13_log_4",
+						type: "text",
+						label: "Day 2: Snacks & Corresponding Symptoms"
+					},
+					{
+						id: "m13_log_5",
+						type: "text",
+						label: "Day 3: Breakfast, Lunch, Dinner"
+					},
+					{
+						id: "m13_log_6",
+						type: "text",
+						label: "Day 3: Snacks & Corresponding Symptoms"
+					},
+					{
+						id: "m13_log_7",
+						type: "text",
+						label: "Day 4: Breakfast, Lunch, Dinner"
+					},
+					{
+						id: "m13_log_8",
+						type: "text",
+						label: "Day 4: Snacks & Corresponding Symptoms"
+					},
+					{
+						id: "m13_log_9",
+						type: "text",
+						label: "Day 5: Breakfast, Lunch, Dinner"
+					},
+					{
+						id: "m13_log_10",
+						type: "text",
+						label: "Day 5: Snacks & Corresponding Symptoms"
+					},
+					{
+						id: "m13_log_11",
+						type: "text",
+						label: "Day 6: Breakfast, Lunch, Dinner"
+					},
+					{
+						id: "m13_log_12",
+						type: "text",
+						label: "Day 6: Snacks & Corresponding Symptoms"
+					},
+					{
+						id: "m13_log_13",
+						type: "text",
+						label: "Day 7: Breakfast, Lunch, Dinner"
+					},
+					{
+						id: "m13_log_14",
+						type: "text",
+						label: "Day 7: Snacks & Corresponding Symptoms"
+					}
+				]
+			},
+			{
+				sectionTitle: "Building an Anti-Inflammatory Plate",
+				fields: [
+					{
+						id: "m13_plate_desc",
+						type: "text",
+						label: "Aim for this balance at each meal: 1/2 plate colorful vegetables and fruits, 1/4 plate lean protein (fish, chicken, beans, tofu), 1/4 plate whole grains or healthy starches. Add a serving of healthy fats (olive oil, avocado, nuts)."
+					},
+					{
+						id: "m13_plate_q1",
+						type: "textarea",
+						label: "Look at your food diary above. How close are your meals to this anti-inflammatory plate model? What is one meal you could adjust this week?"
+					},
+					{
+						id: "m13_plate_q2",
+						type: "textarea",
+						label: "Which anti-inflammatory foods do you already enjoy? Which new ones are you willing to try?"
+					}
+				]
+			},
+			{
+				sectionTitle: "Weekly Observations",
+				fields: [{
+					id: "m13_s1_q1",
+					type: "textarea",
+					label: "Do you feel more pain/fatigue the day after eating sugar or processed foods?"
+				}, {
+					id: "m13_s1_q2",
+					type: "textarea",
+					label: "Which anti-inflammatory foods (vegetables, lean protein, healthy fats) will you add to your plate?"
+				}]
+			}
+		]
+	},
+	{
+		moduleId: 14,
+		title: "Module 14: Harnessing Your Mind's Power",
+		summary: "Your mind is a powerful ally in managing pain. This module introduces evidence-based psychological tools like Cognitive Behavioral Therapy (CBT) and Acceptance and Commitment Therapy (ACT) to help you build a life guided by your core values.",
+		patientNote: "Your thoughts are powerful, and learning to notice and gently redirect them is a skill that gets easier with practice.",
+		exerciseTitle: "Psychological Approaches",
+		sections: [
+			{
+				sectionTitle: "Why a CBT Record?",
+				fields: [{
+					id: "m14_s0_q1",
+					type: "text",
+					label: "A Cognitive Behavioral Therapy (CBT) Thought Record is a simple but powerful tool. When pain triggers a negative thought (like \"I can't do anything anymore\"), that thought creates real emotions (sadness, frustration) that can actually make your pain feel worse. This exercise helps you catch those automatic thoughts, pause, and practice replacing them with more balanced, realistic ones. Over time, this rewires the thought patterns that fuel your suffering. Fill out the record below the next time you notice a strong negative thought related to your pain."
+				}]
+			},
+			{
+				sectionTitle: "CBT Thought Record",
+				fields: [
+					{
+						id: "m14_s1_q1",
+						type: "textarea",
+						label: "The Situation: What was happening when the negative thought appeared? Where were you? What were you doing?"
+					},
+					{
+						id: "m14_s1_q2",
+						type: "textarea",
+						label: "The Automatic Thought: What was the first negative thought that popped into your mind? Write it down exactly as it occurred to you."
+					},
+					{
+						id: "m14_s1_q3",
+						type: "textarea",
+						label: "The Emotion(s): What feeling(s) did that thought create? (e.g., sadness, anger, fear, hopelessness) Rate the intensity 0-10."
+					},
+					{
+						id: "m14_s1_q4",
+						type: "textarea",
+						label: "A More Balanced Thought: Step back and ask — is this thought 100% true? What would I say to a friend in this situation? Write a more realistic, compassionate way to see it."
+					}
+				]
+			},
+			{
+				sectionTitle: "What is ACT?",
+				fields: [{
+					id: "m14_act_desc",
+					type: "text",
+					label: "Acceptance and Commitment Therapy (ACT) takes a different approach from CBT. Instead of trying to change painful thoughts, ACT teaches you to accept them without judgment and redirect your energy toward actions that align with your deepest values. The goal is not to eliminate pain, but to build a rich and meaningful life alongside it."
+				}]
+			},
+			{
+				sectionTitle: "ACT Values Chart",
+				fields: [
+					{
+						id: "m14_s3_q1a",
+						type: "text",
+						label: "Domain: Family/Relationships — Importance (1-10):"
+					},
+					{
+						id: "m14_s3_q1b",
+						type: "text",
+						label: "Domain: Family/Relationships — Satisfaction (1-10):"
+					},
+					{
+						id: "m14_s3_q2a",
+						type: "text",
+						label: "Domain: Career/Education — Importance (1-10):"
+					},
+					{
+						id: "m14_s3_q2b",
+						type: "text",
+						label: "Domain: Career/Education — Satisfaction (1-10):"
+					},
+					{
+						id: "m14_s3_q3a",
+						type: "text",
+						label: "Domain: Personal Growth/Health — Importance (1-10):"
+					},
+					{
+						id: "m14_s3_q3b",
+						type: "text",
+						label: "Domain: Personal Growth/Health — Satisfaction (1-10):"
+					},
+					{
+						id: "m14_s3_q4a",
+						type: "text",
+						label: "Domain: Social Life/Friends — Importance (1-10):"
+					},
+					{
+						id: "m14_s3_q4b",
+						type: "text",
+						label: "Domain: Social Life/Friends — Satisfaction (1-10):"
+					},
+					{
+						id: "m14_s3_q5a",
+						type: "text",
+						label: "Domain: Recreation/Leisure — Importance (1-10):"
+					},
+					{
+						id: "m14_s3_q5b",
+						type: "text",
+						label: "Domain: Recreation/Leisure — Satisfaction (1-10):"
+					}
+				]
+			},
+			{
+				sectionTitle: "ACT Values Compass",
+				fields: [{
+					id: "m14_s2_q1",
+					type: "text",
+					label: "Looking at your chart above, pick one life domain where importance is high but satisfaction is low:"
+				}, {
+					id: "m14_s2_q2",
+					type: "textarea",
+					label: "What is one small, committed action you could take this week to move closer to that value?"
+				}]
+			},
+			{
+				sectionTitle: "Guided Mindfulness Reflection",
+				fields: [{
+					id: "m14_s4_desc",
+					type: "text",
+					label: "Mindfulness is the practice of paying attention to the present moment without judgment. For chronic pain, mindfulness helps you observe pain sensations without adding layers of fear or catastrophizing on top of them. Even 5 minutes of focused breathing can begin to calm your nervous system. Try this: sit comfortably, close your eyes, and breathe slowly for 5 minutes. Notice each breath. When your mind wanders, gently bring it back to the breath."
+				}, {
+					id: "m14_s4_q1",
+					type: "textarea",
+					label: "After completing the mindfulness exercise, what did you notice about your breathing, your body tension, and your thoughts?"
+				}]
+			}
+		]
+	},
+	{
+		moduleId: 15,
+		title: "Module 15: Reclaiming Your Nights",
+		summary: "Sleep is a biological superpower for healing and pain management. This module focuses on improving your sleep hygiene—the essential habits and environmental factors that can break the cycle of sleep disruption and increased pain.",
+		patientNote: "A good night’s sleep isn’t a luxury — it’s one of the most healing things you can do for your pain.",
+		exerciseTitle: "Sleep Hygiene Checklist",
+		sections: [{
+			sectionTitle: "Habits to Improve",
+			fields: [
+				{
+					id: "m15_s1_q1",
+					type: "checkbox",
+					label: "I go to bed and wake up at roughly the same time every day, even on weekends."
+				},
+				{
+					id: "m15_s1_q2",
+					type: "checkbox",
+					label: "My bedroom is dark, quiet, and cool."
+				},
+				{
+					id: "m15_s1_q2b",
+					type: "checkbox",
+					label: "I use my bed only for sleep and intimacy (not for work, watching TV, etc.)."
+				},
+				{
+					id: "m15_s1_q2c",
+					type: "checkbox",
+					label: "I have a relaxing wind-down routine for the hour before bed."
+				},
+				{
+					id: "m15_s1_q3",
+					type: "checkbox",
+					label: "I avoid bright screens (phone, TV, computer) for at least an hour before bed."
+				},
+				{
+					id: "m15_s1_q4",
+					type: "checkbox",
+					label: "I avoid caffeine for at least 6-8 hours before bedtime."
+				},
+				{
+					id: "m15_s1_q4a",
+					type: "checkbox",
+					label: "I avoid heavy meals within 2-3 hours of bedtime."
+				},
+				{
+					id: "m15_s1_q4b",
+					type: "checkbox",
+					label: "I limit or avoid alcohol, especially in the evening."
+				},
+				{
+					id: "m15_s1_q5a",
+					type: "checkbox",
+					label: "I get some form of gentle physical activity most days."
+				},
+				{
+					id: "m15_s1_q5b",
+					type: "checkbox",
+					label: "I get exposure to natural light in the morning."
+				},
+				{
+					id: "m15_s1_q5c",
+					type: "checkbox",
+					label: "If I nap, I keep it short (under 30 mins) and early in the day."
+				},
+				{
+					id: "m15_s1_q5d",
+					type: "checkbox",
+					label: "If I can't fall asleep after 20-30 minutes, I get out of bed and do something relaxing until I feel sleepy."
+				},
+				{
+					id: "m15_s1_q6",
+					type: "textarea",
+					label: "Look at the boxes you did not check. Pick one or two habits to work on this week:"
+				}
+			]
+		}, {
+			sectionTitle: "Sleep Diary",
+			fields: [
+				{
+					id: "m15_diary_1",
+					type: "text",
+					label: "Day 1: Time to bed, time to sleep, awakenings, wake time, waking feel (0-10), notes"
+				},
+				{
+					id: "m15_diary_2",
+					type: "text",
+					label: "Day 2: Time to bed, time to sleep, awakenings, wake time, waking feel (0-10), notes"
+				},
+				{
+					id: "m15_diary_3",
+					type: "text",
+					label: "Day 3: Time to bed, time to sleep, awakenings, wake time, waking feel (0-10), notes"
+				},
+				{
+					id: "m15_diary_4",
+					type: "text",
+					label: "Day 4: Time to bed, time to sleep, awakenings, wake time, waking feel (0-10), notes"
+				},
+				{
+					id: "m15_diary_5",
+					type: "text",
+					label: "Day 5: Time to bed, time to sleep, awakenings, wake time, waking feel (0-10), notes"
+				},
+				{
+					id: "m15_diary_6",
+					type: "text",
+					label: "Day 6: Time to bed, time to sleep, awakenings, wake time, waking feel (0-10), notes"
+				},
+				{
+					id: "m15_diary_7",
+					type: "text",
+					label: "Day 7: Time to bed, time to sleep, awakenings, wake time, waking feel (0-10), notes"
+				}
+			]
+		}]
+	},
+	{
+		moduleId: 16,
+		title: "Module 16: Beyond the Clinic: Complementary Therapies",
+		summary: "Complementary and integrative therapies, such as acupuncture, chiropractic care, massage, or yoga, can be valuable additions to your health plan. This module helps you be an informed consumer by providing a structured way to research and evaluate these options safely and effectively.",
+		patientNote: "Being an informed consumer of complementary therapies protects both your health and your wallet.",
+		exerciseTitle: "My Complementary Therapy Evaluation",
+		sections: [{
+			sectionTitle: "Therapy Evaluation",
+			fields: [
+				{
+					id: "m16_s1_q1",
+					type: "text",
+					label: "Therapy I am considering (e.g., Acupuncture, Chiropractic, Yoga, Massage, Tai Chi):"
+				},
+				{
+					id: "m16_s1_q2",
+					type: "textarea",
+					label: "1. The evidence: What does scientific research say about this therapy for my condition?"
+				},
+				{
+					id: "m16_s1_q3",
+					type: "textarea",
+					label: "2. The logistics & risks: What is the cost, and what are the potential side effects?"
+				},
+				{
+					id: "m16_s1_q4",
+					type: "textarea",
+					label: "3. Communication: Have I discussed this with my primary doctor? What is their feedback?"
+				},
+				{
+					id: "m16_s1_q5",
+					type: "textarea",
+					label: "My decision and rationale:"
+				}
+			]
+		}]
+	},
+	{
+		moduleId: 17,
+		title: "Module 17: The Art of Pacing and Planning",
+		summary: "Escaping the 'boom-bust' cycle requires active management of your energy. This module teaches the principles of pacing—breaking down tasks and scheduling proactive rest—to help you regain a sense of control and predictability in your daily life.",
+		patientNote: "Pacing isn’t about doing less — it’s about doing things smarter so you can do more over time.",
+		exerciseTitle: "Activity Baseline Finder",
+		sections: [
+			{
+				sectionTitle: "Purpose of Pacing",
+				fields: [{
+					id: "m17_desc",
+					type: "text",
+					label: "Pacing ensures you stop an activity before you hit a painful limit. It breaks the cycle of over-activity followed by a crash, creating a steady, reliable routine."
+				}]
+			},
+			{
+				sectionTitle: "Finding Your Safe Starting Point",
+				fields: [
+					{
+						id: "m17_s1_q1",
+						type: "text",
+						label: "My chosen activity to pace better (e.g., reading, computer work):"
+					},
+					{
+						id: "m17_s1_q2",
+						type: "text",
+						label: "The Test: Time/reps when I stopped before pain increased:"
+					},
+					{
+						id: "m17_s1_q3",
+						type: "text",
+						label: "My Calculated Baseline (80% of the stop time):"
+					},
+					{
+						id: "m17_s1_q4",
+						type: "textarea",
+						label: "How will you build proactive rest into your weekly schedule?"
+					}
+				]
+			},
+			{
+				sectionTitle: "My Weekly Pacing Plan",
+				fields: [
+					{
+						id: "m17_w1",
+						type: "textarea",
+						label: "Monday: Planned activities, rest breaks, and time limits."
+					},
+					{
+						id: "m17_w2",
+						type: "textarea",
+						label: "Tuesday: Planned activities, rest breaks, and time limits."
+					},
+					{
+						id: "m17_w3",
+						type: "textarea",
+						label: "Wednesday: Planned activities, rest breaks, and time limits."
+					},
+					{
+						id: "m17_w4",
+						type: "textarea",
+						label: "Thursday: Planned activities, rest breaks, and time limits."
+					},
+					{
+						id: "m17_w5",
+						type: "textarea",
+						label: "Friday: Planned activities, rest breaks, and time limits."
+					},
+					{
+						id: "m17_w6",
+						type: "textarea",
+						label: "Saturday: Planned activities, rest breaks, and time limits."
+					},
+					{
+						id: "m17_w7",
+						type: "textarea",
+						label: "Sunday: Planned activities, rest breaks, and time limits."
+					}
+				]
+			},
+			{
+				sectionTitle: "End of Week Pacing Reflection",
+				fields: [{
+					id: "m17_s2_q1",
+					type: "textarea",
+					label: "What worked well this week with your pacing? What was difficult?"
+				}, {
+					id: "m17_s2_q2",
+					type: "textarea",
+					label: "What adjustments will you make to next week's plan?"
+				}]
+			}
+		]
+	},
+	{
+		moduleId: 18,
+		title: "Module 18: Creating a Pain-Friendly Environment",
+		summary: "Applying the principles of ergonomics (fitting the environment to the person) can dramatically reduce physical strain and conserve energy. This module provides a detailed 'walk-through' of your surroundings to identify opportunities for health-supporting improvements.",
+		patientNote: "Small changes to your surroundings can make a surprisingly big difference in your daily comfort.",
+		exerciseTitle: "Ergonomic Improvements",
+		sections: [
+			{
+				sectionTitle: "Purpose of an Ergonomic Action Plan",
+				description: "The goal of an ergonomic action plan is to modify your environment so that your body spends less energy and encounters less physical stress doing daily tasks.",
+				fields: []
+			},
+			{
+				sectionTitle: "Ergonomic Checklists",
+				fields: [
+					{
+						id: "m18_chk_k1",
+						type: "checkbox",
+						label: "Kitchen: Frequently used items are stored between shoulder and hip height."
+					},
+					{
+						id: "m18_chk_k2",
+						type: "checkbox",
+						label: "Kitchen: An anti-fatigue mat is in front of the sink/stove."
+					},
+					{
+						id: "m18_chk_k3",
+						type: "checkbox",
+						label: "Kitchen: A stool is available for seated tasks."
+					},
+					{
+						id: "m18_chk_k4",
+						type: "checkbox",
+						label: "Kitchen: I have ergonomic tools (e.g., large-grip utensils, jar opener)."
+					},
+					{
+						id: "m18_chk_k5",
+						type: "checkbox",
+						label: "Kitchen: I use lightweight pots and pans."
+					},
+					{
+						id: "m18_chk_b1",
+						type: "checkbox",
+						label: "Bedroom: My mattress is supportive and comfortable."
+					},
+					{
+						id: "m18_chk_b2",
+						type: "checkbox",
+						label: "Bedroom: My pillows support my head and neck in a neutral position."
+					},
+					{
+						id: "m18_chk_b3",
+						type: "checkbox",
+						label: "Bedroom: The bed height allows me to get in and out easily."
+					},
+					{
+						id: "m18_chk_b4",
+						type: "checkbox",
+						label: "Bedroom: Essential items are within easy reach on a bedside table."
+					},
+					{
+						id: "m18_chk_b5",
+						type: "checkbox",
+						label: "Bedroom: The room is dark, quiet, and cool for sleep."
+					},
+					{
+						id: "m18_chk_ba1",
+						type: "checkbox",
+						label: "Bathroom: There are non-slip mats in and out of the tub/shower."
+					},
+					{
+						id: "m18_chk_ba2",
+						type: "checkbox",
+						label: "Bathroom: There are securely installed grab bars."
+					},
+					{
+						id: "m18_chk_ba3",
+						type: "checkbox",
+						label: "Bathroom: I have a shower chair or bath bench."
+					},
+					{
+						id: "m18_chk_ba4",
+						type: "checkbox",
+						label: "Bathroom: I have a long-handled brush or sponge."
+					},
+					{
+						id: "m18_chk_ba5",
+						type: "checkbox",
+						label: "Bathroom: I have a raised toilet seat or safety frame if needed."
+					},
+					{
+						id: "m18_chk_o1",
+						type: "checkbox",
+						label: "Office: My chair is adjustable and provides good lumbar support."
+					},
+					{
+						id: "m18_chk_o2",
+						type: "checkbox",
+						label: "Office: My feet are flat on the floor (or a footrest)."
+					},
+					{
+						id: "m18_chk_o3",
+						type: "checkbox",
+						label: "Office: My keyboard and mouse are close, with wrists straight."
+					},
+					{
+						id: "m18_chk_o4",
+						type: "checkbox",
+						label: "Office: The top of my monitor is at or just below eye level."
+					},
+					{
+						id: "m18_chk_o5",
+						type: "checkbox",
+						label: "Office: I have adequate lighting and minimal screen glare."
+					},
+					{
+						id: "m18_chk_o6",
+						type: "checkbox",
+						label: "Office: I take short stretch breaks every 20-30 minutes."
+					}
+				]
+			},
+			{
+				sectionTitle: "My Ergonomic Action Plan",
+				fields: [
+					{
+						id: "m18_s1_q1",
+						type: "textarea",
+						label: "Kitchen: What changes can you make (e.g., anti-fatigue mat, stool)?"
+					},
+					{
+						id: "m18_s1_q2",
+						type: "textarea",
+						label: "Bedroom & Bathroom: What changes can you make (e.g., grab bars, specialized pillows)?"
+					},
+					{
+						id: "m18_s1_q3",
+						type: "textarea",
+						label: "Office/Workspace: What changes can you make (e.g., lumbar support, screen at eye level)?"
+					},
+					{
+						id: "m18_s1_q4",
+						type: "textarea",
+						label: "Based on these concepts, what is ONE change you can make this week to improve your environment?"
+					}
+				]
+			}
+		]
+	},
+	{
+		moduleId: 19,
+		title: "Module 19: Weaving Your Web of Support",
+		summary: "A strong support system is an essential lifeline when navigating chronic pain. This module helps you visualize your current network of family, friends, and peers, identifying strengths and gaps so you can take active steps to strengthen your vital connections.",
+		patientNote: "You don’t have to walk this path alone — even one strong connection can make all the difference.",
+		exerciseTitle: "My Support Map",
+		sections: [{
+			sectionTitle: "Types of Support",
+			description: "There are several types of support, and understanding them can help you identify what you have and what you may need: Emotional support (someone who listens and validates your feelings), Practical support (help with daily tasks, rides to appointments, meals), Informational support (advice, resources, and guidance from those with knowledge or experience), and Social companionship (people who help you feel connected and reduce isolation).",
+			fields: []
+		}, {
+			sectionTitle: "Analyzing Your Network",
+			fields: [
+				{
+					id: "m19_s1_q1",
+					type: "textarea",
+					label: "Emotional Support: Who listens to you and validates your feelings? Who can you call on a hard day?"
+				},
+				{
+					id: "m19_s1_q2",
+					type: "textarea",
+					label: "Practical Support: Who helps with daily tasks, appointments, or errands when you need it?"
+				},
+				{
+					id: "m19_s1_q3",
+					type: "textarea",
+					label: "Informational Support: Who provides helpful advice, medical knowledge, or useful resources?"
+				},
+				{
+					id: "m19_s1_q4",
+					type: "textarea",
+					label: "Social Companionship: Who helps you feel connected and less isolated?"
+				},
+				{
+					id: "m19_s1_q5",
+					type: "textarea",
+					label: "Are there any gaps? Which type of support do you feel you are missing most?"
+				},
+				{
+					id: "m19_s1_q6",
+					type: "textarea",
+					label: "What is one small step you could take this week to strengthen a connection or fill a gap?"
+				}
+			]
+		}]
+	},
+	{
+		moduleId: 20,
+		title: "Module 20: Finding Your Voice: Self-Advocacy",
+		summary: "Self-advocacy is the skill of using your voice to ensure your needs are heard and met. This module provides scripts to help you communicate clearly and assertively with your healthcare team, transforming you into an empowered partner in your own care.",
+		patientNote: "Your voice matters, and learning to use it effectively is one of the most important skills you can build.",
+		exerciseTitle: "Advocacy Script Builder",
+		sections: [
+			{
+				sectionTitle: "Why Self-Advocacy Matters",
+				description: "Chronic pain patients often feel rushed, dismissed, or unheard in medical appointments. Self-advocacy is not about being difficult — it is about clearly and respectfully communicating your needs so your healthcare team can provide the best possible care. Preparing what you want to say in advance ensures you make the most of your limited appointment time and leave feeling heard.",
+				fields: []
+			},
+			{
+				sectionTitle: "Building Your Scripts",
+				fields: [
+					{
+						id: "m20_s1_q1",
+						type: "textarea",
+						label: "Script for Describing Your Pain Clearly: Write 2-3 sentences covering location, quality (sharp, burning, aching), intensity (0-10), and how it affects your daily function."
+					},
+					{
+						id: "m20_s1_q2",
+						type: "textarea",
+						label: "Script for Requesting a Referral or Discussing Treatment Options: Practice a clear, respectful way to ask for what you need (e.g., \"I'd like to discuss whether a referral to a pain specialist might be helpful for me.\")"
+					},
+					{
+						id: "m20_s1_q3",
+						type: "textarea",
+						label: "Script for When You Feel Dismissed: How will you calmly redirect the conversation? (e.g., \"I appreciate your input. I want to make sure we've explored all the options. Can we discuss...?\")"
+					}
+				]
+			},
+			{
+				sectionTitle: "Advocacy Reflection",
+				fields: [{
+					id: "m20_s2_q1",
+					type: "textarea",
+					label: "Think about a past appointment where you left feeling unheard. What would you say differently now?"
+				}, {
+					id: "m20_s2_q2",
+					type: "textarea",
+					label: "What is one thing you will do to prepare before your next appointment?"
+				}]
+			}
+		]
+	},
+	{
+		moduleId: 21,
+		title: "Module 21: Breaking Free from Unhelpful Habits",
+		summary: "Building resilience involves removing habits that actively undermine your progress. This module provides a structured planner to help you tackle roadblocks like smoking or excessive alcohol use, which can fuel inflammation and interfere with your pain management.",
+		patientNote: "Letting go of habits that hold you back is an act of courage and self-care.",
+		exerciseTitle: "My Habit Change Planner",
+		sections: [
+			{
+				sectionTitle: "Plan for Change",
+				fields: [
+					{
+						id: "m21_s1_q1",
+						type: "text",
+						label: "The habit I want to change:"
+					},
+					{
+						id: "m21_s1_q0a",
+						type: "text",
+						label: "Start Date:"
+					},
+					{
+						id: "m21_s1_q0b",
+						type: "text",
+						label: "Target Quit/Goal Date:"
+					},
+					{
+						id: "m21_s1_q2",
+						type: "textarea",
+						label: "1. My \"why\": What are my deepest reasons for making this change?"
+					},
+					{
+						id: "m21_s1_q3",
+						type: "textarea",
+						label: "2. My support system for this change:"
+					}
+				]
+			},
+			{
+				sectionTitle: "My Triggers",
+				fields: [{
+					id: "m21_s2_q1",
+					type: "textarea",
+					label: "What situations, emotions, times of day, or people trigger this habit? List as many as you can identify."
+				}, {
+					id: "m21_s2_q2",
+					type: "textarea",
+					label: "For each trigger above, what is one alternative action or coping strategy you can use instead?"
+				}]
+			},
+			{
+				sectionTitle: "Coping and Rewards",
+				fields: [{
+					id: "m21_s1_q4",
+					type: "textarea",
+					label: "3. My coping plan for cravings and temptation (What will I do instead?):"
+				}, {
+					id: "m21_s1_q5",
+					type: "textarea",
+					label: "4. My reward for milestones:"
+				}]
+			}
+		]
+	},
+	{
+		moduleId: 22,
+		title: "Module 22: Building Your Resilience",
+		summary: "Resilience is your ability to adapt well in the face of adversity. This module focuses on cultivating inner strength through realistic optimism and self-efficacy, using daily practices like gratitude and self-compassion to shift your focus from simply managing pain to truly living well with it.",
+		patientNote: "The goal is no longer just to manage your pain — it is to build a life you love living, even with it.",
+		exerciseTitle: "Gratitude and Self-Compassion Journal",
+		sections: [{
+			sectionTitle: "From Managing to Living Well",
+			description: "Up to this point, much of this workbook has focused on understanding and managing your pain. This module marks a shift. Resilience is not simply about survival — it is about thriving. It means moving beyond coping day-to-day and toward building a life that feels meaningful, joyful, and connected, even in the presence of pain. The practices below help you strengthen that foundation.",
+			fields: []
+		}, {
+			sectionTitle: "Daily Reflection",
+			fields: [
+				{
+					id: "m22_s1_q1",
+					type: "textarea",
+					label: "1. Today, I am grateful for (list three things, no matter how small):"
+				},
+				{
+					id: "m22_s1_q2",
+					type: "textarea",
+					label: "2. One small success or effort I can acknowledge today is:"
+				},
+				{
+					id: "m22_s1_q3",
+					type: "textarea",
+					label: "3. A compassionate message I can give myself about today's struggles is:"
+				}
+			]
+		}]
+	},
+	{
+		moduleId: 23,
+		title: "Module 23: Finding Meaning and Purpose",
+		summary: "Chronic pain can challenge our sense of purpose, but finding meaning remains a powerful source of healing. This module helps you identify your core values and brainstorm small, manageable ways to contribute to your world and maintain a fulfilling identity.",
+		patientNote: "Even on your hardest days, you have something meaningful to offer the world.",
+		exerciseTitle: "My Contribution Brainstorm",
+		sections: [{
+			sectionTitle: "Sharing Your Gifts",
+			fields: [{
+				id: "m23_s1_q1",
+				type: "textarea",
+				label: "1. My skills, passions, and interests (What are you good at or care about?):"
+			}, {
+				id: "m23_s1_q2",
+				type: "textarea",
+				label: "2. My idea for contribution (How could you use one of those skills in a small way?):"
+			}]
+		}]
+	},
+	{
+		moduleId: 24,
+		title: "Module 24: Your Path to Inner Peace",
+		summary: "Spirituality and personal meaning are profound sources of strength and comfort. When one is facing profound challenges, seeking connection to something larger than oneself is natural. Whether through faith, nature, art, or meditation, this module encourages you to explore what brings you a sense of awe and peace and to intentionally nurture that connection.",
+		patientNote: "Whatever brings you peace — faith, nature, music, or stillness — lean into it without apology.",
+		exerciseTitle: "Spirituality and Personal Meaning",
+		sections: [{
+			sectionTitle: "Finding Connection",
+			fields: [{
+				id: "m24_s1_q1",
+				type: "textarea",
+				label: "What activities, places, or practices bring you a sense of peace, awe, or connection?"
+			}, {
+				id: "m24_s1_q2",
+				type: "textarea",
+				label: "How can you intentionally incorporate one of these into your life this week, even for just five minutes?"
+			}]
+		}]
+	},
+	{
+		moduleId: 25,
+		title: "Module 25: Your Flare-Up Plan & Hopeful Future",
+		summary: "Setbacks are a normal part of the journey. This module helps you create a concrete, step-by-step plan for your 'tough days,' transforming fear of the unknown into a feeling of preparedness and control as you walk toward a hopeful future.",
+		patientNote: "Having a plan for tough days transforms fear of the unknown into quiet confidence.",
+		exerciseTitle: "My Personalized Flare-Up Plan",
+		sections: [{
+			sectionTitle: "The Plan",
+			fields: [
+				{
+					id: "m25_s1_q1",
+					type: "textarea",
+					label: "1. My early warning signs (how I know a flare is starting):"
+				},
+				{
+					id: "m25_s1_q2",
+					type: "text",
+					label: "2. My go-to calming phrase (e.g., \"This is temporary. I can handle this\"): "
+				},
+				{
+					id: "m25_s1_q3",
+					type: "textarea",
+					label: "3. My comfort tool kit (Movements, heat/cold, relaxation, distraction):"
+				},
+				{
+					id: "m25_s1_q4",
+					type: "textarea",
+					label: "4. My pacing plan (Activities to cancel, reduced activity goals):"
+				},
+				{
+					id: "m25_s1_q5",
+					type: "textarea",
+					label: "5. I will contact my doctor if (list your specific red flags):"
+				},
+				{
+					id: "m25_s1_q6",
+					type: "textarea",
+					label: "6. My Support System to Contact (Names/Numbers):"
+				}
+			]
+		}, {
+			sectionTitle: "My Hopeful Future",
+			fields: [
+				{
+					id: "m25_s2_q1",
+					type: "textarea",
+					label: "What are the two or three most important tools or insights you will carry forward from this workbook?"
+				},
+				{
+					id: "m25_s2_q2",
+					type: "textarea",
+					label: "What is one hopeful goal you have for your well-being in the next three months?"
+				},
+				{
+					id: "m25_s2_q3",
+					type: "textarea",
+					label: "What is one small, concrete step you can take today to move toward that goal?"
+				}
+			]
+		}]
+	}
+];
+
+//# sourceMappingURL=data:application/json;base64,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Q1YsT0FBTztFQUNQLFNBQVM7RUFDVCxhQUFhO0VBQ2IsZUFBZTtFQUNmLFVBQVU7R0FDUjtJQUNFLGNBQWM7SUFDZCxRQUFRO0tBQ047TUFBRSxJQUFJO01BQWEsTUFBTTtNQUFRLE9BQU87TUFBc0M7S0FDOUU7TUFBRSxJQUFJO01BQWEsTUFBTTtNQUFRLE9BQU87TUFBcUM7S0FDN0U7TUFBRSxJQUFJO01BQWEsTUFBTTtNQUFRLE9BQU87TUFBc0M7S0FDOUU7TUFBRSxJQUFJO01BQWEsTUFBTTtNQUFRLE9BQU87TUFBcUM7S0FDN0U7TUFBRSxJQUFJO01BQWEsTUFBTTtNQUFRLE9BQU87TUFBc0M7S0FDOUU7TUFBRSxJQUFJO01BQWEsTUFBTTtNQUFRLE9BQU87TUFBcUM7S0FDN0U7TUFBRSxJQUFJO01BQWEsTUFBTTtNQUFRLE9BQU87TUFBc0M7S0FDOUU7TUFBRSxJQUFJO01BQWEsTUFBTTtNQUFRLE9BQU87TUFBcUM7S0FDN0U7TUFBRSxJQUFJO01BQWEsTUFBTTtNQUFRLE9BQU87TUFBc0M7S0FDOUU7TUFBRSxJQUFJO01BQWMsTUFBTTtNQUFRLE9BQU87TUFBcUM7S0FDOUU7TUFBRSxJQUFJO01BQWMsTUFBTTtNQUFRLE9BQU87TUFBc0M7S0FDL0U7TUFBRSxJQUFJO01BQWMsTUFBTTtNQUFRLE9BQU87TUFBcUM7S0FDOUU7TUFBRSxJQUFJO01BQWMsTUFBTTtNQUFRLE9BQU87TUFBc0M7S0FDL0U7TUFBRSxJQUFJO01BQWMsTUFBTTtNQUFRLE9BQU87TUFBcUM7S0FDOUU7TUFBRSxJQUFJO01BQWMsTUFBTTtNQUFRLE9BQU87TUFBc0M7S0FDL0U7TUFBRSxJQUFJO01BQWMsTUFBTTtNQUFRLE9BQU87TUFBcUM7S0FDOUU7TUFBRSxJQUFJO01BQWMsTUFBTTtNQUFRLE9BQU87TUFBc0M7S0FDL0U7TUFBRSxJQUFJO01BQWMsTUFBTTtNQUFRLE9BQU87TUFBcUM7S0FDOUU7TUFBRSxJQUFJO01BQWMsTUFBTTtNQUFRLE9BQU87TUFBdUM7S0FDaEY7TUFBRSxJQUFJO01BQWMsTUFBTTtNQUFR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RSxJQUFJO0lBQWEsTUFBTTtJQUFZLE9BQU87SUFBZ0YsRUFDNUg7SUFBRSxJQUFJO0lBQWEsTUFBTTtJQUFZLE9BQU87SUFBd0YsQ0FDckk7R0FDRixDQUNGO0VBQ0Y7Q0FDRDtFQUNFLFVBQVU7RUFDVixPQUFPO0VBQ1AsU0FBUztFQUNULGFBQWE7RUFDYixlQUFlO0VBQ2YsVUFBVSxDQUNSO0dBQ0UsY0FBYztHQUNkLFFBQVEsQ0FDTjtJQUFFLElBQUk7SUFBYSxNQUFNO0lBQVksT0FBTztJQUF5RixFQUNySTtJQUFFLElBQUk7SUFBYSxNQUFNO0lBQVksT0FBTztJQUE0RyxDQUN6SjtHQUNGLENBQ0Y7RUFDRjtDQUNEO0VBQ0UsVUFBVTtFQUNWLE9BQU87RUFDUCxTQUFTO0VBQ1QsYUFBYTtFQUNiLGVBQWU7RUFDZixVQUFVLENBQ1I7R0FDRSxjQUFjO0dBQ2QsUUFBUTtJQUNOO0tBQUUsSUFBSTtLQUFhLE1BQU07S0FBWSxPQUFPO0tBQStEO0lBQzNHO0tBQUUsSUFBSTtLQUFhLE1BQU07S0FBUSxPQUFPO0tBQStFO0lBQ3ZIO0tBQUUsSUFBSTtLQUFhLE1BQU07S0FBWSxPQUFPO0tBQTJFO0lBQ3ZIO0tBQUUsSUFBSTtLQUFhLE1BQU07S0FBWSxPQUFPO0tBQXFFO0lBQ2pIO0tBQUUsSUFBSTtLQUFhLE1BQU07S0FBWSxPQUFPO0tBQWtFO0lBQzlHO0tBQUUsSUFBSTtLQUFhLE1BQU07S0FBWSxPQUFPO0tBQW9EO0lBQ2pHO0dBQ0YsRUFDRDtHQUNFLGNBQWM7R0FDZCxRQUFRO0lBQ047S0FBRSxJQUFJO0tBQWEsTUFBTTtLQUFZLE9BQU87S0FBeUc7SUFDcko7S0FBRSxJQUFJO0tBQWEsTUFBTTtLQUFZLE9BQU87S0FBbUY7SUFDL0g7S0FBRSxJQUFJO0tBQWEsTUFBTTtLQUFZLE9BQU87S0FBaUY7SUFDOUg7R0FDRixDQUNGO0VBQ0Y7Q0FDRiIsIm5hbWVzIjpbXSwic291cmNlcyI6WyJ3b3JrYm9va0Zvcm1zLmpzIl0sInZlcnNpb24iOjMsInNvdXJjZXNDb250ZW50IjpbImV4cG9ydCBjb25zdCB3b3JrYm9va0RhdGEgPSBbXG4gIHtcbiAgICBtb2R1bGVJZDogMSxcbiAgICB0aXRsZTogXCJNb2R1bGUgMTogUmVkZWZpbmluZyBZb3VyIFBhaW4gRXhwZXJpZW5jZVwiLFxuICAgIHN1bW1hcnk6IFwiV2VsY29tZSB0byB0aGUgZmlyc3Qgc3RlcCBpbiB0cmFuc2Zvcm1pbmcgeW91ciB1bmRlcnN0YW5kaW5nIG9mIHBhaW4uIFRoaXMgbW9kdWxlIGludHJvZHVjZXMgdGhlIG1vZGVybiwgaG9saXN0aWMgZGVmaW5pdGlvbiBvZiBwYWluOiBpdCBpcyBhIHBlcnNvbmFsIHNlbnNvcnkgYW5kIGVtb3Rpb25hbCBleHBlcmllbmNlIGluZmx1ZW5jZWQgYnkgYmlvbG9naWNhbCwgcHN5Y2hvbG9naWNhbCwgYW5kIHNvY2lhbCBmYWN0b3JzLiBWYWxpZGF0aW5nIHlvdXIgZXhwZXJpZW5jZSBpcyB0aGUgZm91bmRhdGlvbiBmb3IgeW91ciByZXNpbGllbnQgcGF0aCBmb3J3YXJkLlwiLFxuICAgIHBhdGllbnROb3RlOiBcIllvdXIgcGFpbiBpcyByZWFsLCBpdCBpcyB2YWxpZCwgYW5kIGl0IGlzIHVuaXF1ZWx5IHlvdXJzIFxcdTIwMTQgdW5kZXJzdGFuZGluZyBpdCBpcyB0aGUgZmlyc3Qgc3RlcCB0byBtYW5hZ2luZyBpdC5cIixcbiAgICBleGVyY2lzZVRpdGxlOiBcIk15IEJpb3BzeWNob3NvY2lhbCBQYWluIE1hcFwiLFxuICAgIHNlY3Rpb25zOiBbXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJ1NlY3Rpb24gMTogVGhlIFwiQmlvXCIgKE15IEJvZHkpJyxcbiAgICAgICAgZmllbGRzOiBbXG4gICAgICAgICAgeyBpZDogJ20xX3MxX3ExJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdXaGF0IGFyZSB0aGUgcGh5c2ljYWwgc2Vuc2F0aW9ucyB5b3UgZXhwZXJpZW5jZSAoZS5nLiwgYnVybmluZywgYWNoaW5nLCB0aHJvYmJpbmcsIHN0YWJiaW5nKT8nIH0sXG4gICAgICAgICAgeyBpZDogJ20xX3MxX3EyJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdJbiB3aGljaCBwYXJ0cyBvZiB5b3VyIGJvZHkgZG8geW91IGZlZWwgdGhlc2Ugc2Vuc2F0aW9ucz8nIH0sXG4gICAgICAgICAgeyBpZDogJ20xX3MxX3EzJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdXaGF0IHBoeXNpY2FsIGZhY3RvcnMgc2VlbSB0byBtYWtlIHlvdXIgcGFpbiB3b3JzZT8nIH0sXG4gICAgICAgICAgeyBpZDogJ20xX3MxX3E0JywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdXaGF0IHBoeXNpY2FsIGZhY3RvcnMgc2VlbSB0byBtYWtlIHlvdXIgcGFpbiBiZXR0ZXI/JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMV9zMV9xNScsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnV2hhdCBvdGhlciBwaHlzaWNhbCBzeW1wdG9tcyBvZnRlbiBhY2NvbXBhbnkgeW91ciBwYWluPycgfVxuICAgICAgICBdXG4gICAgICB9LFxuICAgICAge1xuICAgICAgICBzZWN0aW9uVGl0bGU6ICdTZWN0aW9uIDI6IFRoZSBcIlBzeWNob1wiIChNeSBUaG91Z2h0cyBhbmQgRmVlbGluZ3MpJyxcbiAgICAgICAgZmllbGRzOiBbXG4gICAgICAgICAgeyBpZDogJ20xX3MyX3ExJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdXaGF0IGFyZSB0aGUgbW9zdCBjb21tb24gdGhvdWdodHMgb3IgYmVsaWVmcyB5b3UgaGF2ZSBhYm91dCB5b3VyIHBhaW4/JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMV9zMl9xMicsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnV2hhdCBlbW90aW9ucyBkb2VzIHlvdXIgcGFpbiB0eXBpY2FsbHkgYnJpbmcgdXAgZm9yIHlvdT8nIH0sXG4gICAgICAgICAgeyBpZDogJ20xX3MyX3EzJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdXaGF0IGFyZSB5b3VyIGJpZ2dlc3Qgd29ycmllcyBvciBmZWFycyByZWxhdGVkIHRvIHlvdXIgcGFpbj8nIH0sXG4gICAgICAgICAgeyBpZDogJ20xX3MyX3E0JywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdXaGF0IGNvcGluZyBzdHJhdGVnaWVzIGRvIHlvdSBjdXJyZW50bHkgdXNlIHRvIG1hbmFnZSB0aGUgZW1vdGlvbmFsIHNpZGUgb2YgcGFpbj8nIH1cbiAgICAgICAgXVxuICAgICAgfSxcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnU2VjdGlvbiAzOiBUaGUgXCJTb2NpYWxcIiAoTXkgV29ybGQpJyxcbiAgICAgICAgZmllbGRzOiBbXG4gICAgICAgICAgeyBpZDogJ20xX3MzX3ExJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdIb3cgZG9lcyB5b3VyIHBhaW4gYWZmZWN0IHlvdXIgcmVsYXRpb25zaGlwcyB3aXRoIGNsb3NlIGZhbWlseT8nIH0sXG4gICAgICAgICAgeyBpZDogJ20xX3MzX3EyJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdIb3cgZG9lcyB5b3VyIHBhaW4gYWZmZWN0IHlvdXIgZnJpZW5kc2hpcHMgYW5kIHNvY2lhbCBsaWZlPycgfSxcbiAgICAgICAgICB7IGlkOiAnbTFfczNfcTMnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ0hvdyBkb2VzIHlvdXIgcGFpbiBpbXBhY3QgeW91ciB3b3JrLCBzY2hvb2wsIG9yIGFiaWxpdHkgdG8gdm9sdW50ZWVyPycgfSxcbiAgICAgICAgICB7IGlkOiAnbTFfczNfcTQnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ1dobyBpbiB5b3VyIGxpZmUgc2VlbXMgdG8gdW5kZXJzdGFuZCB3aGF0IHlvdVxcJ3JlIGdvaW5nIHRocm91Z2g/IFdobyBzdHJ1Z2dsZXMgdG8gdW5kZXJzdGFuZD8nIH0sXG4gICAgICAgICAgeyBpZDogJ20xX3MzX3E1JywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdXaGF0IGFyZSBzb21lIHNvY2lhbCBvciBlbnZpcm9ubWVudGFsIGZhY3RvcnMgdGhhdCBtYWtlIHlvdXIgcGFpbiBoYXJkZXIgdG8gbWFuYWdlPycgfVxuICAgICAgICBdXG4gICAgICB9LFxuICAgICAge1xuICAgICAgICBzZWN0aW9uVGl0bGU6ICdSZWZsZWN0aW9uIFByb21wdCcsXG4gICAgICAgIGZpZWxkczogW1xuICAgICAgICAgIHsgaWQ6ICdtMV9zNF9xMScsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnVGFrZSBhIG1vbWVudCB0byBsb29rIGF0IHlvdXIgY29tcGxldGVkIFBhaW4gTWFwLiBXaGF0IGNvbm5lY3Rpb25zIGNhbiB5b3Ugc2VlIGJldHdlZW4gdGhlIHRocmVlIHNlY3Rpb25zPycgfSxcbiAgICAgICAgICB7IGlkOiAnbTFfczRfcTInLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ0hvdyBkbyB0aGUgXCJpbmdyZWRpZW50c1wiIGZyb20gb25lIHNlY3Rpb24gaW5mbHVlbmNlIHRoZSBvdGhlcnM/IEZvciBleGFtcGxlLCBoYXZlIHlvdSBub3RpY2VkIGhvdyBhIHNwZWNpZmljIHdvcnJ5IChQc3ljaG8pIG1pZ2h0IGxlYWQgdG8gaW5jcmVhc2VkIG11c2NsZSB0ZW5zaW9uIChCaW8pPyBPciBob3cgZmVlbGluZyBtaXN1bmRlcnN0b29kIGJ5IGEgbG92ZWQgb25lIChTb2NpYWwpIGNhbiBtYWtlIHlvdSBmZWVsIG1vcmUgc2FkIGFuZCBmcnVzdHJhdGVkIChQc3ljaG8pPycgfSxcbiAgICAgICAgICB7IGlkOiAnbTFfczRfcTMnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ1dyaXRlIGRvd24gb25lIG9yIHR3byBjb25uZWN0aW9ucyB5b3VcXCd2ZSBvYnNlcnZlZCBpbiB5b3VyIG93biBsaWZlOicgfVxuICAgICAgICBdXG4gICAgICB9XG4gICAgXVxuICB9LFxuICB7XG4gICAgbW9kdWxlSWQ6IDIsXG4gICAgdGl0bGU6IFwiTW9kdWxlIDI6IFRoZSBTY2llbmNlIG9mIFlvdXIgSHVydFwiLFxuICAgIHN1bW1hcnk6IFwiVW5kZXJzdGFuZGluZyBob3cgeW91IGh1cnQgaGVscHMgbW92ZSBmcm9tIGZlYXJpbmcgcGFpbiB0byBtYW5hZ2luZyBpdC4gVGhpcyBtb2R1bGUgZXhwbG9yZXMgaG93IHlvdXIgbmVydm91cyBzeXN0ZW0gY2FuIGJlY29tZSBvdmVyLXJlYWN0aXZlIChjZW50cmFsIHNlbnNpdGl6YXRpb24pLCB0dXJuaW5nIHVwIHRoZSAndm9sdW1lJyBvbiBzaWduYWxzIGV2ZW4gd2l0aG91dCBuZXcgZGFtYWdlLiBVbmRlcnN0YW5kaW5nICdodXJ0IHZzLiBoYXJtJyBpcyBhIHBvd2VyZnVsIHNoaWZ0IGluIHBlcnNwZWN0aXZlLlwiLFxuICAgIHBhdGllbnROb3RlOiBcIkxlYXJuaW5nIHRoYXQgeW91ciBuZXJ2b3VzIHN5c3RlbSBjYW4gY2hhbmdlIGdpdmVzIHlvdSB0aGUgcG93ZXIgdG8gaGVscCBpdCBoZWFsLlwiLFxuICAgIGV4ZXJjaXNlVGl0bGU6IFwiVHJhbnNsYXRpbmcgdGhlIFNjaWVuY2UgdG8gWW91XCIsXG4gICAgc2VjdGlvbnM6IFtcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnMS4gQWxsb2R5bmlhIENoZWNrbGlzdCcsXG4gICAgICAgIGZpZWxkczogW1xuICAgICAgICAgIHsgaWQ6ICdtMl9zMV9xMScsIHR5cGU6ICdjaGVja2JveCcsIGxhYmVsOiAnVGhlIGxpZ2h0IHRvdWNoIG9mIGNsb3RoaW5nIG9yIGJlZHNoZWV0cyBvbiB5b3VyIHNraW4uJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMl9zMV9xMicsIHR5cGU6ICdjaGVja2JveCcsIGxhYmVsOiAnVGhlIHNlbnNhdGlvbiBvZiB3YXRlciBmcm9tIGEgc2hvd2VyIGhpdHRpbmcgeW91ciBib2R5LicgfSxcbiAgICAgICAgICB7IGlkOiAnbTJfczFfcTMnLCB0eXBlOiAnY2hlY2tib3gnLCBsYWJlbDogJ0EgZ2VudGxlIGJyZWV6ZSBvciBjaGFuZ2UgaW4gdGVtcGVyYXR1cmUgb24geW91ciBza2luLicgfSxcbiAgICAgICAgICB7IGlkOiAnbTJfczFfcTQnLCB0eXBlOiAnY2hlY2tib3gnLCBsYWJlbDogJ0EgZ2VudGxlIHBhdCBvciBodWcgZnJvbSBhIGxvdmVkIG9uZS4nIH0sXG4gICAgICAgICAgeyBpZDogJ20yX3MxX3E1X3RleHQnLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnT3RoZXIgZXhhbXBsZXM/IFBsZWFzZSBkZXNjcmliZTonIH1cbiAgICAgICAgXVxuICAgICAgfSxcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnMi4gSHlwZXJhbGdlc2lhIENoZWNrbGlzdCcsXG4gICAgICAgIGZpZWxkczogW1xuICAgICAgICAgIHsgaWQ6ICdtMl9zMl9xMScsIHR5cGU6ICdjaGVja2JveCcsIGxhYmVsOiAnRG8geW91IGZpbmQgdGhhdCBtaW5vciBidW1wcywgc2NyYXBlcywgb3IgcHJlc3N1cmUgZmVlbCBtdWNoIG1vcmUgcGFpbmZ1bCB0aGFuIGV4cGVjdGVkPycgfSxcbiAgICAgICAgICB7IGlkOiAnbTJfczJfcTInLCB0eXBlOiAnY2hlY2tib3gnLCBsYWJlbDogJ1doZW4geW91IGdldCBhIHBhcGVyIGN1dCBvciBzdHViIHlvdXIgdG9lLCBkb2VzIHRoZSBwYWluIHNlZW0gdW51c3VhbGx5IGludGVuc2Ugb3IgbGFzdCBleGNlcHRpb25hbGx5IGxvbmc/JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMl9zMl9xM190ZXh0JywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ090aGVyIGV4YW1wbGVzPyBQbGVhc2UgZGVzY3JpYmU6JyB9XG4gICAgICAgIF1cbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJzMuIFNwcmVhZGluZyBQYWluIFJlZmxlY3Rpb24nLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbTJfczNfcTEnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ1RoaW5rIGJhY2sgdG8gd2hlbiB5b3VyIHBhaW4gZmlyc3Qgc3RhcnRlZC4gV2FzIGl0IGNvbmZpbmVkIHRvIG9uZSBzcGVjaWZpYyBhcmVhPycgfSxcbiAgICAgICAgICB7IGlkOiAnbTJfczNfcTInLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ0hhcyB5b3VyIHBhaW4gc3ByZWFkIGJleW9uZCB0aGF0IG9yaWdpbmFsIGFyZWEgb3ZlciB0aW1lPyBJZiBzbywgZGVzY3JpYmUgd2hlcmUgdGhlIHBhaW4gaGFzIHNwcmVhZC4nIH1cbiAgICAgICAgXVxuICAgICAgfSxcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnUmVmbGVjdGlvbiBQcm9tcHQnLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbTJfczRfcTEnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ0hvdyBkb2VzIHRoZSBpZGVhIHRoYXQgeW91ciBuZXJ2b3VzIHN5c3RlbSBjYW4gYmVjb21lIFxcJ292ZXJwcm90ZWN0aXZlXFwnIGFuZCBcXCdzdHVjayBvbiBoaWdoIGFsZXJ0XFwnIGNoYW5nZSBob3cgeW91IHRoaW5rIGFib3V0IHlvdXIgcGFpbj8gRG9lcyBpdCBtYWtlIHRoZSBkaXN0aW5jdGlvbiBiZXR3ZWVuIFxcJ2h1cnRcXCcgKHRoZSBzZW5zYXRpb24geW91IGZlZWwpIGFuZCBcXCdoYXJtXFwnIChhY3R1YWwgdGlzc3VlIGRhbWFnZSkgYW55IGNsZWFyZXI/JyB9XG4gICAgICAgIF1cbiAgICAgIH1cbiAgICBdXG4gIH0sXG4gIHtcbiAgICBtb2R1bGVJZDogMyxcbiAgICB0aXRsZTogXCJNb2R1bGUgMzogV2hlbiBZb3VyIEFsYXJtIFN5c3RlbSBHb2VzIFdyb25nXCIsXG4gICAgc3VtbWFyeTogXCJDaHJvbmljIHBhaW4gY2FuIGJlY29tZSBhIHNlbGYtcGVycGV0dWF0aW5nIHZpY2lvdXMgY3ljbGUsIHdoZXJlIGluaXRpYWwgcGFpbiBsZWFkcyB0byBtdXNjbGUgZ3VhcmRpbmcgKHNwbGludGluZyksIHdoaWNoIHRoZW4gY3JlYXRlcyBtb3JlIHBhaW4uIFRoaXMgbW9kdWxlIGhlbHBzIHlvdSBpZGVudGlmeSBhbmQgaW50ZXJydXB0IHRoZXNlIHBhdHRlcm5zLCBwcmV2ZW50aW5nIHlvdXIgbmVydm91cyBzeXN0ZW0gZnJvbSByZW1haW5pbmcgc3R1Y2sgb24gaGlnaCBhbGVydC5cIixcbiAgICBwYXRpZW50Tm90ZTogXCJSZWNvZ25pemluZyB0aGVzZSBjeWNsZXMgaXMgbm90IGFib3V0IGJsYW1lIFxcdTIwMTQgaXRcXHUyMDE5cyBhYm91dCBmaW5kaW5nIHRoZSBwbGFjZXMgd2hlcmUgeW91IGNhbiBnZW50bHkgaW50ZXJ2ZW5lLlwiLFxuICAgIGV4ZXJjaXNlVGl0bGU6IFwiSWRlbnRpZnlpbmcgWW91ciBWaWNpb3VzIEN5Y2xlc1wiLFxuICAgIHNlY3Rpb25zOiBbXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJ1RyYWNlIFlvdXIgUGFpbiBDeWNsZScsXG4gICAgICAgIGZpZWxkczogW1xuICAgICAgICAgIHsgaWQ6ICdtM19zMV9xMScsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnMS4gVGhlIEluaXRpYWwgUGFpbjogRGVzY3JpYmUgdGhlIHBhaW4geW91IGZpcnN0IGZlbHQuIFdoZXJlIHdhcyBpdD8gV2hhdCBkaWQgaXQgZmVlbCBsaWtlPycgfSxcbiAgICAgICAgICB7IGlkOiAnbTNfczFfcTInLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJzIuIFRoZSBCb2R5XFwncyBSZWFjdGlvbiAoTXVzY2xlIEd1YXJkaW5nKTogSG93IGRpZCB5b3VyIGJvZHkgcmVhY3QgdG8gdGhhdCBwYWluPyBEaWQgeW91IG5vdGljZSB5b3VyIG11c2NsZXMgdGVuc2luZyB1cD8nIH0sXG4gICAgICAgICAgeyBpZDogJ20zX3MxX3EzJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICczLiBUaGUgTmV3IFBhaW4gKEZyb20gdGhlIFNwYXNtKTogSG93IGRpZCB0aGF0IG11c2NsZSB0ZW5zaW9uIG9yIHNwYXNtIGZlZWw/IERpZCBpdCBjcmVhdGUgaXRzIG93biBzZXBhcmF0ZSBwYWluPycgfSxcbiAgICAgICAgICB7IGlkOiAnbTNfczFfcTQnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJzQuIFRoZSBPdmVyYWxsIEVmZmVjdDogSG93IGRpZCB0aGlzIG5ldyBwYWluIGFmZmVjdCB5b3VyIG9yaWdpbmFsIHBhaW4gYW5kIGVtb3Rpb25hbCBzdGF0ZT8nIH1cbiAgICAgICAgXVxuICAgICAgfSxcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnUmVmbGVjdGlvbiBQcm9tcHRzJyxcbiAgICAgICAgZmllbGRzOiBbXG4gICAgICAgICAgeyBpZDogJ20zX3MyX3EwJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdXaGF0IHRyaWdnZXJzIHlvdXIgdmljaW91cyBjeWNsZXMsIGFuZCBob3cgY2FuIHlvdSBicmVhayB0aGVtPycgfSxcbiAgICAgICAgICB7IGlkOiAnbTNfczJfcTEnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ1doYXQgaXMgb25lIHNtYWxsLCBnZW50bGUgc3RlcCB5b3UgY291bGQgdGFrZSB0byBpbnRlcnJ1cHQgdGhpcyBjeWNsZSB0aGUgbmV4dCB0aW1lIHlvdSBmZWVsIGl0IHN0YXJ0aW5nPyAoZS5nLiwgdXNpbmcgaGVhdCwgZGVlcCBicmVhdGhpbmcsIGRpc3RyYWN0aW9uKScgfVxuICAgICAgICBdXG4gICAgICB9XG4gICAgXVxuICB9LFxuICB7XG4gICAgbW9kdWxlSWQ6IDQsXG4gICAgdGl0bGU6IFwiTW9kdWxlIDQ6IE5hbWluZyBZb3VyIFBhaW5cIixcbiAgICBzdW1tYXJ5OiBcIlBhaW4gaXNuJ3QganVzdCBvbmUgdGhpbmfigJRpdCBoYXMgZGlmZmVyZW50ICdmbGF2b3JzJyAobm9jaWNlcHRpdmUsIG5ldXJvcGF0aGljLCBhbmQgbm9jaXBsYXN0aWMpLiBVbmRlcnN0YW5kaW5nIHRoZSBzcGVjaWZpYyB0eXBlIG9mIHBhaW4geW91IGFyZSBleHBlcmllbmNpbmcgaXMgY3J1Y2lhbCBmb3IgY2hvb3NpbmcgdGhlIG1vc3QgZWZmZWN0aXZlIHRyZWF0bWVudHMgYW5kIGNvbW11bmljYXRpbmcgY2xlYXJseSB3aXRoIHlvdXIgaGVhbHRoY2FyZSB0ZWFtLlwiLFxuICAgIHBhdGllbnROb3RlOiBcIlB1dHRpbmcgdGhlIHJpZ2h0IHdvcmRzIHRvIHlvdXIgcGFpbiBoZWxwcyB5b3VyIGRvY3RvciB0cnVseSB1bmRlcnN0YW5kIHdoYXQgeW91XFx1MjAxOXJlIGxpdmluZyB3aXRoLlwiLFxuICAgIGV4ZXJjaXNlVGl0bGU6IFwiWW91ciBQYWluJ3MgVm9jYWJ1bGFyeVwiLFxuICAgIHNlY3Rpb25zOiBbXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJ0NoZWNrIGFsbCB0aGUgd29yZHMgdGhhdCBkZXNjcmliZSB0aGUgc2Vuc2F0aW9ucyB5b3UgZXhwZXJpZW5jZTonLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbTRfczFfcTEnLCB0eXBlOiAnY2hlY2tib3gnLCBsYWJlbDogJ0FjaGluZycgfSxcbiAgICAgICAgICB7IGlkOiAnbTRfczFfcTInLCB0eXBlOiAnY2hlY2tib3gnLCBsYWJlbDogJ0J1cm5pbmcnIH0sXG4gICAgICAgICAgeyBpZDogJ200X3MxX3EzJywgdHlwZTogJ2NoZWNrYm94JywgbGFiZWw6ICdXaWRlc3ByZWFkJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtNF9zMV9xNCcsIHR5cGU6ICdjaGVja2JveCcsIGxhYmVsOiAnVGhyb2JiaW5nJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtNF9zMV9xNScsIHR5cGU6ICdjaGVja2JveCcsIGxhYmVsOiAnU2hvb3RpbmcnIH0sXG4gICAgICAgICAgeyBpZDogJ200X3MxX3E2JywgdHlwZTogJ2NoZWNrYm94JywgbGFiZWw6ICdEaWZmdXNlJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtNF9zMV9xNycsIHR5cGU6ICdjaGVja2JveCcsIGxhYmVsOiAnQ3JhbXBpbmcnIH0sXG4gICAgICAgICAgeyBpZDogJ200X3MxX3E4JywgdHlwZTogJ2NoZWNrYm94JywgbGFiZWw6ICdTdGFiYmluZycgfSxcbiAgICAgICAgICB7IGlkOiAnbTRfczFfcTknLCB0eXBlOiAnY2hlY2tib3gnLCBsYWJlbDogJ0RlZXAgYWNoaW5nJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtNF9zMV9xMTAnLCB0eXBlOiAnY2hlY2tib3gnLCBsYWJlbDogJ1NoYXJwIHdpdGggbW92ZW1lbnQnIH0sXG4gICAgICAgICAgeyBpZDogJ200X3MxX3ExMScsIHR5cGU6ICdjaGVja2JveCcsIGxhYmVsOiAnRWxlY3RyaWMgc2hvY2tzJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtNF9zMV9xMTInLCB0eXBlOiAnY2hlY2tib3gnLCBsYWJlbDogJ0hlaWdodGVuZWQgc2Vuc2l0aXZpdHkgdG8gdG91Y2gvcHJlc3N1cmUvc291bmQvbGlnaHQnIH0sXG4gICAgICAgICAgeyBpZDogJ200X3MxX3ExMycsIHR5cGU6ICdjaGVja2JveCcsIGxhYmVsOiAnRHVsbCcgfSxcbiAgICAgICAgICB7IGlkOiAnbTRfczFfcTE0JywgdHlwZTogJ2NoZWNrYm94JywgbGFiZWw6ICdUaW5nbGluZyAvIFBpbnMgYW5kIG5lZWRsZXMgLyBOdW1ibmVzcycgfSxcbiAgICAgICAgICB7IGlkOiAnbTRfczFfcTE1JywgdHlwZTogJ2NoZWNrYm94JywgbGFiZWw6ICdBY2NvbXBhbmllZCBieSBzZXZlcmUgZmF0aWd1ZSBvciBicmFpbiBmb2cnIH0sXG4gICAgICAgICAgeyBpZDogJ200X3MxX3ExNicsIHR5cGU6ICdjaGVja2JveCcsIGxhYmVsOiAnVGVuZGVyJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtNF9zMV9xMTcnLCB0eXBlOiAnY2hlY2tib3gnLCBsYWJlbDogJ05hZ2dpbmcnIH0sXG4gICAgICAgICAgeyBpZDogJ200X3MxX3ExOCcsIHR5cGU6ICdjaGVja2JveCcsIGxhYmVsOiAnRXhoYXVzdGluZycgfSxcbiAgICAgICAgICB7IGlkOiAnbTRfczFfcTE5JywgdHlwZTogJ2NoZWNrYm94JywgbGFiZWw6ICdQZW5ldHJhdGluZycgfVxuICAgICAgICBdXG4gICAgICB9LFxuICAgICAge1xuICAgICAgICBzZWN0aW9uVGl0bGU6ICdSZWZsZWN0aW9uICYgQWN0aW9uIFByb21wdCcsXG4gICAgICAgIGZpZWxkczogW1xuICAgICAgICAgIHsgaWQ6ICdtNF9zMl9xMCcsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnRG9lcyBzZWVpbmcgdGhlIHdvcmRzIGNhdGVnb3JpemVkIGxpa2UgdGhpcyBoZWxwIHlvdSB1bmRlcnN0YW5kIHlvdXIgb3duIHBhaW4gYmV0dGVyPyBEbyB5b3Ugc2VlIGhvdyB5b3UgbWlnaHQgaGF2ZSBhIFwibWl4ZWQgcGFpbiBzdGF0ZVwiPycgfSxcbiAgICAgICAgICB7IGlkOiAnbTRfczJfcTEnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ0xpc3QgdGhlIHRvcCAzIHdvcmRzIHlvdSB3b3VsZCB1c2UgdG8gY29tbXVuaWNhdGUgeW91ciBwYWluIHRvIHlvdXIgZG9jdG9yLicgfSxcbiAgICAgICAgICB7IGlkOiAnbTRfczJfcTInLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ1Rha2UgdGhpcyBjb21wbGV0ZWQgd29ya3NoZWV0IHdpdGggeW91IHRvIHlvdXIgbmV4dCBkb2N0b3JcXCdzIGFwcG9pbnRtZW50LiBXaGVuIHlvdXIgZG9jdG9yIGFza3MgeW91IHRvIGRlc2NyaWJlIHlvdXIgcGFpbiwgdXNlIHRoZXNlIHNwZWNpZmljIHdvcmRzIHRvIHByb3ZpZGUgaW1wb3J0YW50IGNsdWVzIHRvIGd1aWRlIHlvdXIgZGlhZ25vc2lzIGFuZCB0cmVhdG1lbnQgcGxhbi4nIH1cbiAgICAgICAgXVxuICAgICAgfVxuICAgIF1cbiAgfSxcbiAge1xuICAgIG1vZHVsZUlkOiA1LFxuICAgIHRpdGxlOiBcIk1vZHVsZSA1OiBUaGUgUGh5c2ljYWwgVG9sbFwiLFxuICAgIHN1bW1hcnk6IFwiQ2hyb25pYyBwYWluIG9mdGVuIGNhcnJpZXMgYSBoZWF2eSBwaHlzaWNhbCBidXJkZW4gYmV5b25kIHRoZSBwYWluIGl0c2VsZiwgaW5jbHVkaW5nIHByb2ZvdW5kIGZhdGlndWUgYW5kIHNsZWVwIGRpc3J1cHRpb24uIFRoaXMgbW9kdWxlIGhlbHBzIHlvdSB0cmFjayB0aGUgaW50ZXJjb25uZWN0ZWQgcGF0dGVybnMgb2YgcGFpbiwgc2xlZXAsIGFuZCBhY3Rpdml0eSB0byBmaW5kIHdheXMgdG8gYnJlYWsgdGhlc2UgZXhoYXVzdGluZyBwaHlzaWNhbCBjeWNsZXMuXCIsXG4gICAgcGF0aWVudE5vdGU6IFwiVHJhY2tpbmcgeW91ciBwYXR0ZXJucyBkYXkgYnkgZGF5IHJldmVhbHMgaW5zaWdodHMgdGhhdCBldmVuIHRoZSBiZXN0IGRvY3RvclxcdTIwMTlzIHZpc2l0IGNhbiBtaXNzLlwiLFxuICAgIGV4ZXJjaXNlVGl0bGU6IFwiVGhlIFdlZWtseSBTeW1wdG9tIGFuZCBBY3Rpdml0eSBUcmFja2VyXCIsXG4gICAgc2VjdGlvbnM6IFtcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnV2Vla2x5IFN5bXB0b20gVHJhY2tlciAoMS0xMCknLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbTVfdHJrX3MxJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ01vbmRheSAoUGFpbi9GYXRpZ3VlL01vb2QpOicgfSxcbiAgICAgICAgICB7IGlkOiAnbTVfdHJrX3MyJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ1R1ZXNkYXkgKFBhaW4vRmF0aWd1ZS9Nb29kKTonIH0sXG4gICAgICAgICAgeyBpZDogJ201X3Rya19zMycsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdXZWRuZXNkYXkgKFBhaW4vRmF0aWd1ZS9Nb29kKTonIH0sXG4gICAgICAgICAgeyBpZDogJ201X3Rya19zNCcsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdUaHVyc2RheSAoUGFpbi9GYXRpZ3VlL01vb2QpOicgfSxcbiAgICAgICAgICB7IGlkOiAnbTVfdHJrX3M1JywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ0ZyaWRheSAoUGFpbi9GYXRpZ3VlL01vb2QpOicgfSxcbiAgICAgICAgICB7IGlkOiAnbTVfdHJrX3M2JywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ1NhdHVyZGF5IChQYWluL0ZhdGlndWUvTW9vZCk6JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtNV90cmtfczcnLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnU3VuZGF5IChQYWluL0ZhdGlndWUvTW9vZCk6JyB9XG4gICAgICAgIF1cbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJ1dlZWtseSBBY3Rpdml0eSBUcmFja2VyJyxcbiAgICAgICAgZmllbGRzOiBbXG4gICAgICAgICAgeyBpZDogJ201X2FjdF9zMScsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdNb25kYXkgQWN0aXZpdGllczonIH0sXG4gICAgICAgICAgeyBpZDogJ201X2FjdF9zMicsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdUdWVzZGF5IEFjdGl2aXRpZXM6JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtNV9hY3RfczMnLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnV2VkbmVzZGF5IEFjdGl2aXRpZXM6JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtNV9hY3RfczQnLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnVGh1cnNkYXkgQWN0aXZpdGllczonIH0sXG4gICAgICAgICAgeyBpZDogJ201X2FjdF9zNScsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdGcmlkYXkgQWN0aXZpdGllczonIH0sXG4gICAgICAgICAgeyBpZDogJ201X2FjdF9zNicsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdTYXR1cmRheSBBY3Rpdml0aWVzOicgfSxcbiAgICAgICAgICB7IGlkOiAnbTVfYWN0X3M3JywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ1N1bmRheSBBY3Rpdml0aWVzOicgfVxuICAgICAgICBdXG4gICAgICB9LFxuICAgICAge1xuICAgICAgICBzZWN0aW9uVGl0bGU6ICdSZWZsZWN0aW9uIFByb21wdCcsXG4gICAgICAgIGZpZWxkczogW1xuICAgICAgICAgIHsgaWQ6ICdtNV9zMV9xMCcsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnQXQgdGhlIGVuZCBvZiB0aGUgd2VlaywgdGFrZSBzb21lIHRpbWUgdG8gcmV2aWV3IHlvdXIgY29tcGxldGVkIHRyYWNrZXIuIExvb2sgZm9yIGNvbm5lY3Rpb25zIGFuZCBwYXR0ZXJucy4gV2hhdCBkbyB5b3Ugbm90aWNlPycgfSxcbiAgICAgICAgICB7IGlkOiAnbTVfczFfcTEnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ0FmdGVyIGEgbmlnaHQgb2YgcG9vciBzbGVlcCwgd2hhdCB0eXBpY2FsbHkgaGFwcGVucyB0byB5b3VyIHBhaW4gYW5kIGZhdGlndWUgbGV2ZWxzIHRoZSBuZXh0IGRheT8nIH0sXG4gICAgICAgICAgeyBpZDogJ201X3MxX3EyJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdPbiBkYXlzIHdoZW4geW91ciBwYWluIGlzIGhpZ2hlciwgaG93IGRvZXMgdGhhdCBhZmZlY3QgeW91ciBtb29kIGFuZCB5b3VyIGFjdGl2aXR5IGxldmVscz8nIH0sXG4gICAgICAgICAgeyBpZDogJ201X3MxX3EzJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdBcmUgdGhlcmUgYW55IGFjdGl2aXRpZXMgb3IgZm9vZHMgdGhhdCBjb25zaXN0ZW50bHkgc2VlbSB0byBtYWtlIHlvdSBmZWVsIGJldHRlciBvciB3b3JzZT8nIH0sXG4gICAgICAgICAgeyBpZDogJ201X3MxX3E0JywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdXcml0ZSBkb3duIG9uZSBrZXkgcGF0dGVybiB5b3Ugb2JzZXJ2ZWQgdGhpcyB3ZWVrOicgfVxuICAgICAgICBdXG4gICAgICB9XG4gICAgXVxuICB9LFxuICB7XG4gICAgbW9kdWxlSWQ6IDYsXG4gICAgdGl0bGU6IFwiTW9kdWxlIDY6IE5hdmlnYXRpbmcgdGhlIEVtb3Rpb25hbCBTdG9ybVwiLFxuICAgIHN1bW1hcnk6IFwiRW1vdGlvbnMgbGlrZSBmZWFyLCBzYWRuZXNzLCBhbmQgZnJ1c3RyYXRpb24gYXJlIG5vcm1hbCByZXNwb25zZXMgdG8gcGFpbi4gVGhpcyBtb2R1bGUgdXNlcyBDQlQgcHJpbmNpcGxlcyB0byBzaG93IGhvdyB5b3VyIHRob3VnaHRzIGNhbiB0cmlnZ2VyIGN5Y2xlcyBvZiBlbW90aW9uYWwgYW5kIHBoeXNpY2FsIHN1ZmZlcmluZywgaGVscGluZyB5b3UgYnVpbGQgbW9yZSBoZWxwZnVsLCBiYWxhbmNlZCB3YXlzIG9mIHRoaW5raW5nLlwiLFxuICAgIHBhdGllbnROb3RlOiBcIllvdXIgZW1vdGlvbnMgYWJvdXQgcGFpbiBhcmUgbm90IHdlYWtuZXNzIFxcdTIwMTQgdGhleSBhcmUgaW5mb3JtYXRpb24geW91IGNhbiBsZWFybiB0byB3b3JrIHdpdGguXCIsXG4gICAgZXhlcmNpc2VUaXRsZTogXCJUaGUgJ1Rob3VnaHRzLUZlZWxpbmdzLUJvZHktQWN0aW9ucycgQ3ljbGVcIixcbiAgICBzZWN0aW9uczogW1xuICAgICAge1xuICAgICAgICBzZWN0aW9uVGl0bGU6ICdUcmFjZSBZb3VyIEVtb3Rpb25hbCBDeWNsZScsXG4gICAgICAgIGZpZWxkczogW1xuICAgICAgICAgIHsgaWQ6ICdtNl9zMV9xMScsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnMS4gVGhlIHNpdHVhdGlvbjogQnJpZWZseSBkZXNjcmliZSB0aGUgc2l0dWF0aW9uIG9yIGZsYXJlLXVwLicgfSxcbiAgICAgICAgICB7IGlkOiAnbTZfczFfcTInLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJzIuIFRoZSBhdXRvbWF0aWMgdGhvdWdodDogV2hhdCB3YXMgdGhlIHZlcnkgZmlyc3QgdGhvdWdodCBvciBiZWxpZWYgdGhhdCBwb3BwZWQgaW50byB5b3VyIGhlYWQgYWJvdXQgdGhlIHBhaW4/JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtNl9zMV9xMycsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnMy4gVGhlIHJlc3VsdGluZyBmZWVsaW5nKHMpIGFuZCBib2R5IHNlbnNhdGlvbnM6IFdoYXQgZW1vdGlvbihzKSBkaWQgdGhhdCB0aG91Z2h0IGNyZWF0ZT8gV2hhdCBoYXBwZW5lZCBpbiB5b3VyIGJvZHk/JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtNl9zMV9xNCcsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnNC4gVGhlIHN1YnNlcXVlbnQgYWN0aW9uOiBXaGF0IGRpZCB5b3UgZG8gYXMgYSByZXN1bHQgb2YgdGhlc2UgdGhvdWdodHMgYW5kIGZlZWxpbmdzPycgfVxuICAgICAgICBdXG4gICAgICB9LFxuICAgICAge1xuICAgICAgICBzZWN0aW9uVGl0bGU6ICdSZWZsZWN0aW9uIFByb21wdCcsXG4gICAgICAgIGZpZWxkczogW1xuICAgICAgICAgIHsgaWQ6ICdtNl9zMl9xMCcsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnTG9vayBhdCB0aGUgY3ljbGUgeW91IGp1c3QgZGVzY3JpYmVkLiBJdCBjYW4gZmVlbCBsaWtlIGEgcG93ZXJmdWwsIHVuc3RvcHBhYmxlIGNoYWluIHJlYWN0aW9uLiBCdXQgeW91IGhhdmUgdGhlIHBvd2VyIHRvIGludGVydmVuZSBhdCBhbnkgbGluayBpbiB0aGUgY2hhaW4uIEhvdyBjb3VsZCB5b3UgaW50ZXJ2ZW5lIGluIHRoaXMgY3ljbGUgbmV4dCB0aW1lPycgfSxcbiAgICAgICAgICB7IGlkOiAnbTZfczJfcTEnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ1doYXQgaXMgYSBtb3JlIGhlbHBmdWwsIGJhbGFuY2VkIHRob3VnaHQgeW91IGNvdWxkIHByYWN0aWNlPyAoZS5nLiwgXCJNeSBiYWNrIGlzIHN0aWZmIHRoaXMgbW9ybmluZywgd2hpY2ggaXMgZnJ1c3RyYXRpbmcuIEkgd2lsbCBkbyBteSBnZW50bGUgc3RyZXRjaGVzIGFuZCB0aGVuIHRhY2tsZSBteSBtb3N0IGltcG9ydGFudCB0YXNrIGZpcnN0LiBJIGNhbiBtYW5hZ2UgdGhpcy5cIiknIH0sXG4gICAgICAgICAgeyBpZDogJ202X3MyX3EyJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdXaGF0IGlzIG9uZSBzbWFsbCBhY3Rpb24geW91IGNvdWxkIHRha2UgdGhhdCB3b3VsZCBhbGlnbiBtb3JlIHdpdGggeW91ciB2YWx1ZXMsIGV2ZW4gd2l0aCB0aGUgcGFpbj8gKGUuZy4sIFwiSW5zdGVhZCBvZiBnb2luZyBiYWNrIHRvIGJlZCwgSSB3aWxsIG1ha2UgYSBjdXAgb2YgdGVhIGFuZCBzaXQgaW4gYSBjb21mb3J0YWJsZSBjaGFpciBmb3IgMTAgbWludXRlcy5cIiknIH0sXG4gICAgICAgICAgeyBpZDogJ202X3MyX3EzJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdXcml0ZSBkb3duIG9uZSBzcGVjaWZpYyBpbnRlcnZlbnRpb24geW91IGNvdWxkIHRyeTonIH1cbiAgICAgICAgXVxuICAgICAgfVxuICAgIF1cbiAgfSxcbiAge1xuICAgIG1vZHVsZUlkOiA3LFxuICAgIHRpdGxlOiBcIk1vZHVsZSA3OiBDbGVhcmluZyB0aGUgJ1BhaW4gRm9nJ1wiLFxuICAgIHN1bW1hcnk6IFwiJ1BhaW4gZm9nJyBpcyBhIHJlYWwgcGh5c2lvbG9naWNhbCBjb25zZXF1ZW5jZSBvZiB5b3VyIGJyYWluJ3MgbGltaXRlZCByZXNvdXJjZXMgYmVpbmcgY29uc3VtZWQgYnkgcGFpbi4gVGhpcyBtb2R1bGUgaWRlbnRpZmllcyB5b3VyIHNwZWNpZmljIGNvZ25pdGl2ZSBjaGFsbGVuZ2VzIGFuZCBoZWxwcyB5b3UgYnVpbGQgYSBwcmFjdGljYWwgdG9vbGtpdCBvZiBzdHJhdGVnaWVzIHRvIG1hbmFnZSB0aGVtIGVmZmVjdGl2ZWx5LlwiLFxuICAgIHBhdGllbnROb3RlOiBcIkJyYWluIGZvZyBkb2VzblxcdTIwMTl0IG1lYW4geW91XFx1MjAxOXJlIGxvc2luZyB5b3VyIG1pbmQgXFx1MjAxNCBpdCBtZWFucyB5b3VyIGJyYWluIGlzIHdvcmtpbmcgb3ZlcnRpbWUgdG8gcHJvdGVjdCB5b3UuXCIsXG4gICAgZXhlcmNpc2VUaXRsZTogXCJNeSBDb2duaXRpdmUgVG9vbCBLaXRcIixcbiAgICBzZWN0aW9uczogW1xuICAgICAge1xuICAgICAgICBzZWN0aW9uVGl0bGU6ICdQYWluIEZvZyBUcmFja2VyJyxcbiAgICAgICAgZmllbGRzOiBbXG4gICAgICAgICAgeyBpZDogJ203X2ZvZ18xJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ01vbmRheSAoQnJhaW4gRm9nIGxldmVsIC8gQ29nbml0aXZlIGNoYWxsZW5nZXMpOicgfSxcbiAgICAgICAgICB7IGlkOiAnbTdfZm9nXzInLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnVHVlc2RheSAoQnJhaW4gRm9nIGxldmVsIC8gQ29nbml0aXZlIGNoYWxsZW5nZXMpOicgfSxcbiAgICAgICAgICB7IGlkOiAnbTdfZm9nXzMnLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnV2VkbmVzZGF5IChCcmFpbiBGb2cgbGV2ZWwgLyBDb2duaXRpdmUgY2hhbGxlbmdlcyk6JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtN19mb2dfNCcsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdUaHVyc2RheSAoQnJhaW4gRm9nIGxldmVsIC8gQ29nbml0aXZlIGNoYWxsZW5nZXMpOicgfSxcbiAgICAgICAgICB7IGlkOiAnbTdfZm9nXzUnLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnRnJpZGF5IChCcmFpbiBGb2cgbGV2ZWwgLyBDb2duaXRpdmUgY2hhbGxlbmdlcyk6JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtN19mb2dfNicsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdTYXR1cmRheSAoQnJhaW4gRm9nIGxldmVsIC8gQ29nbml0aXZlIGNoYWxsZW5nZXMpOicgfSxcbiAgICAgICAgICB7IGlkOiAnbTdfZm9nXzcnLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnU3VuZGF5IChCcmFpbiBGb2cgbGV2ZWwgLyBDb2duaXRpdmUgY2hhbGxlbmdlcyk6JyB9XG4gICAgICAgIF1cbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJ0JyYWluc3Rvcm0gU3RyYXRlZ2llcycsXG4gICAgICAgIGZpZWxkczogW1xuICAgICAgICAgIHsgaWQ6ICdtN19zMV9xMScsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnTXkgQmlnZ2VzdCBDaGFsbGVuZ2UgIzE6JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtN19zMV9xMicsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnTXkgc3RyYXRlZ3kgdG8gdHJ5IGZvciBDaGFsbGVuZ2UgIzEgKGUuZy4sIHVzZSBhIGNhbGVuZGFyLCBzaW5nbGUtdGFza2luZyk6JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtN19zMV9xMycsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnTXkgQmlnZ2VzdCBDaGFsbGVuZ2UgIzI6JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtN19zMV9xNCcsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnTXkgc3RyYXRlZ3kgdG8gdHJ5IGZvciBDaGFsbGVuZ2UgIzIgKGUuZy4sIHR1cm4gb2ZmIFRWIHRvIGZvY3VzLCB0YWtlIG1lbnRhbCBicmVha3MpOicgfVxuICAgICAgICBdXG4gICAgICB9XG4gICAgXVxuICB9LFxuICB7XG4gICAgbW9kdWxlSWQ6IDgsXG4gICAgdGl0bGU6IFwiTW9kdWxlIDg6IFBhaW4gaW4gWW91ciBXb3JsZFwiLFxuICAgIHN1bW1hcnk6IFwiQ2hyb25pYyBwYWluIHJpcHBsZXMgdGhyb3VnaCB5b3VyIHJlbGF0aW9uc2hpcHMsIHdvcmssIGFuZCBpZGVudGl0eS4gQWNrbm93bGVkZ2luZyB3aGF0IGhhcyBjaGFuZ2VkIGlzIHRoZSBmaXJzdCBzdGVwIHRvd2FyZCBmb3JnaW5nIGEgbmV3LCBtZWFuaW5nZnVsIGlkZW50aXR5IHRoYXQgaW5jb3Jwb3JhdGVzIHRoZSByZWFsaXR5IG9mIHBhaW4gYW5kIGV4cHJlc3NlcyB5b3VyIGNvcmUgdmFsdWVzIGluIGFkYXB0ZWQgd2F5cy5cIixcbiAgICBwYXRpZW50Tm90ZTogXCJXaG8geW91IGFyZSBhdCB5b3VyIGNvcmUgaGFzblxcdTIwMTl0IGNoYW5nZWQgXFx1MjAxNCBvbmx5IHRoZSB3YXkgeW91IGV4cHJlc3MgaXQgbmVlZHMgdG8gYWRhcHQuXCIsXG4gICAgZXhlcmNpc2VUaXRsZTogXCJSZWxhdGlvbnNoaXAgYW5kIFJvbGUgTWFwcGluZ1wiLFxuICAgIHNlY3Rpb25zOiBbXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJ1JvbGVzICYgQ29yZSBWYWx1ZXMnLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbThfczFfcTEnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ0xpc3QgMy01IHJvbGVzIHRoYXQgd2VyZSBjZW50cmFsIHRvIHlvdXIgaWRlbnRpdHkgYmVmb3JlIGNocm9uaWMgcGFpbiAoZS5nLiwgbWFyYXRob24gcnVubmVyLCBwcm9qZWN0IG1hbmFnZXIpLicgfSxcbiAgICAgICAgICB7IGlkOiAnbThfczFfcTInLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ0hvdyBoYXZlIHRoZXNlIHJvbGVzIGNoYW5nZWQ/IFdoYXQgaGFzIGJlZW4gbG9zdCBvciBtb2RpZmllZD8nIH0sXG4gICAgICAgICAgeyBpZDogJ204X3MxX3EzJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ0lkZW50aWZ5IGEgQ29yZSBWYWx1ZSBmcm9tIGEgbG9zdCByb2xlOicgfSxcbiAgICAgICAgICB7IGlkOiAnbThfczFfcTQnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ0EgbmV3LCBhZGFwdGVkIHdheSB0byBleHByZXNzIHRoaXMgQ29yZSBWYWx1ZSB3aXRoIHlvdXIgY3VycmVudCBhYmlsaXRpZXM6JyB9XG4gICAgICAgIF1cbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJ0tleSBSZWxhdGlvbnNoaXBzJyxcbiAgICAgICAgZmllbGRzOiBbXG4gICAgICAgICAgeyBpZDogJ204X3MyX3ExJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdEZXNjcmliZSB0aGUgZHluYW1pY3Mgb2YgMS0yIGtleSByZWxhdGlvbnNoaXBzIGJlZm9yZSBjaHJvbmljIHBhaW4uJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtOF9zMl9xMicsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnRGVzY3JpYmUgaG93IGNocm9uaWMgcGFpbiBoYXMgYWZmZWN0ZWQgdGhlc2UgZHluYW1pY3MuIEhvdyBoYXZlIHRoZXNlIGtleSByZWxhdGlvbnNoaXBzIGFuZCBpbnRlcmFjdGlvbnMgYmVlbiBpbXBhY3RlZD8nIH1cbiAgICAgICAgXVxuICAgICAgfSxcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnUmVmbGVjdGlvbiBQcm9tcHQnLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbThfczNfcTAnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ0l0IGlzIGNvbXBsZXRlbHkgbm9ybWFsIGZvciB0aGUgZXhlcmNpc2UgYWJvdmUgdG8gYnJpbmcgdXAgZmVlbGluZ3Mgb2Ygc2FkbmVzcyBvciBncmllZi4gVGFrZSBhIG1vbWVudCB0byBhY2tub3dsZWRnZSB3aGF0ZXZlciBlbW90aW9ucyBhcmUgcHJlc2VudCB3aXRob3V0IGp1ZGdtZW50LiBUaGlzIGlzIGEgdmFsaWQgYW5kIGltcG9ydGFudCBwYXJ0IG9mIHlvdXIgZXhwZXJpZW5jZS4nIH0sXG4gICAgICAgICAgeyBpZDogJ204X3MzX3ExJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdDaG9vc2Ugb25lIG9mIHlvdXIgY29yZSB2YWx1ZXMgb3IgYSBxdWFsaXR5IGZyb20gYSByb2xlIHlvdSBsaXN0ZWQgKGUuZy4sIFwiYmVpbmcgYSBjYXJpbmcgcGFyZW50LFwiIFwiYmVpbmcgYSBjcmVhdGl2ZSBwZXJzb24sXCIgXCJiZWluZyBhIHN1cHBvcnRpdmUgZnJpZW5kXCIpLiBUaGlzIHZhbHVlIGhhc25cXCd0IGRpc2FwcGVhcmVkLCBldmVuIGlmIHRoZSB3YXkgeW91IGV4cHJlc3MgaXQgaGFzIHRvIGNoYW5nZS4gSG93IGNhbiB5b3UgZXhwcmVzcyB0aGF0IGNvcmUgdmFsdWUgaW4gYSBuZXcsIGFkYXB0ZWQgd2F5IHRoYXQgd29ya3Mgd2l0aCB5b3VyIGN1cnJlbnQgYWJpbGl0aWVzPycgfSxcbiAgICAgICAgICB7IGlkOiAnbThfczNfcTInLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ0V4YW1wbGU6IFwiTXkgcm9sZSBhcyBhbiBcXCdhdmlkIGhpa2VyXFwnIGhhcyBjaGFuZ2VkLiBCdXQgdGhlIHVuZGVybHlpbmcgdmFsdWUgd2FzIFxcJ2Nvbm5lY3Rpbmcgd2l0aCBuYXR1cmUuXFwnIEEgbmV3LCBhZGFwdGVkIHdheSB0byBleHByZXNzIHRoaXMgaXMgdG8gY3JlYXRlIGEgc21hbGwgY29udGFpbmVyIGdhcmRlbiBvbiBteSBwYXRpbyBvciB0byBmaW5kIGFuIGFjY2Vzc2libGUgcGFyayBiZW5jaCB3aGVyZSBJIGNhbiBzaXQgYW5kIGVuam95IHRoZSBvdXRkb29ycyBmb3IgMTUgbWludXRlcy5cIicgfVxuICAgICAgICBdXG4gICAgICB9XG4gICAgXVxuICB9LFxuICB7XG4gICAgbW9kdWxlSWQ6IDksXG4gICAgdGl0bGU6IFwiTW9kdWxlIDk6IEJ1aWxkaW5nIFlvdXIgSGVhbHRoY2FyZSBBbGxpYW5jZVwiLFxuICAgIHN1bW1hcnk6IFwiWW91IGFyZSB0aGUgY2FwdGFpbiBvZiB5b3VyIHByb2Zlc3Npb25hbCBjYXJlIHRlYW0uIFRoaXMgbW9kdWxlIHByb3ZpZGVzIHRvb2xzIHRvIG9yZ2FuaXplIHlvdXIgbWVkaWNhbCBpbmZvcm1hdGlvbiBhbmQgbWFrZSBldmVyeSBhcHBvaW50bWVudCBtb3JlIHByb2R1Y3RpdmUgdGhyb3VnaCBjbGVhciBwcmVwYXJhdGlvbiBhbmQgYXNzZXJ0aXZlLCBwcmVwYXJlZCBjb21tdW5pY2F0aW9uLiBCZWluZyBzZWVuLCBoZWFyZCwgYW5kIHZhbGlkYXRlZCBieSB5b3VyIGhlYWx0aGNhcmUgdGVhbSBpcyBmdW5kYW1lbnRhbCB0byBlZmZlY3RpdmUgY2FyZS5cIixcbiAgICBwYXRpZW50Tm90ZTogXCJXYWxraW5nIGludG8geW91ciBuZXh0IGFwcG9pbnRtZW50IHByZXBhcmVkIHRyYW5zZm9ybXMgeW91IGZyb20gYSBwYXNzaXZlIHBhdGllbnQgaW50byBhbiBhY3RpdmUgcGFydG5lci5cIixcbiAgICBleGVyY2lzZVRpdGxlOiBcIkFwcG9pbnRtZW50IFByZXBhcmF0aW9uIEtpdFwiLFxuICAgIHNlY3Rpb25zOiBbXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJ0JlZm9yZSBZb3VyIE5leHQgVmlzaXQnLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbTlfczFfcTEnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ015IHRvcCAzIGdvYWxzIGZvciB0aGlzIHZpc2l0ICh3aGF0IGFyZSB0aGUgbW9zdCBpbXBvcnRhbnQgdGhpbmdzIHRvIGFjY29tcGxpc2gpOicgfSxcbiAgICAgICAgICB7IGlkOiAnbTlfczFfcTInLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ1N5bXB0b20gdXBkYXRlOiBBdmVyYWdlIHBhaW4gbGV2ZWwsIGJldHRlci93b3JzZS9zYW1lLCB3b3JkcyB0aGF0IGRlc2NyaWJlIGl0LCB3aGF0IG1ha2VzIGl0IGJldHRlci93b3JzZS4nIH0sXG4gICAgICAgICAgeyBpZDogJ205X3MxX3EzJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdGdW5jdGlvbiB1cGRhdGU6IFNsZWVwLCBlbmVyZ3ksIG1vb2QsIGFiaWxpdHkgdG8gZG8gZGFpbHkgYWN0aXZpdGllcy4nIH0sXG4gICAgICAgICAgeyBpZDogJ205X3MxX3E0JywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdNZWRpY2F0aW9uIHVwZGF0ZTogQXJlIGN1cnJlbnQgbWVkaWNhdGlvbnMgaGVscGluZz8gQW55IHNpZGUgZWZmZWN0cz8nIH0sXG4gICAgICAgICAgeyBpZDogJ205X3MxX3E1JywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdNeSBzcGVjaWZpYyBxdWVzdGlvbnMgZm9yIHRoZSBkb2N0b3I6JyB9XG4gICAgICAgIF1cbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJzYuIE15IE5vdGVzIGZyb20gdGhlIFZpc2l0ICYgT3VyIFBsYW4nLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbTlfczJfcTEnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ05ldyBQcmVzY3JpcHRpb25zL0NoYW5nZXM6JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtOV9zMl9xMicsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnVGVzdHMgT3JkZXJlZDonIH0sXG4gICAgICAgICAgeyBpZDogJ205X3MyX3EzJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdSZWZlcnJhbHMgTWFkZTonIH0sXG4gICAgICAgICAgeyBpZDogJ205X3MyX3E0JywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdOZXh0IFN0ZXBzIGZvciBNZTonIH0sXG4gICAgICAgICAgeyBpZDogJ205X3MyX3E1JywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ0ZvbGxvdy11cCBBcHBvaW50bWVudDonIH1cbiAgICAgICAgXVxuICAgICAgfVxuICAgIF1cbiAgfSxcbiAge1xuICAgIG1vZHVsZUlkOiAxMCxcbiAgICB0aXRsZTogXCJNb2R1bGUgMTA6IFlvdXIgTWVkaWNhdGlvbiBUb29sIEtpdFwiLFxuICAgIHN1bW1hcnk6IFwiTWVkaWNhdGlvbnMgYXJlIGp1c3Qgb25lIHRvb2wgaW4geW91ciBtYW5hZ2VtZW50IHBsYW4uIFRoaXMgbW9kdWxlIGhlbHBzIHlvdSB0cmFjayB5b3VyIHByZXNjcmlwdGlvbnMgYW5kIHN1cHBsZW1lbnRzIGFjY3VyYXRlbHksIGZvY3VzaW5nIG9uIGZpbmRpbmcgdGhlIHJpZ2h0IGJhbGFuY2Ugb2YgYmVuZWZpdCBhbmQgZnVuY3Rpb25hbCBpbXByb3ZlbWVudCB3aGlsZSBpZGVudGlmeWluZyBwb3RlbnRpYWwgc2lkZSBlZmZlY3RzLlwiLFxuICAgIHBhdGllbnROb3RlOiBcIk1lZGljYXRpb25zIHdvcmsgYmVzdCB3aGVuIHlvdSB1bmRlcnN0YW5kIGV4YWN0bHkgd2hhdCBlYWNoIG9uZSBpcyBkb2luZyBmb3IgeW91LlwiLFxuICAgIGV4ZXJjaXNlVGl0bGU6IFwiTWVkaWNhdGlvbiBSZWZsZWN0aW9uXCIsXG4gICAgc2VjdGlvbnM6IFtcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnTWVkaWNhdGlvbiBMb2cnLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbTEwX2xvZ18xJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ01lZGljYXRpb24gMTogTmFtZSwgRG9zZSwgYW5kIFRpbWUnIH0sXG4gICAgICAgICAgeyBpZDogJ20xMF9sb2dfMicsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdNZWRpY2F0aW9uIDE6IEVmZmVjdGl2ZW5lc3MvTm90ZXMnIH0sXG4gICAgICAgICAgeyBpZDogJ20xMF9sb2dfMycsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdNZWRpY2F0aW9uIDI6IE5hbWUsIERvc2UsIGFuZCBUaW1lJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTBfbG9nXzQnLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnTWVkaWNhdGlvbiAyOiBFZmZlY3RpdmVuZXNzL05vdGVzJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTBfbG9nXzUnLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnTWVkaWNhdGlvbiAzOiBOYW1lLCBEb3NlLCBhbmQgVGltZScgfSxcbiAgICAgICAgICB7IGlkOiAnbTEwX2xvZ182JywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ01lZGljYXRpb24gMzogRWZmZWN0aXZlbmVzcy9Ob3RlcycgfSxcbiAgICAgICAgICB7IGlkOiAnbTEwX2xvZ183JywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ01lZGljYXRpb24gNDogTmFtZSwgRG9zZSwgYW5kIFRpbWUnIH0sXG4gICAgICAgICAgeyBpZDogJ20xMF9sb2dfOCcsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdNZWRpY2F0aW9uIDQ6IEVmZmVjdGl2ZW5lc3MvTm90ZXMnIH0sXG4gICAgICAgICAgeyBpZDogJ20xMF9sb2dfOScsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdNZWRpY2F0aW9uIDU6IE5hbWUsIERvc2UsIGFuZCBUaW1lJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTBfbG9nXzEwJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ01lZGljYXRpb24gNTogRWZmZWN0aXZlbmVzcy9Ob3RlcycgfSxcbiAgICAgICAgICB7IGlkOiAnbTEwX2xvZ18xMScsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdNZWRpY2F0aW9uIDY6IE5hbWUsIERvc2UsIGFuZCBUaW1lJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTBfbG9nXzEyJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ01lZGljYXRpb24gNjogRWZmZWN0aXZlbmVzcy9Ob3RlcycgfSxcbiAgICAgICAgICB7IGlkOiAnbTEwX2xvZ18xMycsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdNZWRpY2F0aW9uIDc6IE5hbWUsIERvc2UsIGFuZCBUaW1lJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTBfbG9nXzE0JywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ01lZGljYXRpb24gNzogRWZmZWN0aXZlbmVzcy9Ob3RlcycgfSxcbiAgICAgICAgICB7IGlkOiAnbTEwX2xvZ18xNScsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdNZWRpY2F0aW9uIDg6IE5hbWUsIERvc2UsIGFuZCBUaW1lJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTBfbG9nXzE2JywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ01lZGljYXRpb24gODogRWZmZWN0aXZlbmVzcy9Ob3RlcycgfSxcbiAgICAgICAgICB7IGlkOiAnbTEwX2xvZ18xNycsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdNZWRpY2F0aW9uIDk6IE5hbWUsIERvc2UsIGFuZCBUaW1lJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTBfbG9nXzE4JywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ01lZGljYXRpb24gOTogRWZmZWN0aXZlbmVzcy9Ob3RlcycgfSxcbiAgICAgICAgICB7IGlkOiAnbTEwX2xvZ18xOScsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdNZWRpY2F0aW9uIDEwOiBOYW1lLCBEb3NlLCBhbmQgVGltZScgfSxcbiAgICAgICAgICB7IGlkOiAnbTEwX2xvZ18yMCcsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdNZWRpY2F0aW9uIDEwOiBFZmZlY3RpdmVuZXNzL05vdGVzJyB9XG4gICAgICAgIF1cbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJ1Jlc3BvbnNlIHRvIE1lZGljYXRpb25zJyxcbiAgICAgICAgZmllbGRzOiBbXG4gICAgICAgICAgeyBpZDogJ20xMF9yZXNwX3ExJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdXaGljaCBtZWRpY2F0aW9ucyBzZWVtIHRvIGJlIGhlbHBpbmcgdGhlIG1vc3Q/IEhvdyBjYW4geW91IHRlbGw/JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTBfcmVzcF9xMicsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnV2hpY2ggbWVkaWNhdGlvbnMgc2VlbSB0byBiZSBsZXNzIGVmZmVjdGl2ZSBvciBub3Qgd29ya2luZz8gV2hhdCBoYXZlIHlvdSBub3RpY2VkPycgfSxcbiAgICAgICAgICB7IGlkOiAnbTEwX3Jlc3BfcTMnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ0hhdmUgeW91IG5vdGljZWQgYW55IHBhdHRlcm5zIGluIGhvdyB5b3UgcmVzcG9uZCB0byB5b3VyIG1lZGljYXRpb25zIChlLmcuLCB0aW1lIG9mIGRheSwgdGFrZW4gd2l0aCBmb29kLCBpbnRlcmFjdGlvbnMpPycgfVxuICAgICAgICBdXG4gICAgICB9LFxuICAgICAge1xuICAgICAgICBzZWN0aW9uVGl0bGU6ICdBc3Nlc3NpbmcgWW91ciBSZWdpbWVuJyxcbiAgICAgICAgZmllbGRzOiBbXG4gICAgICAgICAgeyBpZDogJ20xMF9zMV9xMScsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnQXJlIHRoZXJlIGFueSBzaWRlIGVmZmVjdHMgeW91XFwndmUgZXhwZXJpZW5jZWQgdGhhdCB5b3UgaGF2ZW5cXCd0IGRpc2N1c3NlZCB3aXRoIHlvdXIgZG9jdG9yIHlldD8nIH0sXG4gICAgICAgICAgeyBpZDogJ20xMF9zMV9xMicsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnQXJlIHlvdXIgbWVkaWNhdGlvbnMgaGVscGluZyB5b3UgbWVldCBmdW5jdGlvbmFsIGdvYWxzIChzbGVlcGluZyBiZXR0ZXIsIHdhbGtpbmcsIGhvYmJpZXMpPycgfSxcbiAgICAgICAgICB7IGlkOiAnbTEwX3MxX3EzJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdBbnkgcXVlc3Rpb25zIGFib3V0IG1lZGljYXRpb25zIHRvIGFkZCB0byB5b3VyIEFwcG9pbnRtZW50IFByZXAgS2l0PycgfVxuICAgICAgICBdXG4gICAgICB9XG4gICAgXVxuICB9LFxuICB7XG4gICAgbW9kdWxlSWQ6IDExLFxuICAgIHRpdGxlOiBcIk1vZHVsZSAxMTogRXhwbG9yaW5nIEludGVydmVudGlvbmFsIE9wdGlvbnNcIixcbiAgICBzdW1tYXJ5OiBcIldoZW4gbWVkaWNhdGlvbnMgYW5kIG90aGVyIHRoZXJhcGllcyBhcmVuXFx1MjAxOXQgcHJvdmlkaW5nIGVub3VnaCByZWxpZWYsIGludGVydmVudGlvbmFsIHByb2NlZHVyZXMgbGlrZSBpbmplY3Rpb25zIG9yIGltcGxhbnRlZCBkZXZpY2VzIGNhbiB0YXJnZXQgdGhlIHNvdXJjZSBvZiBwYWluIG1vcmUgZGlyZWN0bHkuIFRoaXMgbW9kdWxlIGhlbHBzIHlvdSBhcHByb2FjaCB0aGVzZSBvcHRpb25zIHdpdGggcmVhbGlzdGljIGV4cGVjdGF0aW9ucyBhbmQgZ3VpZGVzIHlvdXIgY29udmVyc2F0aW9uIHdpdGggeW91ciBkb2N0b3IgdG8gZW5zdXJlIHlvdSBoYXZlIGFsbCB0aGUgaW5mb3JtYXRpb24gbmVlZGVkIGZvciBzaGFyZWQgZGVjaXNpb24tbWFraW5nLlwiLFxuICAgIHBhdGllbnROb3RlOiBcIldoZW4gb3RoZXIgdHJlYXRtZW50cyBhcmVuXFx1MjAxOXQgZW5vdWdoLCBrbm93aW5nIHRoZSByaWdodCBxdWVzdGlvbnMgdG8gYXNrIGVtcG93ZXJzIHlvdSB0byBtYWtlIHRoZSBiZXN0IGRlY2lzaW9uIGZvciB5b3VyIGJvZHkuXCIsXG4gICAgZXhlcmNpc2VUaXRsZTogXCJTaGFyZWQgRGVjaXNpb24tTWFraW5nXCIsXG4gICAgc2VjdGlvbnM6IFtcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnRXZhbHVhdGluZyBhIFByb2NlZHVyZScsXG4gICAgICAgIGZpZWxkczogW1xuICAgICAgICAgIHsgaWQ6ICdtMTFfczFfcTEnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJzEuIFRoZSBnb2FsOiBXaGF0IGlzIHRoZSBzcGVjaWZpYyBnb2FsIG9mIHRoaXMgcHJvY2VkdXJlIGZvciBtZT8nIH0sXG4gICAgICAgICAgeyBpZDogJ20xMV9zMV9xMicsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnMi4gUG90ZW50aWFsIGJlbmVmaXRzOiBXaGF0IGFyZSB0aGUgcG90ZW50aWFsIHBvc2l0aXZlIG91dGNvbWVzPycgfSxcbiAgICAgICAgICB7IGlkOiAnbTExX3MxX3EzJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICczLiBSaXNrcyBhbmQgYWx0ZXJuYXRpdmVzOiBXaGF0IGFyZSB0aGUgY29tbW9uL3JhcmUgcmlza3MgYW5kIGFsdGVybmF0aXZlIG9wdGlvbnM/JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTFfczFfcTQnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJzQuIExpa2VsaWhvb2Qgb2Ygc3VjY2VzcyBhbmQgZHVyYXRpb24gb2YgcmVsaWVmOicgfVxuICAgICAgICBdXG4gICAgICB9LFxuICAgICAge1xuICAgICAgICBzZWN0aW9uVGl0bGU6ICdUaGUgUHJvY2VkdXJlIFByb2Nlc3MgYW5kIFJlY292ZXJ5JyxcbiAgICAgICAgZmllbGRzOiBbXG4gICAgICAgICAgeyBpZDogJ20xMV9zMl9xMCcsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdVc2UgdGhpcyBzZWN0aW9uIHRvIGRvY3VtZW50IHRoZSBzcGVjaWZpYyBwcm9jZWR1cmUgYmVpbmcgZGlzY3Vzc2VkIGFuZCB0byBwbGFuIGZvciB5b3VyIHJlY292ZXJ5LiBCcmluZyB0aGVzZSBub3RlcyB0byB5b3VyIHByZS1wcm9jZWR1cmUgYXBwb2ludG1lbnQuJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTFfczJfcTEnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ1doYXQgaXMgdGhlIGV4YWN0IHByb2NlZHVyZSBiZWluZyBjb25zaWRlcmVkIG9yIHBlcmZvcm1lZD8gRGVzY3JpYmUgaXQgaW4geW91ciBvd24gd29yZHMgYWZ0ZXIgZGlzY3Vzc2luZyB3aXRoIHlvdXIgZG9jdG9yLicgfSxcbiAgICAgICAgICB7IGlkOiAnbTExX3MyX3EyJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdXaGF0IGFyZSB0aGUgcG9zdC1wcm9jZWR1cmUgcmVjb3Zlcnkgc3RlcHMgb3IgbGltaXRhdGlvbnMgeW91IG5lZWQgdG8gcGxhbiBmb3I/JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTFfczJfcTMnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ1doYXQgcXVlc3Rpb25zIGRvIHlvdSBzdGlsbCBoYXZlIGZvciB5b3VyIGRvY3RvciBhYm91dCB0aGUgcHJvY2VkdXJlIGFuZCByZWNvdmVyeT8nIH1cbiAgICAgICAgXVxuICAgICAgfSxcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnRmluYWwgVGhvdWdodHMnLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbTExX3MzX3ExJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdDb25zaWRlcmluZyBiZW5lZml0cyBhZ2FpbnN0IHJpc2tzLCB3aGF0IGlzIHlvdXIgaW5pdGlhbCBmZWVsaW5nPyBXaGF0IGFyZSB5b3VyIGJpZ2dlc3QgaG9wZXMgYW5kIGZlYXJzPycgfSxcbiAgICAgICAgICB7IGlkOiAnbTExX3MzX3EyJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdXaGF0IG90aGVyIHF1ZXN0aW9ucyBkbyB5b3UgbmVlZCBhbnN3ZXJlZCBiZWZvcmUgbWFraW5nIGEgZmluYWwgZGVjaXNpb24/JyB9XG4gICAgICAgIF1cbiAgICAgIH1cbiAgICBdXG4gIH0sXG4gIHtcbiAgICBtb2R1bGVJZDogMTIsXG4gICAgdGl0bGU6IFwiTW9kdWxlIDEyOiBNb3ZlbWVudCBhcyBZb3VyIE1lZGljaW5lXCIsXG4gICAgc3VtbWFyeTogXCJBcHByb3ByaWF0ZSBtb3ZlbWVudCBpcyBhIHBvdGVudCBtZWRpY2luZSBmb3IgY2hyb25pYyBwYWluLiBVbmRlcnN0YW5kaW5nIHRoZSBkaWZmZXJlbmNlIGJldHdlZW4gJ2h1cnQnIGFuZCAnaGFybScgaGVscHMgeW91IHVzZSBwYWNpbmcgYW5kIGdyYWRlZCBhY3Rpdml0eSB0byBncmFkdWFsbHkgdGVhY2ggeW91ciBib2R5IGFuZCBicmFpbiB0aGF0IG1vdmVtZW50IGlzIHNhZmUgYW5kIGJlbmVmaWNpYWwgZm9yIGxvbmctdGVybSBoZWFsdGguXCIsXG4gICAgcGF0aWVudE5vdGU6IFwiRXZlcnkgc21hbGwsIHNhZmUgbW92ZW1lbnQgeW91IG1ha2UgaXMgYSBtZXNzYWdlIHRvIHlvdXIgYnJhaW4gdGhhdCB5b3VyIGJvZHkgY2FuIGJlIHRydXN0ZWQuXCIsXG4gICAgZXhlcmNpc2VUaXRsZTogXCJPdmVyY29taW5nIEZlYXIgb2YgTW92ZW1lbnRcIixcbiAgICBzZWN0aW9uczogW1xuICAgICAge1xuICAgICAgICBzZWN0aW9uVGl0bGU6ICdXZWVrbHkgQWN0aXZpdHkgTG9nJyxcbiAgICAgICAgZmllbGRzOiBbXG4gICAgICAgICAgeyBpZDogJ20xMl9hY3RfMScsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdNb25kYXkgQWN0aXZpdHkgTG9nOicgfSxcbiAgICAgICAgICB7IGlkOiAnbTEyX2FjdF8yJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ1R1ZXNkYXkgQWN0aXZpdHkgTG9nOicgfSxcbiAgICAgICAgICB7IGlkOiAnbTEyX2FjdF8zJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ1dlZG5lc2RheSBBY3Rpdml0eSBMb2c6JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTJfYWN0XzQnLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnVGh1cnNkYXkgQWN0aXZpdHkgTG9nOicgfSxcbiAgICAgICAgICB7IGlkOiAnbTEyX2FjdF81JywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ0ZyaWRheSBBY3Rpdml0eSBMb2c6JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTJfYWN0XzYnLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnU2F0dXJkYXkgQWN0aXZpdHkgTG9nOicgfSxcbiAgICAgICAgICB7IGlkOiAnbTEyX2FjdF83JywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ1N1bmRheSBBY3Rpdml0eSBMb2c6JyB9XG4gICAgICAgIF1cbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJ0dyYWRlZCBBY3Rpdml0eSBSZWZsZWN0aW9uJyxcbiAgICAgICAgZmllbGRzOiBbXG4gICAgICAgICAgeyBpZDogJ20xMl9zMV9xMScsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdNeSBjaG9zZW4gZ2VudGxlIGFjdGl2aXR5IChlLmcuLCB3YWxraW5nLCBzdHJldGNoaW5nKTonIH0sXG4gICAgICAgICAgeyBpZDogJ20xMl9zMV9xMicsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdNeSBiYXNlbGluZSAodGltZS9yZXBzIEkgY2FuIGRvIHdpdGhvdXQgY2F1c2luZyBhIGZsYXJlKTonIH1cbiAgICAgICAgXVxuICAgICAgfSxcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnQ29uZnJvbnRpbmcgS2luZXNpb3Bob2JpYSAoRmVhciBvZiBNb3ZlbWVudCknLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbTEyX3MyX3ExJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdXaGF0IG1vdmVtZW50IG9yIGFjdGl2aXR5IGRvIHlvdSBhdm9pZCBvdXQgb2YgZmVhcj8nIH0sXG4gICAgICAgICAgeyBpZDogJ20xMl9zMl9xMicsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnV2hhdCBpcyB5b3VyIFwid29yc3QtY2FzZSBzY2VuYXJpb1wiIHRob3VnaHQgd2hlbiBjb25zaWRlcmluZyBpdD8nIH0sXG4gICAgICAgICAgeyBpZDogJ20xMl9zMl9xMycsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnV2hhdCBpcyBhIG1vcmUgcmVhbGlzdGljL2JhbGFuY2VkIFwiaHVydCB2cy4gaGFybVwiIHRob3VnaHQgeW91IGNhbiByZXBsYWNlIGl0IHdpdGg/JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTJfczJfcTQnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ1doYXQgaXMgb25lIGluY3JlZGlibHkgc21hbGwsIHNhZmUgdmVyc2lvbiBvZiB0aGlzIG1vdmVtZW50IHlvdSBjb3VsZCB0cnkgYXMgYSBmaXJzdCBzdGVwPycgfVxuICAgICAgICBdXG4gICAgICB9LFxuICAgICAge1xuICAgICAgICBzZWN0aW9uVGl0bGU6ICdFbmQgb2YgV2VlayBSZWZsZWN0aW9uIExvZycsXG4gICAgICAgIGZpZWxkczogW1xuICAgICAgICAgIHsgaWQ6ICdtMTJfczNfcTEnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ0xvb2tpbmcgYmFjayBhdCB0aGlzIHdlZWssIHdoYXQgZGlkIHlvdSBzdWNjZXNzZnVsbHkgYWNjb21wbGlzaCBhbmQgaG93IGRpZCB5b3VyIGJvZHkgcmVzcG9uZD8nIH0sXG4gICAgICAgICAgeyBpZDogJ20xMl9zM19xMicsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnQmFzZWQgb24gaG93IHlvdXIgYm9keSByZXNwb25kZWQgdGhpcyB3ZWVrLCBhcmUgeW91IHJlYWR5IHRvIHNsaWdodGx5IGluY3JlYXNlIHlvdXIgYmFzZWxpbmUgZm9yIG5leHQgd2Vlaz8gSWYgc28sIHdoYXQgd291bGQgdGhhdCBsb29rIGxpa2U/IElmIG5vdCwgd2hhdCBhZGp1c3RtZW50cyBtaWdodCBoZWxwPycgfVxuICAgICAgICBdXG4gICAgICB9XG4gICAgXVxuICB9LFxuICB7XG4gICAgbW9kdWxlSWQ6IDEzLFxuICAgIHRpdGxlOiBcIk1vZHVsZSAxMzogRnVlbGluZyBZb3VyIEJvZHkgZm9yIFJlc2lsaWVuY2VcIixcbiAgICBzdW1tYXJ5OiBcIllvdXIgbnV0cml0aW9uIGNhbiBlaXRoZXIgZnVlbCB0aGUgZmxhbWVzIG9mIGluZmxhbW1hdGlvbiBvciBoZWxwIHRvIHRhbWUgdGhlbS4gVGhpcyBtb2R1bGUgZXhwbG9yZXMgdGhlIGd1dC1icmFpbiBheGlzIGFuZCBoZWxwcyB5b3UgYnVpbGQgYW4gYW50aS1pbmZsYW1tYXRvcnkgZGlldCB0aGF0IHN1cHBvcnRzIHlvdXIgb3ZlcmFsbCB3ZWxsLWJlaW5nIGFuZCBsb25nLXRlcm0gaGVhbHRoLlwiLFxuICAgIHBhdGllbnROb3RlOiBcIldoYXQgeW91IGVhdCBjYW4gZWl0aGVyIGNhbG0gb3IgZnVlbCB0aGUgZmlyZSBvZiBpbmZsYW1tYXRpb24gXFx1MjAxNCBhbmQgc21hbGwgY2hhbmdlcyBhZGQgdXAuXCIsXG4gICAgZXhlcmNpc2VUaXRsZTogXCJGb29kIGFuZCBTeW1wdG9tIERpYXJ5XCIsXG4gICAgc2VjdGlvbnM6IFtcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnRGV0YWlsZWQgRm9vZCBhbmQgU3ltcHRvbSBEaWFyeScsXG4gICAgICAgIGZpZWxkczogW1xuICAgICAgICAgIHsgaWQ6ICdtMTNfbG9nXzEnLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnRGF5IDE6IEJyZWFrZmFzdCwgTHVuY2gsIERpbm5lcicgfSxcbiAgICAgICAgICB7IGlkOiAnbTEzX2xvZ18yJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ0RheSAxOiBTbmFja3MgJiBDb3JyZXNwb25kaW5nIFN5bXB0b21zJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTNfbG9nXzMnLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnRGF5IDI6IEJyZWFrZmFzdCwgTHVuY2gsIERpbm5lcicgfSxcbiAgICAgICAgICB7IGlkOiAnbTEzX2xvZ180JywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ0RheSAyOiBTbmFja3MgJiBDb3JyZXNwb25kaW5nIFN5bXB0b21zJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTNfbG9nXzUnLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnRGF5IDM6IEJyZWFrZmFzdCwgTHVuY2gsIERpbm5lcicgfSxcbiAgICAgICAgICB7IGlkOiAnbTEzX2xvZ182JywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ0RheSAzOiBTbmFja3MgJiBDb3JyZXNwb25kaW5nIFN5bXB0b21zJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTNfbG9nXzcnLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnRGF5IDQ6IEJyZWFrZmFzdCwgTHVuY2gsIERpbm5lcicgfSxcbiAgICAgICAgICB7IGlkOiAnbTEzX2xvZ184JywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ0RheSA0OiBTbmFja3MgJiBDb3JyZXNwb25kaW5nIFN5bXB0b21zJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTNfbG9nXzknLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnRGF5IDU6IEJyZWFrZmFzdCwgTHVuY2gsIERpbm5lcicgfSxcbiAgICAgICAgICB7IGlkOiAnbTEzX2xvZ18xMCcsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdEYXkgNTogU25hY2tzICYgQ29ycmVzcG9uZGluZyBTeW1wdG9tcycgfSxcbiAgICAgICAgICB7IGlkOiAnbTEzX2xvZ18xMScsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdEYXkgNjogQnJlYWtmYXN0LCBMdW5jaCwgRGlubmVyJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTNfbG9nXzEyJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ0RheSA2OiBTbmFja3MgJiBDb3JyZXNwb25kaW5nIFN5bXB0b21zJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTNfbG9nXzEzJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ0RheSA3OiBCcmVha2Zhc3QsIEx1bmNoLCBEaW5uZXInIH0sXG4gICAgICAgICAgeyBpZDogJ20xM19sb2dfMTQnLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnRGF5IDc6IFNuYWNrcyAmIENvcnJlc3BvbmRpbmcgU3ltcHRvbXMnIH1cbiAgICAgICAgXVxuICAgICAgfSxcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnQnVpbGRpbmcgYW4gQW50aS1JbmZsYW1tYXRvcnkgUGxhdGUnLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbTEzX3BsYXRlX2Rlc2MnLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnQWltIGZvciB0aGlzIGJhbGFuY2UgYXQgZWFjaCBtZWFsOiAxLzIgcGxhdGUgY29sb3JmdWwgdmVnZXRhYmxlcyBhbmQgZnJ1aXRzLCAxLzQgcGxhdGUgbGVhbiBwcm90ZWluIChmaXNoLCBjaGlja2VuLCBiZWFucywgdG9mdSksIDEvNCBwbGF0ZSB3aG9sZSBncmFpbnMgb3IgaGVhbHRoeSBzdGFyY2hlcy4gQWRkIGEgc2VydmluZyBvZiBoZWFsdGh5IGZhdHMgKG9saXZlIG9pbCwgYXZvY2FkbywgbnV0cykuJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTNfcGxhdGVfcTEnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ0xvb2sgYXQgeW91ciBmb29kIGRpYXJ5IGFib3ZlLiBIb3cgY2xvc2UgYXJlIHlvdXIgbWVhbHMgdG8gdGhpcyBhbnRpLWluZmxhbW1hdG9yeSBwbGF0ZSBtb2RlbD8gV2hhdCBpcyBvbmUgbWVhbCB5b3UgY291bGQgYWRqdXN0IHRoaXMgd2Vlaz8nIH0sXG4gICAgICAgICAgeyBpZDogJ20xM19wbGF0ZV9xMicsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnV2hpY2ggYW50aS1pbmZsYW1tYXRvcnkgZm9vZHMgZG8geW91IGFscmVhZHkgZW5qb3k/IFdoaWNoIG5ldyBvbmVzIGFyZSB5b3Ugd2lsbGluZyB0byB0cnk/JyB9XG4gICAgICAgIF1cbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJ1dlZWtseSBPYnNlcnZhdGlvbnMnLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbTEzX3MxX3ExJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdEbyB5b3UgZmVlbCBtb3JlIHBhaW4vZmF0aWd1ZSB0aGUgZGF5IGFmdGVyIGVhdGluZyBzdWdhciBvciBwcm9jZXNzZWQgZm9vZHM/JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTNfczFfcTInLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ1doaWNoIGFudGktaW5mbGFtbWF0b3J5IGZvb2RzICh2ZWdldGFibGVzLCBsZWFuIHByb3RlaW4sIGhlYWx0aHkgZmF0cykgd2lsbCB5b3UgYWRkIHRvIHlvdXIgcGxhdGU/JyB9XG4gICAgICAgIF1cbiAgICAgIH1cbiAgICBdXG4gIH0sXG4gIHtcbiAgICBtb2R1bGVJZDogMTQsXG4gICAgdGl0bGU6IFwiTW9kdWxlIDE0OiBIYXJuZXNzaW5nIFlvdXIgTWluZCdzIFBvd2VyXCIsXG4gICAgc3VtbWFyeTogXCJZb3VyIG1pbmQgaXMgYSBwb3dlcmZ1bCBhbGx5IGluIG1hbmFnaW5nIHBhaW4uIFRoaXMgbW9kdWxlIGludHJvZHVjZXMgZXZpZGVuY2UtYmFzZWQgcHN5Y2hvbG9naWNhbCB0b29scyBsaWtlIENvZ25pdGl2ZSBCZWhhdmlvcmFsIFRoZXJhcHkgKENCVCkgYW5kIEFjY2VwdGFuY2UgYW5kIENvbW1pdG1lbnQgVGhlcmFweSAoQUNUKSB0byBoZWxwIHlvdSBidWlsZCBhIGxpZmUgZ3VpZGVkIGJ5IHlvdXIgY29yZSB2YWx1ZXMuXCIsXG4gICAgcGF0aWVudE5vdGU6IFwiWW91ciB0aG91Z2h0cyBhcmUgcG93ZXJmdWwsIGFuZCBsZWFybmluZyB0byBub3RpY2UgYW5kIGdlbnRseSByZWRpcmVjdCB0aGVtIGlzIGEgc2tpbGwgdGhhdCBnZXRzIGVhc2llciB3aXRoIHByYWN0aWNlLlwiLFxuICAgIGV4ZXJjaXNlVGl0bGU6IFwiUHN5Y2hvbG9naWNhbCBBcHByb2FjaGVzXCIsXG4gICAgc2VjdGlvbnM6IFtcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnV2h5IGEgQ0JUIFJlY29yZD8nLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbTE0X3MwX3ExJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ0EgQ29nbml0aXZlIEJlaGF2aW9yYWwgVGhlcmFweSAoQ0JUKSBUaG91Z2h0IFJlY29yZCBpcyBhIHNpbXBsZSBidXQgcG93ZXJmdWwgdG9vbC4gV2hlbiBwYWluIHRyaWdnZXJzIGEgbmVnYXRpdmUgdGhvdWdodCAobGlrZSBcIkkgY2FuXFwndCBkbyBhbnl0aGluZyBhbnltb3JlXCIpLCB0aGF0IHRob3VnaHQgY3JlYXRlcyByZWFsIGVtb3Rpb25zIChzYWRuZXNzLCBmcnVzdHJhdGlvbikgdGhhdCBjYW4gYWN0dWFsbHkgbWFrZSB5b3VyIHBhaW4gZmVlbCB3b3JzZS4gVGhpcyBleGVyY2lzZSBoZWxwcyB5b3UgY2F0Y2ggdGhvc2UgYXV0b21hdGljIHRob3VnaHRzLCBwYXVzZSwgYW5kIHByYWN0aWNlIHJlcGxhY2luZyB0aGVtIHdpdGggbW9yZSBiYWxhbmNlZCwgcmVhbGlzdGljIG9uZXMuIE92ZXIgdGltZSwgdGhpcyByZXdpcmVzIHRoZSB0aG91Z2h0IHBhdHRlcm5zIHRoYXQgZnVlbCB5b3VyIHN1ZmZlcmluZy4gRmlsbCBvdXQgdGhlIHJlY29yZCBiZWxvdyB0aGUgbmV4dCB0aW1lIHlvdSBub3RpY2UgYSBzdHJvbmcgbmVnYXRpdmUgdGhvdWdodCByZWxhdGVkIHRvIHlvdXIgcGFpbi4nIH1cbiAgICAgICAgXVxuICAgICAgfSxcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnQ0JUIFRob3VnaHQgUmVjb3JkJyxcbiAgICAgICAgZmllbGRzOiBbXG4gICAgICAgICAgeyBpZDogJ20xNF9zMV9xMScsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnVGhlIFNpdHVhdGlvbjogV2hhdCB3YXMgaGFwcGVuaW5nIHdoZW4gdGhlIG5lZ2F0aXZlIHRob3VnaHQgYXBwZWFyZWQ/IFdoZXJlIHdlcmUgeW91PyBXaGF0IHdlcmUgeW91IGRvaW5nPycgfSxcbiAgICAgICAgICB7IGlkOiAnbTE0X3MxX3EyJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdUaGUgQXV0b21hdGljIFRob3VnaHQ6IFdoYXQgd2FzIHRoZSBmaXJzdCBuZWdhdGl2ZSB0aG91Z2h0IHRoYXQgcG9wcGVkIGludG8geW91ciBtaW5kPyBXcml0ZSBpdCBkb3duIGV4YWN0bHkgYXMgaXQgb2NjdXJyZWQgdG8geW91LicgfSxcbiAgICAgICAgICB7IGlkOiAnbTE0X3MxX3EzJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdUaGUgRW1vdGlvbihzKTogV2hhdCBmZWVsaW5nKHMpIGRpZCB0aGF0IHRob3VnaHQgY3JlYXRlPyAoZS5nLiwgc2FkbmVzcywgYW5nZXIsIGZlYXIsIGhvcGVsZXNzbmVzcykgUmF0ZSB0aGUgaW50ZW5zaXR5IDAtMTAuJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTRfczFfcTQnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ0EgTW9yZSBCYWxhbmNlZCBUaG91Z2h0OiBTdGVwIGJhY2sgYW5kIGFzayBcXHUyMDE0IGlzIHRoaXMgdGhvdWdodCAxMDAlIHRydWU/IFdoYXQgd291bGQgSSBzYXkgdG8gYSBmcmllbmQgaW4gdGhpcyBzaXR1YXRpb24/IFdyaXRlIGEgbW9yZSByZWFsaXN0aWMsIGNvbXBhc3Npb25hdGUgd2F5IHRvIHNlZSBpdC4nIH1cbiAgICAgICAgXVxuICAgICAgfSxcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnV2hhdCBpcyBBQ1Q/JyxcbiAgICAgICAgZmllbGRzOiBbXG4gICAgICAgICAgeyBpZDogJ20xNF9hY3RfZGVzYycsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdBY2NlcHRhbmNlIGFuZCBDb21taXRtZW50IFRoZXJhcHkgKEFDVCkgdGFrZXMgYSBkaWZmZXJlbnQgYXBwcm9hY2ggZnJvbSBDQlQuIEluc3RlYWQgb2YgdHJ5aW5nIHRvIGNoYW5nZSBwYWluZnVsIHRob3VnaHRzLCBBQ1QgdGVhY2hlcyB5b3UgdG8gYWNjZXB0IHRoZW0gd2l0aG91dCBqdWRnbWVudCBhbmQgcmVkaXJlY3QgeW91ciBlbmVyZ3kgdG93YXJkIGFjdGlvbnMgdGhhdCBhbGlnbiB3aXRoIHlvdXIgZGVlcGVzdCB2YWx1ZXMuIFRoZSBnb2FsIGlzIG5vdCB0byBlbGltaW5hdGUgcGFpbiwgYnV0IHRvIGJ1aWxkIGEgcmljaCBhbmQgbWVhbmluZ2Z1bCBsaWZlIGFsb25nc2lkZSBpdC4nIH1cbiAgICAgICAgXVxuICAgICAgfSxcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnQUNUIFZhbHVlcyBDaGFydCcsXG4gICAgICAgIGZpZWxkczogW1xuICAgICAgICAgIHsgaWQ6ICdtMTRfczNfcTFhJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ0RvbWFpbjogRmFtaWx5L1JlbGF0aW9uc2hpcHMgXFx1MjAxNCBJbXBvcnRhbmNlICgxLTEwKTonIH0sXG4gICAgICAgICAgeyBpZDogJ20xNF9zM19xMWInLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnRG9tYWluOiBGYW1pbHkvUmVsYXRpb25zaGlwcyBcXHUyMDE0IFNhdGlzZmFjdGlvbiAoMS0xMCk6JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTRfczNfcTJhJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ0RvbWFpbjogQ2FyZWVyL0VkdWNhdGlvbiBcXHUyMDE0IEltcG9ydGFuY2UgKDEtMTApOicgfSxcbiAgICAgICAgICB7IGlkOiAnbTE0X3MzX3EyYicsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdEb21haW46IENhcmVlci9FZHVjYXRpb24gXFx1MjAxNCBTYXRpc2ZhY3Rpb24gKDEtMTApOicgfSxcbiAgICAgICAgICB7IGlkOiAnbTE0X3MzX3EzYScsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdEb21haW46IFBlcnNvbmFsIEdyb3d0aC9IZWFsdGggXFx1MjAxNCBJbXBvcnRhbmNlICgxLTEwKTonIH0sXG4gICAgICAgICAgeyBpZDogJ20xNF9zM19xM2InLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnRG9tYWluOiBQZXJzb25hbCBHcm93dGgvSGVhbHRoIFxcdTIwMTQgU2F0aXNmYWN0aW9uICgxLTEwKTonIH0sXG4gICAgICAgICAgeyBpZDogJ20xNF9zM19xNGEnLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnRG9tYWluOiBTb2NpYWwgTGlmZS9GcmllbmRzIFxcdTIwMTQgSW1wb3J0YW5jZSAoMS0xMCk6JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTRfczNfcTRiJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ0RvbWFpbjogU29jaWFsIExpZmUvRnJpZW5kcyBcXHUyMDE0IFNhdGlzZmFjdGlvbiAoMS0xMCk6JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTRfczNfcTVhJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ0RvbWFpbjogUmVjcmVhdGlvbi9MZWlzdXJlIFxcdTIwMTQgSW1wb3J0YW5jZSAoMS0xMCk6JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTRfczNfcTViJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ0RvbWFpbjogUmVjcmVhdGlvbi9MZWlzdXJlIFxcdTIwMTQgU2F0aXNmYWN0aW9uICgxLTEwKTonIH1cbiAgICAgICAgXVxuICAgICAgfSxcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnQUNUIFZhbHVlcyBDb21wYXNzJyxcbiAgICAgICAgZmllbGRzOiBbXG4gICAgICAgICAgeyBpZDogJ20xNF9zMl9xMScsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdMb29raW5nIGF0IHlvdXIgY2hhcnQgYWJvdmUsIHBpY2sgb25lIGxpZmUgZG9tYWluIHdoZXJlIGltcG9ydGFuY2UgaXMgaGlnaCBidXQgc2F0aXNmYWN0aW9uIGlzIGxvdzonIH0sXG4gICAgICAgICAgeyBpZDogJ20xNF9zMl9xMicsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnV2hhdCBpcyBvbmUgc21hbGwsIGNvbW1pdHRlZCBhY3Rpb24geW91IGNvdWxkIHRha2UgdGhpcyB3ZWVrIHRvIG1vdmUgY2xvc2VyIHRvIHRoYXQgdmFsdWU/JyB9XG4gICAgICAgIF1cbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJ0d1aWRlZCBNaW5kZnVsbmVzcyBSZWZsZWN0aW9uJyxcbiAgICAgICAgZmllbGRzOiBbXG4gICAgICAgICAgeyBpZDogJ20xNF9zNF9kZXNjJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ01pbmRmdWxuZXNzIGlzIHRoZSBwcmFjdGljZSBvZiBwYXlpbmcgYXR0ZW50aW9uIHRvIHRoZSBwcmVzZW50IG1vbWVudCB3aXRob3V0IGp1ZGdtZW50LiBGb3IgY2hyb25pYyBwYWluLCBtaW5kZnVsbmVzcyBoZWxwcyB5b3Ugb2JzZXJ2ZSBwYWluIHNlbnNhdGlvbnMgd2l0aG91dCBhZGRpbmcgbGF5ZXJzIG9mIGZlYXIgb3IgY2F0YXN0cm9waGl6aW5nIG9uIHRvcCBvZiB0aGVtLiBFdmVuIDUgbWludXRlcyBvZiBmb2N1c2VkIGJyZWF0aGluZyBjYW4gYmVnaW4gdG8gY2FsbSB5b3VyIG5lcnZvdXMgc3lzdGVtLiBUcnkgdGhpczogc2l0IGNvbWZvcnRhYmx5LCBjbG9zZSB5b3VyIGV5ZXMsIGFuZCBicmVhdGhlIHNsb3dseSBmb3IgNSBtaW51dGVzLiBOb3RpY2UgZWFjaCBicmVhdGguIFdoZW4geW91ciBtaW5kIHdhbmRlcnMsIGdlbnRseSBicmluZyBpdCBiYWNrIHRvIHRoZSBicmVhdGguJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTRfczRfcTEnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ0FmdGVyIGNvbXBsZXRpbmcgdGhlIG1pbmRmdWxuZXNzIGV4ZXJjaXNlLCB3aGF0IGRpZCB5b3Ugbm90aWNlIGFib3V0IHlvdXIgYnJlYXRoaW5nLCB5b3VyIGJvZHkgdGVuc2lvbiwgYW5kIHlvdXIgdGhvdWdodHM/JyB9XG4gICAgICAgIF1cbiAgICAgIH1cbiAgICBdXG4gIH0sXG4gIHtcbiAgICBtb2R1bGVJZDogMTUsXG4gICAgdGl0bGU6IFwiTW9kdWxlIDE1OiBSZWNsYWltaW5nIFlvdXIgTmlnaHRzXCIsXG4gICAgc3VtbWFyeTogXCJTbGVlcCBpcyBhIGJpb2xvZ2ljYWwgc3VwZXJwb3dlciBmb3IgaGVhbGluZyBhbmQgcGFpbiBtYW5hZ2VtZW50LiBUaGlzIG1vZHVsZSBmb2N1c2VzIG9uIGltcHJvdmluZyB5b3VyIHNsZWVwIGh5Z2llbmXigJR0aGUgZXNzZW50aWFsIGhhYml0cyBhbmQgZW52aXJvbm1lbnRhbCBmYWN0b3JzIHRoYXQgY2FuIGJyZWFrIHRoZSBjeWNsZSBvZiBzbGVlcCBkaXNydXB0aW9uIGFuZCBpbmNyZWFzZWQgcGFpbi5cIixcbiAgICBwYXRpZW50Tm90ZTogXCJBIGdvb2QgbmlnaHRcXHUyMDE5cyBzbGVlcCBpc25cXHUyMDE5dCBhIGx1eHVyeSBcXHUyMDE0IGl0XFx1MjAxOXMgb25lIG9mIHRoZSBtb3N0IGhlYWxpbmcgdGhpbmdzIHlvdSBjYW4gZG8gZm9yIHlvdXIgcGFpbi5cIixcbiAgICBleGVyY2lzZVRpdGxlOiBcIlNsZWVwIEh5Z2llbmUgQ2hlY2tsaXN0XCIsXG4gICAgc2VjdGlvbnM6IFtcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnSGFiaXRzIHRvIEltcHJvdmUnLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbTE1X3MxX3ExJywgdHlwZTogJ2NoZWNrYm94JywgbGFiZWw6ICdJIGdvIHRvIGJlZCBhbmQgd2FrZSB1cCBhdCByb3VnaGx5IHRoZSBzYW1lIHRpbWUgZXZlcnkgZGF5LCBldmVuIG9uIHdlZWtlbmRzLicgfSxcbiAgICAgICAgICB7IGlkOiAnbTE1X3MxX3EyJywgdHlwZTogJ2NoZWNrYm94JywgbGFiZWw6ICdNeSBiZWRyb29tIGlzIGRhcmssIHF1aWV0LCBhbmQgY29vbC4nIH0sXG4gICAgICAgICAgeyBpZDogJ20xNV9zMV9xMmInLCB0eXBlOiAnY2hlY2tib3gnLCBsYWJlbDogJ0kgdXNlIG15IGJlZCBvbmx5IGZvciBzbGVlcCBhbmQgaW50aW1hY3kgKG5vdCBmb3Igd29yaywgd2F0Y2hpbmcgVFYsIGV0Yy4pLicgfSxcbiAgICAgICAgICB7IGlkOiAnbTE1X3MxX3EyYycsIHR5cGU6ICdjaGVja2JveCcsIGxhYmVsOiAnSSBoYXZlIGEgcmVsYXhpbmcgd2luZC1kb3duIHJvdXRpbmUgZm9yIHRoZSBob3VyIGJlZm9yZSBiZWQuJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTVfczFfcTMnLCB0eXBlOiAnY2hlY2tib3gnLCBsYWJlbDogJ0kgYXZvaWQgYnJpZ2h0IHNjcmVlbnMgKHBob25lLCBUViwgY29tcHV0ZXIpIGZvciBhdCBsZWFzdCBhbiBob3VyIGJlZm9yZSBiZWQuJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTVfczFfcTQnLCB0eXBlOiAnY2hlY2tib3gnLCBsYWJlbDogJ0kgYXZvaWQgY2FmZmVpbmUgZm9yIGF0IGxlYXN0IDYtOCBob3VycyBiZWZvcmUgYmVkdGltZS4nIH0sXG4gICAgICAgICAgeyBpZDogJ20xNV9zMV9xNGEnLCB0eXBlOiAnY2hlY2tib3gnLCBsYWJlbDogJ0kgYXZvaWQgaGVhdnkgbWVhbHMgd2l0aGluIDItMyBob3VycyBvZiBiZWR0aW1lLicgfSxcbiAgICAgICAgICB7IGlkOiAnbTE1X3MxX3E0YicsIHR5cGU6ICdjaGVja2JveCcsIGxhYmVsOiAnSSBsaW1pdCBvciBhdm9pZCBhbGNvaG9sLCBlc3BlY2lhbGx5IGluIHRoZSBldmVuaW5nLicgfSxcbiAgICAgICAgICB7IGlkOiAnbTE1X3MxX3E1YScsIHR5cGU6ICdjaGVja2JveCcsIGxhYmVsOiAnSSBnZXQgc29tZSBmb3JtIG9mIGdlbnRsZSBwaHlzaWNhbCBhY3Rpdml0eSBtb3N0IGRheXMuJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTVfczFfcTViJywgdHlwZTogJ2NoZWNrYm94JywgbGFiZWw6ICdJIGdldCBleHBvc3VyZSB0byBuYXR1cmFsIGxpZ2h0IGluIHRoZSBtb3JuaW5nLicgfSxcbiAgICAgICAgICB7IGlkOiAnbTE1X3MxX3E1YycsIHR5cGU6ICdjaGVja2JveCcsIGxhYmVsOiAnSWYgSSBuYXAsIEkga2VlcCBpdCBzaG9ydCAodW5kZXIgMzAgbWlucykgYW5kIGVhcmx5IGluIHRoZSBkYXkuJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTVfczFfcTVkJywgdHlwZTogJ2NoZWNrYm94JywgbGFiZWw6ICdJZiBJIGNhblxcJ3QgZmFsbCBhc2xlZXAgYWZ0ZXIgMjAtMzAgbWludXRlcywgSSBnZXQgb3V0IG9mIGJlZCBhbmQgZG8gc29tZXRoaW5nIHJlbGF4aW5nIHVudGlsIEkgZmVlbCBzbGVlcHkuJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTVfczFfcTYnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ0xvb2sgYXQgdGhlIGJveGVzIHlvdSBkaWQgbm90IGNoZWNrLiBQaWNrIG9uZSBvciB0d28gaGFiaXRzIHRvIHdvcmsgb24gdGhpcyB3ZWVrOicgfVxuICAgICAgICBdXG4gICAgICB9LFxuICAgICAge1xuICAgICAgICBzZWN0aW9uVGl0bGU6ICdTbGVlcCBEaWFyeScsXG4gICAgICAgIGZpZWxkczogW1xuICAgICAgICAgIHsgaWQ6ICdtMTVfZGlhcnlfMScsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdEYXkgMTogVGltZSB0byBiZWQsIHRpbWUgdG8gc2xlZXAsIGF3YWtlbmluZ3MsIHdha2UgdGltZSwgd2FraW5nIGZlZWwgKDAtMTApLCBub3RlcycgfSxcbiAgICAgICAgICB7IGlkOiAnbTE1X2RpYXJ5XzInLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnRGF5IDI6IFRpbWUgdG8gYmVkLCB0aW1lIHRvIHNsZWVwLCBhd2FrZW5pbmdzLCB3YWtlIHRpbWUsIHdha2luZyBmZWVsICgwLTEwKSwgbm90ZXMnIH0sXG4gICAgICAgICAgeyBpZDogJ20xNV9kaWFyeV8zJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ0RheSAzOiBUaW1lIHRvIGJlZCwgdGltZSB0byBzbGVlcCwgYXdha2VuaW5ncywgd2FrZSB0aW1lLCB3YWtpbmcgZmVlbCAoMC0xMCksIG5vdGVzJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTVfZGlhcnlfNCcsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdEYXkgNDogVGltZSB0byBiZWQsIHRpbWUgdG8gc2xlZXAsIGF3YWtlbmluZ3MsIHdha2UgdGltZSwgd2FraW5nIGZlZWwgKDAtMTApLCBub3RlcycgfSxcbiAgICAgICAgICB7IGlkOiAnbTE1X2RpYXJ5XzUnLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnRGF5IDU6IFRpbWUgdG8gYmVkLCB0aW1lIHRvIHNsZWVwLCBhd2FrZW5pbmdzLCB3YWtlIHRpbWUsIHdha2luZyBmZWVsICgwLTEwKSwgbm90ZXMnIH0sXG4gICAgICAgICAgeyBpZDogJ20xNV9kaWFyeV82JywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ0RheSA2OiBUaW1lIHRvIGJlZCwgdGltZSB0byBzbGVlcCwgYXdha2VuaW5ncywgd2FrZSB0aW1lLCB3YWtpbmcgZmVlbCAoMC0xMCksIG5vdGVzJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTVfZGlhcnlfNycsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdEYXkgNzogVGltZSB0byBiZWQsIHRpbWUgdG8gc2xlZXAsIGF3YWtlbmluZ3MsIHdha2UgdGltZSwgd2FraW5nIGZlZWwgKDAtMTApLCBub3RlcycgfVxuICAgICAgICBdXG4gICAgICB9XG4gICAgXVxuICB9LFxuICB7XG4gICAgbW9kdWxlSWQ6IDE2LFxuICAgIHRpdGxlOiBcIk1vZHVsZSAxNjogQmV5b25kIHRoZSBDbGluaWM6IENvbXBsZW1lbnRhcnkgVGhlcmFwaWVzXCIsXG4gICAgc3VtbWFyeTogXCJDb21wbGVtZW50YXJ5IGFuZCBpbnRlZ3JhdGl2ZSB0aGVyYXBpZXMsIHN1Y2ggYXMgYWN1cHVuY3R1cmUsIGNoaXJvcHJhY3RpYyBjYXJlLCBtYXNzYWdlLCBvciB5b2dhLCBjYW4gYmUgdmFsdWFibGUgYWRkaXRpb25zIHRvIHlvdXIgaGVhbHRoIHBsYW4uIFRoaXMgbW9kdWxlIGhlbHBzIHlvdSBiZSBhbiBpbmZvcm1lZCBjb25zdW1lciBieSBwcm92aWRpbmcgYSBzdHJ1Y3R1cmVkIHdheSB0byByZXNlYXJjaCBhbmQgZXZhbHVhdGUgdGhlc2Ugb3B0aW9ucyBzYWZlbHkgYW5kIGVmZmVjdGl2ZWx5LlwiLFxuICAgIHBhdGllbnROb3RlOiBcIkJlaW5nIGFuIGluZm9ybWVkIGNvbnN1bWVyIG9mIGNvbXBsZW1lbnRhcnkgdGhlcmFwaWVzIHByb3RlY3RzIGJvdGggeW91ciBoZWFsdGggYW5kIHlvdXIgd2FsbGV0LlwiLFxuICAgIGV4ZXJjaXNlVGl0bGU6IFwiTXkgQ29tcGxlbWVudGFyeSBUaGVyYXB5IEV2YWx1YXRpb25cIixcbiAgICBzZWN0aW9uczogW1xuICAgICAge1xuICAgICAgICBzZWN0aW9uVGl0bGU6ICdUaGVyYXB5IEV2YWx1YXRpb24nLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbTE2X3MxX3ExJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ1RoZXJhcHkgSSBhbSBjb25zaWRlcmluZyAoZS5nLiwgQWN1cHVuY3R1cmUsIENoaXJvcHJhY3RpYywgWW9nYSwgTWFzc2FnZSwgVGFpIENoaSk6JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTZfczFfcTInLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJzEuIFRoZSBldmlkZW5jZTogV2hhdCBkb2VzIHNjaWVudGlmaWMgcmVzZWFyY2ggc2F5IGFib3V0IHRoaXMgdGhlcmFweSBmb3IgbXkgY29uZGl0aW9uPycgfSxcbiAgICAgICAgICB7IGlkOiAnbTE2X3MxX3EzJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICcyLiBUaGUgbG9naXN0aWNzICYgcmlza3M6IFdoYXQgaXMgdGhlIGNvc3QsIGFuZCB3aGF0IGFyZSB0aGUgcG90ZW50aWFsIHNpZGUgZWZmZWN0cz8nIH0sXG4gICAgICAgICAgeyBpZDogJ20xNl9zMV9xNCcsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnMy4gQ29tbXVuaWNhdGlvbjogSGF2ZSBJIGRpc2N1c3NlZCB0aGlzIHdpdGggbXkgcHJpbWFyeSBkb2N0b3I/IFdoYXQgaXMgdGhlaXIgZmVlZGJhY2s/JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTZfczFfcTUnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ015IGRlY2lzaW9uIGFuZCByYXRpb25hbGU6JyB9XG4gICAgICAgIF1cbiAgICAgIH1cbiAgICBdXG4gIH0sXG4gIHtcbiAgICBtb2R1bGVJZDogMTcsXG4gICAgdGl0bGU6IFwiTW9kdWxlIDE3OiBUaGUgQXJ0IG9mIFBhY2luZyBhbmQgUGxhbm5pbmdcIixcbiAgICBzdW1tYXJ5OiBcIkVzY2FwaW5nIHRoZSAnYm9vbS1idXN0JyBjeWNsZSByZXF1aXJlcyBhY3RpdmUgbWFuYWdlbWVudCBvZiB5b3VyIGVuZXJneS4gVGhpcyBtb2R1bGUgdGVhY2hlcyB0aGUgcHJpbmNpcGxlcyBvZiBwYWNpbmfigJRicmVha2luZyBkb3duIHRhc2tzIGFuZCBzY2hlZHVsaW5nIHByb2FjdGl2ZSByZXN04oCUdG8gaGVscCB5b3UgcmVnYWluIGEgc2Vuc2Ugb2YgY29udHJvbCBhbmQgcHJlZGljdGFiaWxpdHkgaW4geW91ciBkYWlseSBsaWZlLlwiLFxuICAgIHBhdGllbnROb3RlOiBcIlBhY2luZyBpc25cXHUyMDE5dCBhYm91dCBkb2luZyBsZXNzIFxcdTIwMTQgaXRcXHUyMDE5cyBhYm91dCBkb2luZyB0aGluZ3Mgc21hcnRlciBzbyB5b3UgY2FuIGRvIG1vcmUgb3ZlciB0aW1lLlwiLFxuICAgIGV4ZXJjaXNlVGl0bGU6IFwiQWN0aXZpdHkgQmFzZWxpbmUgRmluZGVyXCIsXG4gICAgc2VjdGlvbnM6IFtcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnUHVycG9zZSBvZiBQYWNpbmcnLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbTE3X2Rlc2MnLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnUGFjaW5nIGVuc3VyZXMgeW91IHN0b3AgYW4gYWN0aXZpdHkgYmVmb3JlIHlvdSBoaXQgYSBwYWluZnVsIGxpbWl0LiBJdCBicmVha3MgdGhlIGN5Y2xlIG9mIG92ZXItYWN0aXZpdHkgZm9sbG93ZWQgYnkgYSBjcmFzaCwgY3JlYXRpbmcgYSBzdGVhZHksIHJlbGlhYmxlIHJvdXRpbmUuJyB9XG4gICAgICAgIF1cbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJ0ZpbmRpbmcgWW91ciBTYWZlIFN0YXJ0aW5nIFBvaW50JyxcbiAgICAgICAgZmllbGRzOiBbXG4gICAgICAgICAgeyBpZDogJ20xN19zMV9xMScsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICdNeSBjaG9zZW4gYWN0aXZpdHkgdG8gcGFjZSBiZXR0ZXIgKGUuZy4sIHJlYWRpbmcsIGNvbXB1dGVyIHdvcmspOicgfSxcbiAgICAgICAgICB7IGlkOiAnbTE3X3MxX3EyJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ1RoZSBUZXN0OiBUaW1lL3JlcHMgd2hlbiBJIHN0b3BwZWQgYmVmb3JlIHBhaW4gaW5jcmVhc2VkOicgfSxcbiAgICAgICAgICB7IGlkOiAnbTE3X3MxX3EzJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ015IENhbGN1bGF0ZWQgQmFzZWxpbmUgKDgwJSBvZiB0aGUgc3RvcCB0aW1lKTonIH0sXG4gICAgICAgICAgeyBpZDogJ20xN19zMV9xNCcsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnSG93IHdpbGwgeW91IGJ1aWxkIHByb2FjdGl2ZSByZXN0IGludG8geW91ciB3ZWVrbHkgc2NoZWR1bGU/JyB9XG4gICAgICAgIF1cbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJ015IFdlZWtseSBQYWNpbmcgUGxhbicsXG4gICAgICAgIGZpZWxkczogW1xuICAgICAgICAgIHsgaWQ6ICdtMTdfdzEnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ01vbmRheTogUGxhbm5lZCBhY3Rpdml0aWVzLCByZXN0IGJyZWFrcywgYW5kIHRpbWUgbGltaXRzLicgfSxcbiAgICAgICAgICB7IGlkOiAnbTE3X3cyJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdUdWVzZGF5OiBQbGFubmVkIGFjdGl2aXRpZXMsIHJlc3QgYnJlYWtzLCBhbmQgdGltZSBsaW1pdHMuJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTdfdzMnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ1dlZG5lc2RheTogUGxhbm5lZCBhY3Rpdml0aWVzLCByZXN0IGJyZWFrcywgYW5kIHRpbWUgbGltaXRzLicgfSxcbiAgICAgICAgICB7IGlkOiAnbTE3X3c0JywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdUaHVyc2RheTogUGxhbm5lZCBhY3Rpdml0aWVzLCByZXN0IGJyZWFrcywgYW5kIHRpbWUgbGltaXRzLicgfSxcbiAgICAgICAgICB7IGlkOiAnbTE3X3c1JywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdGcmlkYXk6IFBsYW5uZWQgYWN0aXZpdGllcywgcmVzdCBicmVha3MsIGFuZCB0aW1lIGxpbWl0cy4nIH0sXG4gICAgICAgICAgeyBpZDogJ20xN193NicsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnU2F0dXJkYXk6IFBsYW5uZWQgYWN0aXZpdGllcywgcmVzdCBicmVha3MsIGFuZCB0aW1lIGxpbWl0cy4nIH0sXG4gICAgICAgICAgeyBpZDogJ20xN193NycsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnU3VuZGF5OiBQbGFubmVkIGFjdGl2aXRpZXMsIHJlc3QgYnJlYWtzLCBhbmQgdGltZSBsaW1pdHMuJyB9XG4gICAgICAgIF1cbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJ0VuZCBvZiBXZWVrIFBhY2luZyBSZWZsZWN0aW9uJyxcbiAgICAgICAgZmllbGRzOiBbXG4gICAgICAgICAgeyBpZDogJ20xN19zMl9xMScsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnV2hhdCB3b3JrZWQgd2VsbCB0aGlzIHdlZWsgd2l0aCB5b3VyIHBhY2luZz8gV2hhdCB3YXMgZGlmZmljdWx0PycgfSxcbiAgICAgICAgICB7IGlkOiAnbTE3X3MyX3EyJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdXaGF0IGFkanVzdG1lbnRzIHdpbGwgeW91IG1ha2UgdG8gbmV4dCB3ZWVrXFwncyBwbGFuPycgfVxuICAgICAgICBdXG4gICAgICB9XG4gICAgXVxuICB9LFxuICB7XG4gICAgbW9kdWxlSWQ6IDE4LFxuICAgIHRpdGxlOiBcIk1vZHVsZSAxODogQ3JlYXRpbmcgYSBQYWluLUZyaWVuZGx5IEVudmlyb25tZW50XCIsXG4gICAgc3VtbWFyeTogXCJBcHBseWluZyB0aGUgcHJpbmNpcGxlcyBvZiBlcmdvbm9taWNzIChmaXR0aW5nIHRoZSBlbnZpcm9ubWVudCB0byB0aGUgcGVyc29uKSBjYW4gZHJhbWF0aWNhbGx5IHJlZHVjZSBwaHlzaWNhbCBzdHJhaW4gYW5kIGNvbnNlcnZlIGVuZXJneS4gVGhpcyBtb2R1bGUgcHJvdmlkZXMgYSBkZXRhaWxlZCAnd2Fsay10aHJvdWdoJyBvZiB5b3VyIHN1cnJvdW5kaW5ncyB0byBpZGVudGlmeSBvcHBvcnR1bml0aWVzIGZvciBoZWFsdGgtc3VwcG9ydGluZyBpbXByb3ZlbWVudHMuXCIsXG4gICAgcGF0aWVudE5vdGU6IFwiU21hbGwgY2hhbmdlcyB0byB5b3VyIHN1cnJvdW5kaW5ncyBjYW4gbWFrZSBhIHN1cnByaXNpbmdseSBiaWcgZGlmZmVyZW5jZSBpbiB5b3VyIGRhaWx5IGNvbWZvcnQuXCIsXG4gICAgZXhlcmNpc2VUaXRsZTogXCJFcmdvbm9taWMgSW1wcm92ZW1lbnRzXCIsXG4gICAgc2VjdGlvbnM6IFtcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnUHVycG9zZSBvZiBhbiBFcmdvbm9taWMgQWN0aW9uIFBsYW4nLFxuICAgICAgICBkZXNjcmlwdGlvbjogJ1RoZSBnb2FsIG9mIGFuIGVyZ29ub21pYyBhY3Rpb24gcGxhbiBpcyB0byBtb2RpZnkgeW91ciBlbnZpcm9ubWVudCBzbyB0aGF0IHlvdXIgYm9keSBzcGVuZHMgbGVzcyBlbmVyZ3kgYW5kIGVuY291bnRlcnMgbGVzcyBwaHlzaWNhbCBzdHJlc3MgZG9pbmcgZGFpbHkgdGFza3MuJyxcbiAgICAgICAgZmllbGRzOiBbXVxuICAgICAgfSxcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnRXJnb25vbWljIENoZWNrbGlzdHMnLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbTE4X2Noa19rMScsIHR5cGU6ICdjaGVja2JveCcsIGxhYmVsOiAnS2l0Y2hlbjogRnJlcXVlbnRseSB1c2VkIGl0ZW1zIGFyZSBzdG9yZWQgYmV0d2VlbiBzaG91bGRlciBhbmQgaGlwIGhlaWdodC4nIH0sXG4gICAgICAgICAgeyBpZDogJ20xOF9jaGtfazInLCB0eXBlOiAnY2hlY2tib3gnLCBsYWJlbDogJ0tpdGNoZW46IEFuIGFudGktZmF0aWd1ZSBtYXQgaXMgaW4gZnJvbnQgb2YgdGhlIHNpbmsvc3RvdmUuJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMThfY2hrX2szJywgdHlwZTogJ2NoZWNrYm94JywgbGFiZWw6ICdLaXRjaGVuOiBBIHN0b29sIGlzIGF2YWlsYWJsZSBmb3Igc2VhdGVkIHRhc2tzLicgfSxcbiAgICAgICAgICB7IGlkOiAnbTE4X2Noa19rNCcsIHR5cGU6ICdjaGVja2JveCcsIGxhYmVsOiAnS2l0Y2hlbjogSSBoYXZlIGVyZ29ub21pYyB0b29scyAoZS5nLiwgbGFyZ2UtZ3JpcCB1dGVuc2lscywgamFyIG9wZW5lcikuJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMThfY2hrX2s1JywgdHlwZTogJ2NoZWNrYm94JywgbGFiZWw6ICdLaXRjaGVuOiBJIHVzZSBsaWdodHdlaWdodCBwb3RzIGFuZCBwYW5zLicgfSxcbiAgICAgICAgICB7IGlkOiAnbTE4X2Noa19iMScsIHR5cGU6ICdjaGVja2JveCcsIGxhYmVsOiAnQmVkcm9vbTogTXkgbWF0dHJlc3MgaXMgc3VwcG9ydGl2ZSBhbmQgY29tZm9ydGFibGUuJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMThfY2hrX2IyJywgdHlwZTogJ2NoZWNrYm94JywgbGFiZWw6ICdCZWRyb29tOiBNeSBwaWxsb3dzIHN1cHBvcnQgbXkgaGVhZCBhbmQgbmVjayBpbiBhIG5ldXRyYWwgcG9zaXRpb24uJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMThfY2hrX2IzJywgdHlwZTogJ2NoZWNrYm94JywgbGFiZWw6ICdCZWRyb29tOiBUaGUgYmVkIGhlaWdodCBhbGxvd3MgbWUgdG8gZ2V0IGluIGFuZCBvdXQgZWFzaWx5LicgfSxcbiAgICAgICAgICB7IGlkOiAnbTE4X2Noa19iNCcsIHR5cGU6ICdjaGVja2JveCcsIGxhYmVsOiAnQmVkcm9vbTogRXNzZW50aWFsIGl0ZW1zIGFyZSB3aXRoaW4gZWFzeSByZWFjaCBvbiBhIGJlZHNpZGUgdGFibGUuJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMThfY2hrX2I1JywgdHlwZTogJ2NoZWNrYm94JywgbGFiZWw6ICdCZWRyb29tOiBUaGUgcm9vbSBpcyBkYXJrLCBxdWlldCwgYW5kIGNvb2wgZm9yIHNsZWVwLicgfSxcbiAgICAgICAgICB7IGlkOiAnbTE4X2Noa19iYTEnLCB0eXBlOiAnY2hlY2tib3gnLCBsYWJlbDogJ0JhdGhyb29tOiBUaGVyZSBhcmUgbm9uLXNsaXAgbWF0cyBpbiBhbmQgb3V0IG9mIHRoZSB0dWIvc2hvd2VyLicgfSxcbiAgICAgICAgICB7IGlkOiAnbTE4X2Noa19iYTInLCB0eXBlOiAnY2hlY2tib3gnLCBsYWJlbDogJ0JhdGhyb29tOiBUaGVyZSBhcmUgc2VjdXJlbHkgaW5zdGFsbGVkIGdyYWIgYmFycy4nIH0sXG4gICAgICAgICAgeyBpZDogJ20xOF9jaGtfYmEzJywgdHlwZTogJ2NoZWNrYm94JywgbGFiZWw6ICdCYXRocm9vbTogSSBoYXZlIGEgc2hvd2VyIGNoYWlyIG9yIGJhdGggYmVuY2guJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMThfY2hrX2JhNCcsIHR5cGU6ICdjaGVja2JveCcsIGxhYmVsOiAnQmF0aHJvb206IEkgaGF2ZSBhIGxvbmctaGFuZGxlZCBicnVzaCBvciBzcG9uZ2UuJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMThfY2hrX2JhNScsIHR5cGU6ICdjaGVja2JveCcsIGxhYmVsOiAnQmF0aHJvb206IEkgaGF2ZSBhIHJhaXNlZCB0b2lsZXQgc2VhdCBvciBzYWZldHkgZnJhbWUgaWYgbmVlZGVkLicgfSxcbiAgICAgICAgICB7IGlkOiAnbTE4X2Noa19vMScsIHR5cGU6ICdjaGVja2JveCcsIGxhYmVsOiAnT2ZmaWNlOiBNeSBjaGFpciBpcyBhZGp1c3RhYmxlIGFuZCBwcm92aWRlcyBnb29kIGx1bWJhciBzdXBwb3J0LicgfSxcbiAgICAgICAgICB7IGlkOiAnbTE4X2Noa19vMicsIHR5cGU6ICdjaGVja2JveCcsIGxhYmVsOiAnT2ZmaWNlOiBNeSBmZWV0IGFyZSBmbGF0IG9uIHRoZSBmbG9vciAob3IgYSBmb290cmVzdCkuJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMThfY2hrX28zJywgdHlwZTogJ2NoZWNrYm94JywgbGFiZWw6ICdPZmZpY2U6IE15IGtleWJvYXJkIGFuZCBtb3VzZSBhcmUgY2xvc2UsIHdpdGggd3Jpc3RzIHN0cmFpZ2h0LicgfSxcbiAgICAgICAgICB7IGlkOiAnbTE4X2Noa19vNCcsIHR5cGU6ICdjaGVja2JveCcsIGxhYmVsOiAnT2ZmaWNlOiBUaGUgdG9wIG9mIG15IG1vbml0b3IgaXMgYXQgb3IganVzdCBiZWxvdyBleWUgbGV2ZWwuJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMThfY2hrX281JywgdHlwZTogJ2NoZWNrYm94JywgbGFiZWw6ICdPZmZpY2U6IEkgaGF2ZSBhZGVxdWF0ZSBsaWdodGluZyBhbmQgbWluaW1hbCBzY3JlZW4gZ2xhcmUuJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMThfY2hrX282JywgdHlwZTogJ2NoZWNrYm94JywgbGFiZWw6ICdPZmZpY2U6IEkgdGFrZSBzaG9ydCBzdHJldGNoIGJyZWFrcyBldmVyeSAyMC0zMCBtaW51dGVzLicgfVxuICAgICAgICBdXG4gICAgICB9LFxuICAgICAge1xuICAgICAgICBzZWN0aW9uVGl0bGU6ICdNeSBFcmdvbm9taWMgQWN0aW9uIFBsYW4nLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbTE4X3MxX3ExJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdLaXRjaGVuOiBXaGF0IGNoYW5nZXMgY2FuIHlvdSBtYWtlIChlLmcuLCBhbnRpLWZhdGlndWUgbWF0LCBzdG9vbCk/JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMThfczFfcTInLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ0JlZHJvb20gJiBCYXRocm9vbTogV2hhdCBjaGFuZ2VzIGNhbiB5b3UgbWFrZSAoZS5nLiwgZ3JhYiBiYXJzLCBzcGVjaWFsaXplZCBwaWxsb3dzKT8nIH0sXG4gICAgICAgICAgeyBpZDogJ20xOF9zMV9xMycsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnT2ZmaWNlL1dvcmtzcGFjZTogV2hhdCBjaGFuZ2VzIGNhbiB5b3UgbWFrZSAoZS5nLiwgbHVtYmFyIHN1cHBvcnQsIHNjcmVlbiBhdCBleWUgbGV2ZWwpPycgfSxcbiAgICAgICAgICB7IGlkOiAnbTE4X3MxX3E0JywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdCYXNlZCBvbiB0aGVzZSBjb25jZXB0cywgd2hhdCBpcyBPTkUgY2hhbmdlIHlvdSBjYW4gbWFrZSB0aGlzIHdlZWsgdG8gaW1wcm92ZSB5b3VyIGVudmlyb25tZW50PycgfVxuICAgICAgICBdXG4gICAgICB9XG4gICAgXVxuICB9LFxuICB7XG4gICAgbW9kdWxlSWQ6IDE5LFxuICAgIHRpdGxlOiBcIk1vZHVsZSAxOTogV2VhdmluZyBZb3VyIFdlYiBvZiBTdXBwb3J0XCIsXG4gICAgc3VtbWFyeTogXCJBIHN0cm9uZyBzdXBwb3J0IHN5c3RlbSBpcyBhbiBlc3NlbnRpYWwgbGlmZWxpbmUgd2hlbiBuYXZpZ2F0aW5nIGNocm9uaWMgcGFpbi4gVGhpcyBtb2R1bGUgaGVscHMgeW91IHZpc3VhbGl6ZSB5b3VyIGN1cnJlbnQgbmV0d29yayBvZiBmYW1pbHksIGZyaWVuZHMsIGFuZCBwZWVycywgaWRlbnRpZnlpbmcgc3RyZW5ndGhzIGFuZCBnYXBzIHNvIHlvdSBjYW4gdGFrZSBhY3RpdmUgc3RlcHMgdG8gc3RyZW5ndGhlbiB5b3VyIHZpdGFsIGNvbm5lY3Rpb25zLlwiLFxuICAgIHBhdGllbnROb3RlOiBcIllvdSBkb25cXHUyMDE5dCBoYXZlIHRvIHdhbGsgdGhpcyBwYXRoIGFsb25lIFxcdTIwMTQgZXZlbiBvbmUgc3Ryb25nIGNvbm5lY3Rpb24gY2FuIG1ha2UgYWxsIHRoZSBkaWZmZXJlbmNlLlwiLFxuICAgIGV4ZXJjaXNlVGl0bGU6IFwiTXkgU3VwcG9ydCBNYXBcIixcbiAgICBzZWN0aW9uczogW1xuICAgICAge1xuICAgICAgICBzZWN0aW9uVGl0bGU6ICdUeXBlcyBvZiBTdXBwb3J0JyxcbiAgICAgICAgZGVzY3JpcHRpb246ICdUaGVyZSBhcmUgc2V2ZXJhbCB0eXBlcyBvZiBzdXBwb3J0LCBhbmQgdW5kZXJzdGFuZGluZyB0aGVtIGNhbiBoZWxwIHlvdSBpZGVudGlmeSB3aGF0IHlvdSBoYXZlIGFuZCB3aGF0IHlvdSBtYXkgbmVlZDogRW1vdGlvbmFsIHN1cHBvcnQgKHNvbWVvbmUgd2hvIGxpc3RlbnMgYW5kIHZhbGlkYXRlcyB5b3VyIGZlZWxpbmdzKSwgUHJhY3RpY2FsIHN1cHBvcnQgKGhlbHAgd2l0aCBkYWlseSB0YXNrcywgcmlkZXMgdG8gYXBwb2ludG1lbnRzLCBtZWFscyksIEluZm9ybWF0aW9uYWwgc3VwcG9ydCAoYWR2aWNlLCByZXNvdXJjZXMsIGFuZCBndWlkYW5jZSBmcm9tIHRob3NlIHdpdGgga25vd2xlZGdlIG9yIGV4cGVyaWVuY2UpLCBhbmQgU29jaWFsIGNvbXBhbmlvbnNoaXAgKHBlb3BsZSB3aG8gaGVscCB5b3UgZmVlbCBjb25uZWN0ZWQgYW5kIHJlZHVjZSBpc29sYXRpb24pLicsXG4gICAgICAgIGZpZWxkczogW11cbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJ0FuYWx5emluZyBZb3VyIE5ldHdvcmsnLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbTE5X3MxX3ExJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdFbW90aW9uYWwgU3VwcG9ydDogV2hvIGxpc3RlbnMgdG8geW91IGFuZCB2YWxpZGF0ZXMgeW91ciBmZWVsaW5ncz8gV2hvIGNhbiB5b3UgY2FsbCBvbiBhIGhhcmQgZGF5PycgfSxcbiAgICAgICAgICB7IGlkOiAnbTE5X3MxX3EyJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdQcmFjdGljYWwgU3VwcG9ydDogV2hvIGhlbHBzIHdpdGggZGFpbHkgdGFza3MsIGFwcG9pbnRtZW50cywgb3IgZXJyYW5kcyB3aGVuIHlvdSBuZWVkIGl0PycgfSxcbiAgICAgICAgICB7IGlkOiAnbTE5X3MxX3EzJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdJbmZvcm1hdGlvbmFsIFN1cHBvcnQ6IFdobyBwcm92aWRlcyBoZWxwZnVsIGFkdmljZSwgbWVkaWNhbCBrbm93bGVkZ2UsIG9yIHVzZWZ1bCByZXNvdXJjZXM/JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMTlfczFfcTQnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ1NvY2lhbCBDb21wYW5pb25zaGlwOiBXaG8gaGVscHMgeW91IGZlZWwgY29ubmVjdGVkIGFuZCBsZXNzIGlzb2xhdGVkPycgfSxcbiAgICAgICAgICB7IGlkOiAnbTE5X3MxX3E1JywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdBcmUgdGhlcmUgYW55IGdhcHM/IFdoaWNoIHR5cGUgb2Ygc3VwcG9ydCBkbyB5b3UgZmVlbCB5b3UgYXJlIG1pc3NpbmcgbW9zdD8nIH0sXG4gICAgICAgICAgeyBpZDogJ20xOV9zMV9xNicsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnV2hhdCBpcyBvbmUgc21hbGwgc3RlcCB5b3UgY291bGQgdGFrZSB0aGlzIHdlZWsgdG8gc3RyZW5ndGhlbiBhIGNvbm5lY3Rpb24gb3IgZmlsbCBhIGdhcD8nIH1cbiAgICAgICAgXVxuICAgICAgfVxuICAgIF1cbiAgfSxcbiAge1xuICAgIG1vZHVsZUlkOiAyMCxcbiAgICB0aXRsZTogXCJNb2R1bGUgMjA6IEZpbmRpbmcgWW91ciBWb2ljZTogU2VsZi1BZHZvY2FjeVwiLFxuICAgIHN1bW1hcnk6IFwiU2VsZi1hZHZvY2FjeSBpcyB0aGUgc2tpbGwgb2YgdXNpbmcgeW91ciB2b2ljZSB0byBlbnN1cmUgeW91ciBuZWVkcyBhcmUgaGVhcmQgYW5kIG1ldC4gVGhpcyBtb2R1bGUgcHJvdmlkZXMgc2NyaXB0cyB0byBoZWxwIHlvdSBjb21tdW5pY2F0ZSBjbGVhcmx5IGFuZCBhc3NlcnRpdmVseSB3aXRoIHlvdXIgaGVhbHRoY2FyZSB0ZWFtLCB0cmFuc2Zvcm1pbmcgeW91IGludG8gYW4gZW1wb3dlcmVkIHBhcnRuZXIgaW4geW91ciBvd24gY2FyZS5cIixcbiAgICBwYXRpZW50Tm90ZTogXCJZb3VyIHZvaWNlIG1hdHRlcnMsIGFuZCBsZWFybmluZyB0byB1c2UgaXQgZWZmZWN0aXZlbHkgaXMgb25lIG9mIHRoZSBtb3N0IGltcG9ydGFudCBza2lsbHMgeW91IGNhbiBidWlsZC5cIixcbiAgICBleGVyY2lzZVRpdGxlOiBcIkFkdm9jYWN5IFNjcmlwdCBCdWlsZGVyXCIsXG4gICAgc2VjdGlvbnM6IFtcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnV2h5IFNlbGYtQWR2b2NhY3kgTWF0dGVycycsXG4gICAgICAgIGRlc2NyaXB0aW9uOiAnQ2hyb25pYyBwYWluIHBhdGllbnRzIG9mdGVuIGZlZWwgcnVzaGVkLCBkaXNtaXNzZWQsIG9yIHVuaGVhcmQgaW4gbWVkaWNhbCBhcHBvaW50bWVudHMuIFNlbGYtYWR2b2NhY3kgaXMgbm90IGFib3V0IGJlaW5nIGRpZmZpY3VsdCBcXHUyMDE0IGl0IGlzIGFib3V0IGNsZWFybHkgYW5kIHJlc3BlY3RmdWxseSBjb21tdW5pY2F0aW5nIHlvdXIgbmVlZHMgc28geW91ciBoZWFsdGhjYXJlIHRlYW0gY2FuIHByb3ZpZGUgdGhlIGJlc3QgcG9zc2libGUgY2FyZS4gUHJlcGFyaW5nIHdoYXQgeW91IHdhbnQgdG8gc2F5IGluIGFkdmFuY2UgZW5zdXJlcyB5b3UgbWFrZSB0aGUgbW9zdCBvZiB5b3VyIGxpbWl0ZWQgYXBwb2ludG1lbnQgdGltZSBhbmQgbGVhdmUgZmVlbGluZyBoZWFyZC4nLFxuICAgICAgICBmaWVsZHM6IFtdXG4gICAgICB9LFxuICAgICAge1xuICAgICAgICBzZWN0aW9uVGl0bGU6ICdCdWlsZGluZyBZb3VyIFNjcmlwdHMnLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbTIwX3MxX3ExJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdTY3JpcHQgZm9yIERlc2NyaWJpbmcgWW91ciBQYWluIENsZWFybHk6IFdyaXRlIDItMyBzZW50ZW5jZXMgY292ZXJpbmcgbG9jYXRpb24sIHF1YWxpdHkgKHNoYXJwLCBidXJuaW5nLCBhY2hpbmcpLCBpbnRlbnNpdHkgKDAtMTApLCBhbmQgaG93IGl0IGFmZmVjdHMgeW91ciBkYWlseSBmdW5jdGlvbi4nIH0sXG4gICAgICAgICAgeyBpZDogJ20yMF9zMV9xMicsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnU2NyaXB0IGZvciBSZXF1ZXN0aW5nIGEgUmVmZXJyYWwgb3IgRGlzY3Vzc2luZyBUcmVhdG1lbnQgT3B0aW9uczogUHJhY3RpY2UgYSBjbGVhciwgcmVzcGVjdGZ1bCB3YXkgdG8gYXNrIGZvciB3aGF0IHlvdSBuZWVkIChlLmcuLCBcIklcXCdkIGxpa2UgdG8gZGlzY3VzcyB3aGV0aGVyIGEgcmVmZXJyYWwgdG8gYSBwYWluIHNwZWNpYWxpc3QgbWlnaHQgYmUgaGVscGZ1bCBmb3IgbWUuXCIpJyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMjBfczFfcTMnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ1NjcmlwdCBmb3IgV2hlbiBZb3UgRmVlbCBEaXNtaXNzZWQ6IEhvdyB3aWxsIHlvdSBjYWxtbHkgcmVkaXJlY3QgdGhlIGNvbnZlcnNhdGlvbj8gKGUuZy4sIFwiSSBhcHByZWNpYXRlIHlvdXIgaW5wdXQuIEkgd2FudCB0byBtYWtlIHN1cmUgd2VcXCd2ZSBleHBsb3JlZCBhbGwgdGhlIG9wdGlvbnMuIENhbiB3ZSBkaXNjdXNzLi4uP1wiKScgfVxuICAgICAgICBdXG4gICAgICB9LFxuICAgICAge1xuICAgICAgICBzZWN0aW9uVGl0bGU6ICdBZHZvY2FjeSBSZWZsZWN0aW9uJyxcbiAgICAgICAgZmllbGRzOiBbXG4gICAgICAgICAgeyBpZDogJ20yMF9zMl9xMScsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnVGhpbmsgYWJvdXQgYSBwYXN0IGFwcG9pbnRtZW50IHdoZXJlIHlvdSBsZWZ0IGZlZWxpbmcgdW5oZWFyZC4gV2hhdCB3b3VsZCB5b3Ugc2F5IGRpZmZlcmVudGx5IG5vdz8nIH0sXG4gICAgICAgICAgeyBpZDogJ20yMF9zMl9xMicsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnV2hhdCBpcyBvbmUgdGhpbmcgeW91IHdpbGwgZG8gdG8gcHJlcGFyZSBiZWZvcmUgeW91ciBuZXh0IGFwcG9pbnRtZW50PycgfVxuICAgICAgICBdXG4gICAgICB9XG4gICAgXVxuICB9LFxuICB7XG4gICAgbW9kdWxlSWQ6IDIxLFxuICAgIHRpdGxlOiBcIk1vZHVsZSAyMTogQnJlYWtpbmcgRnJlZSBmcm9tIFVuaGVscGZ1bCBIYWJpdHNcIixcbiAgICBzdW1tYXJ5OiBcIkJ1aWxkaW5nIHJlc2lsaWVuY2UgaW52b2x2ZXMgcmVtb3ZpbmcgaGFiaXRzIHRoYXQgYWN0aXZlbHkgdW5kZXJtaW5lIHlvdXIgcHJvZ3Jlc3MuIFRoaXMgbW9kdWxlIHByb3ZpZGVzIGEgc3RydWN0dXJlZCBwbGFubmVyIHRvIGhlbHAgeW91IHRhY2tsZSByb2FkYmxvY2tzIGxpa2Ugc21va2luZyBvciBleGNlc3NpdmUgYWxjb2hvbCB1c2UsIHdoaWNoIGNhbiBmdWVsIGluZmxhbW1hdGlvbiBhbmQgaW50ZXJmZXJlIHdpdGggeW91ciBwYWluIG1hbmFnZW1lbnQuXCIsXG4gICAgcGF0aWVudE5vdGU6IFwiTGV0dGluZyBnbyBvZiBoYWJpdHMgdGhhdCBob2xkIHlvdSBiYWNrIGlzIGFuIGFjdCBvZiBjb3VyYWdlIGFuZCBzZWxmLWNhcmUuXCIsXG4gICAgZXhlcmNpc2VUaXRsZTogXCJNeSBIYWJpdCBDaGFuZ2UgUGxhbm5lclwiLFxuICAgIHNlY3Rpb25zOiBbXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJ1BsYW4gZm9yIENoYW5nZScsXG4gICAgICAgIGZpZWxkczogW1xuICAgICAgICAgIHsgaWQ6ICdtMjFfczFfcTEnLCB0eXBlOiAndGV4dCcsIGxhYmVsOiAnVGhlIGhhYml0IEkgd2FudCB0byBjaGFuZ2U6JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMjFfczFfcTBhJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ1N0YXJ0IERhdGU6JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMjFfczFfcTBiJywgdHlwZTogJ3RleHQnLCBsYWJlbDogJ1RhcmdldCBRdWl0L0dvYWwgRGF0ZTonIH0sXG4gICAgICAgICAgeyBpZDogJ20yMV9zMV9xMicsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnMS4gTXkgXCJ3aHlcIjogV2hhdCBhcmUgbXkgZGVlcGVzdCByZWFzb25zIGZvciBtYWtpbmcgdGhpcyBjaGFuZ2U/JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMjFfczFfcTMnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJzIuIE15IHN1cHBvcnQgc3lzdGVtIGZvciB0aGlzIGNoYW5nZTonIH1cbiAgICAgICAgXVxuICAgICAgfSxcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnTXkgVHJpZ2dlcnMnLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbTIxX3MyX3ExJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdXaGF0IHNpdHVhdGlvbnMsIGVtb3Rpb25zLCB0aW1lcyBvZiBkYXksIG9yIHBlb3BsZSB0cmlnZ2VyIHRoaXMgaGFiaXQ/IExpc3QgYXMgbWFueSBhcyB5b3UgY2FuIGlkZW50aWZ5LicgfSxcbiAgICAgICAgICB7IGlkOiAnbTIxX3MyX3EyJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdGb3IgZWFjaCB0cmlnZ2VyIGFib3ZlLCB3aGF0IGlzIG9uZSBhbHRlcm5hdGl2ZSBhY3Rpb24gb3IgY29waW5nIHN0cmF0ZWd5IHlvdSBjYW4gdXNlIGluc3RlYWQ/JyB9XG4gICAgICAgIF1cbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJ0NvcGluZyBhbmQgUmV3YXJkcycsXG4gICAgICAgIGZpZWxkczogW1xuICAgICAgICAgIHsgaWQ6ICdtMjFfczFfcTQnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJzMuIE15IGNvcGluZyBwbGFuIGZvciBjcmF2aW5ncyBhbmQgdGVtcHRhdGlvbiAoV2hhdCB3aWxsIEkgZG8gaW5zdGVhZD8pOicgfSxcbiAgICAgICAgICB7IGlkOiAnbTIxX3MxX3E1JywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICc0LiBNeSByZXdhcmQgZm9yIG1pbGVzdG9uZXM6JyB9XG4gICAgICAgIF1cbiAgICAgIH1cbiAgICBdXG4gIH0sXG4gIHtcbiAgICBtb2R1bGVJZDogMjIsXG4gICAgdGl0bGU6IFwiTW9kdWxlIDIyOiBCdWlsZGluZyBZb3VyIFJlc2lsaWVuY2VcIixcbiAgICBzdW1tYXJ5OiBcIlJlc2lsaWVuY2UgaXMgeW91ciBhYmlsaXR5IHRvIGFkYXB0IHdlbGwgaW4gdGhlIGZhY2Ugb2YgYWR2ZXJzaXR5LiBUaGlzIG1vZHVsZSBmb2N1c2VzIG9uIGN1bHRpdmF0aW5nIGlubmVyIHN0cmVuZ3RoIHRocm91Z2ggcmVhbGlzdGljIG9wdGltaXNtIGFuZCBzZWxmLWVmZmljYWN5LCB1c2luZyBkYWlseSBwcmFjdGljZXMgbGlrZSBncmF0aXR1ZGUgYW5kIHNlbGYtY29tcGFzc2lvbiB0byBzaGlmdCB5b3VyIGZvY3VzIGZyb20gc2ltcGx5IG1hbmFnaW5nIHBhaW4gdG8gdHJ1bHkgbGl2aW5nIHdlbGwgd2l0aCBpdC5cIixcbiAgICBwYXRpZW50Tm90ZTogXCJUaGUgZ29hbCBpcyBubyBsb25nZXIganVzdCB0byBtYW5hZ2UgeW91ciBwYWluIFxcdTIwMTQgaXQgaXMgdG8gYnVpbGQgYSBsaWZlIHlvdSBsb3ZlIGxpdmluZywgZXZlbiB3aXRoIGl0LlwiLFxuICAgIGV4ZXJjaXNlVGl0bGU6IFwiR3JhdGl0dWRlIGFuZCBTZWxmLUNvbXBhc3Npb24gSm91cm5hbFwiLFxuICAgIHNlY3Rpb25zOiBbXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJ0Zyb20gTWFuYWdpbmcgdG8gTGl2aW5nIFdlbGwnLFxuICAgICAgICBkZXNjcmlwdGlvbjogJ1VwIHRvIHRoaXMgcG9pbnQsIG11Y2ggb2YgdGhpcyB3b3JrYm9vayBoYXMgZm9jdXNlZCBvbiB1bmRlcnN0YW5kaW5nIGFuZCBtYW5hZ2luZyB5b3VyIHBhaW4uIFRoaXMgbW9kdWxlIG1hcmtzIGEgc2hpZnQuIFJlc2lsaWVuY2UgaXMgbm90IHNpbXBseSBhYm91dCBzdXJ2aXZhbCBcXHUyMDE0IGl0IGlzIGFib3V0IHRocml2aW5nLiBJdCBtZWFucyBtb3ZpbmcgYmV5b25kIGNvcGluZyBkYXktdG8tZGF5IGFuZCB0b3dhcmQgYnVpbGRpbmcgYSBsaWZlIHRoYXQgZmVlbHMgbWVhbmluZ2Z1bCwgam95ZnVsLCBhbmQgY29ubmVjdGVkLCBldmVuIGluIHRoZSBwcmVzZW5jZSBvZiBwYWluLiBUaGUgcHJhY3RpY2VzIGJlbG93IGhlbHAgeW91IHN0cmVuZ3RoZW4gdGhhdCBmb3VuZGF0aW9uLicsXG4gICAgICAgIGZpZWxkczogW11cbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJ0RhaWx5IFJlZmxlY3Rpb24nLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbTIyX3MxX3ExJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICcxLiBUb2RheSwgSSBhbSBncmF0ZWZ1bCBmb3IgKGxpc3QgdGhyZWUgdGhpbmdzLCBubyBtYXR0ZXIgaG93IHNtYWxsKTonIH0sXG4gICAgICAgICAgeyBpZDogJ20yMl9zMV9xMicsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnMi4gT25lIHNtYWxsIHN1Y2Nlc3Mgb3IgZWZmb3J0IEkgY2FuIGFja25vd2xlZGdlIHRvZGF5IGlzOicgfSxcbiAgICAgICAgICB7IGlkOiAnbTIyX3MxX3EzJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICczLiBBIGNvbXBhc3Npb25hdGUgbWVzc2FnZSBJIGNhbiBnaXZlIG15c2VsZiBhYm91dCB0b2RheVxcJ3Mgc3RydWdnbGVzIGlzOicgfVxuICAgICAgICBdXG4gICAgICB9XG4gICAgXVxuICB9LFxuICB7XG4gICAgbW9kdWxlSWQ6IDIzLFxuICAgIHRpdGxlOiBcIk1vZHVsZSAyMzogRmluZGluZyBNZWFuaW5nIGFuZCBQdXJwb3NlXCIsXG4gICAgc3VtbWFyeTogXCJDaHJvbmljIHBhaW4gY2FuIGNoYWxsZW5nZSBvdXIgc2Vuc2Ugb2YgcHVycG9zZSwgYnV0IGZpbmRpbmcgbWVhbmluZyByZW1haW5zIGEgcG93ZXJmdWwgc291cmNlIG9mIGhlYWxpbmcuIFRoaXMgbW9kdWxlIGhlbHBzIHlvdSBpZGVudGlmeSB5b3VyIGNvcmUgdmFsdWVzIGFuZCBicmFpbnN0b3JtIHNtYWxsLCBtYW5hZ2VhYmxlIHdheXMgdG8gY29udHJpYnV0ZSB0byB5b3VyIHdvcmxkIGFuZCBtYWludGFpbiBhIGZ1bGZpbGxpbmcgaWRlbnRpdHkuXCIsXG4gICAgcGF0aWVudE5vdGU6IFwiRXZlbiBvbiB5b3VyIGhhcmRlc3QgZGF5cywgeW91IGhhdmUgc29tZXRoaW5nIG1lYW5pbmdmdWwgdG8gb2ZmZXIgdGhlIHdvcmxkLlwiLFxuICAgIGV4ZXJjaXNlVGl0bGU6IFwiTXkgQ29udHJpYnV0aW9uIEJyYWluc3Rvcm1cIixcbiAgICBzZWN0aW9uczogW1xuICAgICAge1xuICAgICAgICBzZWN0aW9uVGl0bGU6ICdTaGFyaW5nIFlvdXIgR2lmdHMnLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbTIzX3MxX3ExJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICcxLiBNeSBza2lsbHMsIHBhc3Npb25zLCBhbmQgaW50ZXJlc3RzIChXaGF0IGFyZSB5b3UgZ29vZCBhdCBvciBjYXJlIGFib3V0Pyk6JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMjNfczFfcTInLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJzIuIE15IGlkZWEgZm9yIGNvbnRyaWJ1dGlvbiAoSG93IGNvdWxkIHlvdSB1c2Ugb25lIG9mIHRob3NlIHNraWxscyBpbiBhIHNtYWxsIHdheT8pOicgfVxuICAgICAgICBdXG4gICAgICB9XG4gICAgXVxuICB9LFxuICB7XG4gICAgbW9kdWxlSWQ6IDI0LFxuICAgIHRpdGxlOiBcIk1vZHVsZSAyNDogWW91ciBQYXRoIHRvIElubmVyIFBlYWNlXCIsXG4gICAgc3VtbWFyeTogXCJTcGlyaXR1YWxpdHkgYW5kIHBlcnNvbmFsIG1lYW5pbmcgYXJlIHByb2ZvdW5kIHNvdXJjZXMgb2Ygc3RyZW5ndGggYW5kIGNvbWZvcnQuIFdoZW4gb25lIGlzIGZhY2luZyBwcm9mb3VuZCBjaGFsbGVuZ2VzLCBzZWVraW5nIGNvbm5lY3Rpb24gdG8gc29tZXRoaW5nIGxhcmdlciB0aGFuIG9uZXNlbGYgaXMgbmF0dXJhbC4gV2hldGhlciB0aHJvdWdoIGZhaXRoLCBuYXR1cmUsIGFydCwgb3IgbWVkaXRhdGlvbiwgdGhpcyBtb2R1bGUgZW5jb3VyYWdlcyB5b3UgdG8gZXhwbG9yZSB3aGF0IGJyaW5ncyB5b3UgYSBzZW5zZSBvZiBhd2UgYW5kIHBlYWNlIGFuZCB0byBpbnRlbnRpb25hbGx5IG51cnR1cmUgdGhhdCBjb25uZWN0aW9uLlwiLFxuICAgIHBhdGllbnROb3RlOiBcIldoYXRldmVyIGJyaW5ncyB5b3UgcGVhY2UgXFx1MjAxNCBmYWl0aCwgbmF0dXJlLCBtdXNpYywgb3Igc3RpbGxuZXNzIFxcdTIwMTQgbGVhbiBpbnRvIGl0IHdpdGhvdXQgYXBvbG9neS5cIixcbiAgICBleGVyY2lzZVRpdGxlOiBcIlNwaXJpdHVhbGl0eSBhbmQgUGVyc29uYWwgTWVhbmluZ1wiLFxuICAgIHNlY3Rpb25zOiBbXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJ0ZpbmRpbmcgQ29ubmVjdGlvbicsXG4gICAgICAgIGZpZWxkczogW1xuICAgICAgICAgIHsgaWQ6ICdtMjRfczFfcTEnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ1doYXQgYWN0aXZpdGllcywgcGxhY2VzLCBvciBwcmFjdGljZXMgYnJpbmcgeW91IGEgc2Vuc2Ugb2YgcGVhY2UsIGF3ZSwgb3IgY29ubmVjdGlvbj8nIH0sXG4gICAgICAgICAgeyBpZDogJ20yNF9zMV9xMicsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnSG93IGNhbiB5b3UgaW50ZW50aW9uYWxseSBpbmNvcnBvcmF0ZSBvbmUgb2YgdGhlc2UgaW50byB5b3VyIGxpZmUgdGhpcyB3ZWVrLCBldmVuIGZvciBqdXN0IGZpdmUgbWludXRlcz8nIH1cbiAgICAgICAgXVxuICAgICAgfVxuICAgIF1cbiAgfSxcbiAge1xuICAgIG1vZHVsZUlkOiAyNSxcbiAgICB0aXRsZTogXCJNb2R1bGUgMjU6IFlvdXIgRmxhcmUtVXAgUGxhbiAmIEhvcGVmdWwgRnV0dXJlXCIsXG4gICAgc3VtbWFyeTogXCJTZXRiYWNrcyBhcmUgYSBub3JtYWwgcGFydCBvZiB0aGUgam91cm5leS4gVGhpcyBtb2R1bGUgaGVscHMgeW91IGNyZWF0ZSBhIGNvbmNyZXRlLCBzdGVwLWJ5LXN0ZXAgcGxhbiBmb3IgeW91ciAndG91Z2ggZGF5cywnIHRyYW5zZm9ybWluZyBmZWFyIG9mIHRoZSB1bmtub3duIGludG8gYSBmZWVsaW5nIG9mIHByZXBhcmVkbmVzcyBhbmQgY29udHJvbCBhcyB5b3Ugd2FsayB0b3dhcmQgYSBob3BlZnVsIGZ1dHVyZS5cIixcbiAgICBwYXRpZW50Tm90ZTogXCJIYXZpbmcgYSBwbGFuIGZvciB0b3VnaCBkYXlzIHRyYW5zZm9ybXMgZmVhciBvZiB0aGUgdW5rbm93biBpbnRvIHF1aWV0IGNvbmZpZGVuY2UuXCIsXG4gICAgZXhlcmNpc2VUaXRsZTogXCJNeSBQZXJzb25hbGl6ZWQgRmxhcmUtVXAgUGxhblwiLFxuICAgIHNlY3Rpb25zOiBbXG4gICAgICB7XG4gICAgICAgIHNlY3Rpb25UaXRsZTogJ1RoZSBQbGFuJyxcbiAgICAgICAgZmllbGRzOiBbXG4gICAgICAgICAgeyBpZDogJ20yNV9zMV9xMScsIHR5cGU6ICd0ZXh0YXJlYScsIGxhYmVsOiAnMS4gTXkgZWFybHkgd2FybmluZyBzaWducyAoaG93IEkga25vdyBhIGZsYXJlIGlzIHN0YXJ0aW5nKTonIH0sXG4gICAgICAgICAgeyBpZDogJ20yNV9zMV9xMicsIHR5cGU6ICd0ZXh0JywgbGFiZWw6ICcyLiBNeSBnby10byBjYWxtaW5nIHBocmFzZSAoZS5nLiwgXCJUaGlzIGlzIHRlbXBvcmFyeS4gSSBjYW4gaGFuZGxlIHRoaXNcIik6ICcgfSxcbiAgICAgICAgICB7IGlkOiAnbTI1X3MxX3EzJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICczLiBNeSBjb21mb3J0IHRvb2wga2l0IChNb3ZlbWVudHMsIGhlYXQvY29sZCwgcmVsYXhhdGlvbiwgZGlzdHJhY3Rpb24pOicgfSxcbiAgICAgICAgICB7IGlkOiAnbTI1X3MxX3E0JywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICc0LiBNeSBwYWNpbmcgcGxhbiAoQWN0aXZpdGllcyB0byBjYW5jZWwsIHJlZHVjZWQgYWN0aXZpdHkgZ29hbHMpOicgfSxcbiAgICAgICAgICB7IGlkOiAnbTI1X3MxX3E1JywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICc1LiBJIHdpbGwgY29udGFjdCBteSBkb2N0b3IgaWYgKGxpc3QgeW91ciBzcGVjaWZpYyByZWQgZmxhZ3MpOicgfSxcbiAgICAgICAgICB7IGlkOiAnbTI1X3MxX3E2JywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICc2LiBNeSBTdXBwb3J0IFN5c3RlbSB0byBDb250YWN0IChOYW1lcy9OdW1iZXJzKTonIH1cbiAgICAgICAgXVxuICAgICAgfSxcbiAgICAgIHtcbiAgICAgICAgc2VjdGlvblRpdGxlOiAnTXkgSG9wZWZ1bCBGdXR1cmUnLFxuICAgICAgICBmaWVsZHM6IFtcbiAgICAgICAgICB7IGlkOiAnbTI1X3MyX3ExJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdXaGF0IGFyZSB0aGUgdHdvIG9yIHRocmVlIG1vc3QgaW1wb3J0YW50IHRvb2xzIG9yIGluc2lnaHRzIHlvdSB3aWxsIGNhcnJ5IGZvcndhcmQgZnJvbSB0aGlzIHdvcmtib29rPycgfSxcbiAgICAgICAgICB7IGlkOiAnbTI1X3MyX3EyJywgdHlwZTogJ3RleHRhcmVhJywgbGFiZWw6ICdXaGF0IGlzIG9uZSBob3BlZnVsIGdvYWwgeW91IGhhdmUgZm9yIHlvdXIgd2VsbC1iZWluZyBpbiB0aGUgbmV4dCB0aHJlZSBtb250aHM/JyB9LFxuICAgICAgICAgIHsgaWQ6ICdtMjVfczJfcTMnLCB0eXBlOiAndGV4dGFyZWEnLCBsYWJlbDogJ1doYXQgaXMgb25lIHNtYWxsLCBjb25jcmV0ZSBzdGVwIHlvdSBjYW4gdGFrZSB0b2RheSB0byBtb3ZlIHRvd2FyZCB0aGF0IGdvYWw/JyB9XG4gICAgICAgIF1cbiAgICAgIH1cbiAgICBdXG4gIH1cbl07XG4iXX0=

@@ -165,7 +165,7 @@ const Paywall = ({ onClose }) => {
     cancelPurchaseState();
   }, [cancelPurchaseState]);
 
-  const handleSubscribe = () => {
+  const handleSubscribe = async () => {
     setError(null);
     setTimedOut(false);
 
@@ -174,8 +174,21 @@ const Paywall = ({ onClose }) => {
       const pkg = offerings.availablePackages[0];
       beginPurchase(pkg, handlePurchaseError);
     } else {
+      // BUILD 55: Offerings are null — common in Apple's sandbox.
+      // Try a quick refresh before falling back to product ID.
+      console.warn('[Paywall] No offerings available, attempting quick refresh...');
+      try {
+        const freshOfferings = await refreshOfferings();
+        if (freshOfferings?.availablePackages?.length) {
+          const pkg = freshOfferings.availablePackages[0];
+          beginPurchase(pkg, handlePurchaseError);
+          return;
+        }
+      } catch (_) {
+        // Ignore — fall through to product ID fallback
+      }
       // Fallback path: purchase by product ID directly
-      console.warn('[Paywall] No offerings available, using product ID fallback...');
+      console.warn('[Paywall] Offerings still null after refresh, using product ID fallback...');
       beginPurchaseFallback(handlePurchaseError);
     }
     // Returns immediately — UI enters processing state via purchaseInProgress

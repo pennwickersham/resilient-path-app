@@ -83,6 +83,7 @@ async function getPurchasesModule() {
 /**
  * Initialize RevenueCat SDK. Call once on app startup.
  * syncPurchases is called here (and ONLY here) to clear stale sandbox transactions.
+ * BUILD 55: Added retry logic for configure() — Apple's sandbox is flaky.
  */
 export async function initializeRevenueCat() {
   if (isInitialized) return;
@@ -97,24 +98,33 @@ export async function initializeRevenueCat() {
   const platform = Capacitor.getPlatform();
   const apiKey = platform === 'ios' ? REVENUECAT_API_KEY_APPLE : REVENUECAT_API_KEY_GOOGLE;
 
+  // Enable verbose logging for sandbox debugging
   try {
-    // Enable verbose logging for sandbox debugging
+    await Purchases.setLogLevel({ level: 'DEBUG' });
+  } catch (_) { /* ignore if not supported */ }
+
+  // BUILD 55: Try configure twice — sandbox often fails on first attempt
+  for (let attempt = 1; attempt <= 2; attempt++) {
     try {
-      await Purchases.setLogLevel({ level: 'DEBUG' });
-    } catch (_) { /* ignore if not supported */ }
+      await withTimeout(Purchases.configure({ apiKey }), 12000);
+      isInitialized = true;
+      isConfiguredSuccessfully = true;
+      console.log(`[SubscriptionService] RevenueCat initialized for ${platform} (attempt ${attempt})`);
 
-    await withTimeout(Purchases.configure({ apiKey }), 10000);
-    isInitialized = true;
-    isConfiguredSuccessfully = true;
-    console.log('[SubscriptionService] RevenueCat initialized for', platform);
-
-    // Sync purchases once during init — clears stale sandbox transactions.
-    Purchases.syncPurchases()
-      .then(() => console.log('[SubscriptionService] syncPurchases completed (init)'))
-      .catch((e) => console.warn('[SubscriptionService] syncPurchases failed (non-critical):', e.message));
-  } catch (err) {
-    console.error('[SubscriptionService] Init failed:', err);
-    // DO NOT mark as initialized on failure — allow retries via ensureConfigured()
+      // Sync purchases once during init — clears stale sandbox transactions.
+      Purchases.syncPurchases()
+        .then(() => console.log('[SubscriptionService] syncPurchases completed (init)'))
+        .catch((e) => console.warn('[SubscriptionService] syncPurchases failed (non-critical):', e.message));
+      
+      return; // Success — exit
+    } catch (err) {
+      console.error(`[SubscriptionService] Init attempt ${attempt} failed:`, err);
+      if (attempt < 2) {
+        console.log('[SubscriptionService] Retrying configure in 2s...');
+        await delay(2000);
+      }
+      // On final failure, fall through — ensureConfigured() will retry later
+    }
   }
 }
 
@@ -363,7 +373,7 @@ export async function purchasePackage(pkg) {
     try {
       const { products } = await withTimeout(
         Purchases.getProducts({ productIdentifiers: [productId] }),
-        20000  // 20s — sandbox can be very slow
+        15000  // BUILD 55: Reduced from 20s — faster feedback in sandbox
       );
       
       if (products && products.length > 0) {
@@ -454,7 +464,7 @@ export async function purchaseStoreProduct(productId = PRODUCT_ID) {
     console.log(`[SubscriptionService] Fetching product: ${productId}`);
     const { products } = await withTimeout(
       Purchases.getProducts({ productIdentifiers: [productId] }),
-      25000  // 25s — extra generous for sandbox
+      15000  // BUILD 55: Reduced from 25s — faster feedback in sandbox
     );
     if (!products || products.length === 0) {
       return { success: false, error: 'The subscription is temporarily unavailable. Please try again in a moment.' };
