@@ -144,71 +144,73 @@ export function SubscriptionProvider({ children }) {
    *   2. Polling in Paywall via refreshStatusWithSync
    *   3. Best-effort: purchase promise resolving
    *
-   * The purchase promise runs in the background. If it resolves with
-   * success, we update state as a tertiary signal. If it fails, we
-   * set an error callback so the Paywall can show guidance.
+   * BUILD 56: ABANDONED fire-and-forget. Apple rejected Builds 53-55 because
+   * errors were silently swallowed and "nothing happened" on tap.
+   * Now we AWAIT the purchase with a 60s timeout. Errors are shown immediately.
+   * The CustomerInfo listener and polling remain as backup detection.
    */
-  const beginPurchase = useCallback((pkg, onError) => {
+  const beginPurchase = useCallback(async (pkg) => {
     if (!pkg) {
-      if (onError) onError('No package provided');
-      return;
+      return { success: false, error: 'No package provided' };
     }
 
     setPurchaseInProgress(true);
-    console.log('[SubscriptionContext] beginPurchase: firing purchase (non-blocking)');
+    console.log('[SubscriptionContext] beginPurchase: starting purchase (awaited)');
 
-    // Fire and forget — DO NOT await
-    purchasePackage(pkg)
-      .then((result) => {
-        console.log('[SubscriptionContext] Purchase promise resolved:', result.success);
-        if (result.success) {
-          // Tertiary detection — listener/polling usually catch this first
-          setIsSubscribed(true);
-          setShowPaywall(false);
-          setPurchaseInProgress(false);
-        } else if (result.error === 'cancelled') {
-          console.log('[SubscriptionContext] User cancelled purchase');
-          setPurchaseInProgress(false);
-        } else if (result.error) {
-          console.warn('[SubscriptionContext] Purchase error:', result.error);
-          if (onError) onError(result.error);
-          // Don't reset purchaseInProgress here — let the Paywall handle it
-          // because the subscription might still complete via listener/polling
-        }
-      })
-      .catch((err) => {
-        console.error('[SubscriptionContext] Purchase promise rejected:', err);
-        // This is the "promise never resolves" escape hatch — it shouldn't
-        // happen often, but if it does, the Paywall timeout handles it.
-      });
+    try {
+      const result = await purchasePackage(pkg);
+      console.log('[SubscriptionContext] Purchase resolved:', result.success);
+      if (result.success) {
+        setIsSubscribed(true);
+        setShowPaywall(false);
+        setPurchaseInProgress(false);
+        return result;
+      } else if (result.error === 'cancelled') {
+        console.log('[SubscriptionContext] User cancelled purchase');
+        setPurchaseInProgress(false);
+        return result;
+      } else {
+        console.warn('[SubscriptionContext] Purchase error:', result.error);
+        setPurchaseInProgress(false);
+        return result;
+      }
+    } catch (err) {
+      console.error('[SubscriptionContext] Purchase rejected:', err);
+      setPurchaseInProgress(false);
+      return { success: false, error: err.message || 'Purchase failed. Please try again.' };
+    }
   }, []);
 
   /**
-   * BUILD 53: FIRE-AND-FORGET purchase by product ID (fallback).
-   * Same fire-and-forget pattern as beginPurchase.
+   * BUILD 56: Direct purchase by product ID (fallback).
+   * AWAITED — errors are returned to the caller, not swallowed.
    */
-  const beginPurchaseFallback = useCallback((onError) => {
+  const beginPurchaseFallback = useCallback(async () => {
     setPurchaseInProgress(true);
-    console.log('[SubscriptionContext] beginPurchaseFallback: firing purchase (non-blocking)');
+    console.log('[SubscriptionContext] beginPurchaseFallback: starting purchase (awaited)');
 
-    purchaseStoreProduct(PRODUCT_ID)
-      .then((result) => {
-        console.log('[SubscriptionContext] Fallback purchase promise resolved:', result.success);
-        if (result.success) {
-          setIsSubscribed(true);
-          setShowPaywall(false);
-          setPurchaseInProgress(false);
-        } else if (result.error === 'cancelled') {
-          console.log('[SubscriptionContext] User cancelled purchase (fallback)');
-          setPurchaseInProgress(false);
-        } else if (result.error) {
-          console.warn('[SubscriptionContext] Fallback purchase error:', result.error);
-          if (onError) onError(result.error);
-        }
-      })
-      .catch((err) => {
-        console.error('[SubscriptionContext] Fallback purchase promise rejected:', err);
-      });
+    try {
+      const result = await purchaseStoreProduct(PRODUCT_ID);
+      console.log('[SubscriptionContext] Fallback purchase resolved:', result.success);
+      if (result.success) {
+        setIsSubscribed(true);
+        setShowPaywall(false);
+        setPurchaseInProgress(false);
+        return result;
+      } else if (result.error === 'cancelled') {
+        console.log('[SubscriptionContext] User cancelled purchase (fallback)');
+        setPurchaseInProgress(false);
+        return result;
+      } else {
+        console.warn('[SubscriptionContext] Fallback purchase error:', result.error);
+        setPurchaseInProgress(false);
+        return result;
+      }
+    } catch (err) {
+      console.error('[SubscriptionContext] Fallback purchase rejected:', err);
+      setPurchaseInProgress(false);
+      return { success: false, error: err.message || 'Purchase failed. Please try again.' };
+    }
   }, []);
 
   // Cancel a purchase-in-progress (user wants to dismiss)

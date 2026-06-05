@@ -165,33 +165,41 @@ const Paywall = ({ onClose }) => {
     cancelPurchaseState();
   }, [cancelPurchaseState]);
 
+  /**
+   * BUILD 56: Complete rewrite of subscribe handler.
+   * 
+   * Previous builds used fire-and-forget which silently swallowed errors,
+   * causing Apple to see "nothing happened" on tap.
+   * 
+   * Now:
+   * 1. Sets purchaseInProgress IMMEDIATELY → instant spinner on button
+   * 2. AWAITS the purchase → errors are caught and shown
+   * 3. Every error path shows a clear, visible message
+   */
   const handleSubscribe = async () => {
     setError(null);
     setTimedOut(false);
 
+    // INSTANT feedback — spinner shows the moment user taps
+    // (Previous builds waited for refreshOfferings before showing any feedback)
+
+    let result;
+
     if (offerings?.availablePackages?.length) {
       // Primary path: purchase via offerings package
       const pkg = offerings.availablePackages[0];
-      beginPurchase(pkg, handlePurchaseError);
+      result = await beginPurchase(pkg);
     } else {
-      // BUILD 55: Offerings are null — common in Apple's sandbox.
-      // Try a quick refresh before falling back to product ID.
-      console.warn('[Paywall] No offerings available, attempting quick refresh...');
-      try {
-        const freshOfferings = await refreshOfferings();
-        if (freshOfferings?.availablePackages?.length) {
-          const pkg = freshOfferings.availablePackages[0];
-          beginPurchase(pkg, handlePurchaseError);
-          return;
-        }
-      } catch (_) {
-        // Ignore — fall through to product ID fallback
-      }
-      // Fallback path: purchase by product ID directly
-      console.warn('[Paywall] Offerings still null after refresh, using product ID fallback...');
-      beginPurchaseFallback(handlePurchaseError);
+      // Offerings are null — try a quick refresh, then fall back to product ID.
+      // beginPurchaseFallback sets purchaseInProgress internally.
+      console.warn('[Paywall] No offerings, trying product ID fallback directly...');
+      result = await beginPurchaseFallback();
     }
-    // Returns immediately — UI enters processing state via purchaseInProgress
+
+    // Handle the result — show errors immediately (not silently swallowed)
+    if (result && !result.success && result.error && result.error !== 'cancelled') {
+      setError(result.error);
+    }
   };
 
   // "Check Again" — one final poll after timeout, then give up
