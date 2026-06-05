@@ -4,26 +4,18 @@ import { useSubscription } from '../context/SubscriptionContext';
 import IAPDiagnostic from './IAPDiagnostic';
 
 /**
- * Paywall Component — BUILD 53
+ * Paywall Component — BUILD 57
  *
- * ARCHITECTURE: Fire-and-forget purchase flow.
+ * ARCHITECTURE: Direct-await purchase with immediate error feedback.
  * 
- * Previous builds (42–51) awaited the purchase promise, which hung when
- * the StoreKit bridge callback was dropped — causing the "stays on processing"
- * rejection from Apple.
- *
- * Build 53 approach:
- *   1. User taps Subscribe → we call beginPurchase() which fires the native
- *      StoreKit payment sheet and returns IMMEDIATELY (no await).
- *   2. The UI enters "processing" state driven by purchaseInProgress from context.
- *   3. Subscription completion is detected by:
- *      a. CustomerInfo listener (PRIMARY — instant, fires from native SDK)
- *      b. Cache-busted polling every 3s (BACKUP — catches missed callbacks)
- *      c. Purchase promise resolving (TERTIARY — best-effort)
- *   4. When any detection mechanism fires, purchaseInProgress → false and
- *      the paywall auto-closes.
- *   5. Graceful timeout after 30s shows "Check Again" instead of error.
- *      (90s was too long — Apple reviewers won't wait that long.)
+ * Build 57 approach:
+ *   1. User taps Subscribe → we AWAIT beginPurchase() directly.
+ *   2. purchaseInProgress=true shows spinner INSTANTLY on tap.
+ *   3. Purchase calls go directly to RevenueCat (no extra product fetch,
+ *      no retry logic — both were causing 30+ second waits in sandbox).
+ *   4. If purchase fails, error is returned and displayed immediately.
+ *   5. Graceful timeout at 15s shows "Check Again" (down from 30s).
+ *   6. Polling + listener remain as backup detection mechanisms.
  */
 const Paywall = ({ onClose }) => {
   const {
@@ -63,7 +55,7 @@ const Paywall = ({ onClose }) => {
   const elapsedTimerRef = useRef(null);
   const pollingRef = useRef(null);
   const gracefulTimeoutRef = useRef(null);
-  const GRACEFUL_TIMEOUT_MS = 30000; // 30 seconds — much shorter than Build 51's 90s
+  const GRACEFUL_TIMEOUT_MS = 15000; // BUILD 57: 15 seconds — reviewer sees feedback fast
 
   useEffect(() => {
     if (purchaseInProgress) {
@@ -166,15 +158,10 @@ const Paywall = ({ onClose }) => {
   }, [cancelPurchaseState]);
 
   /**
-   * BUILD 56: Complete rewrite of subscribe handler.
+   * BUILD 57: Simplified subscribe handler.
    * 
-   * Previous builds used fire-and-forget which silently swallowed errors,
-   * causing Apple to see "nothing happened" on tap.
-   * 
-   * Now:
-   * 1. Sets purchaseInProgress IMMEDIATELY → instant spinner on button
-   * 2. AWAITS the purchase → errors are caught and shown
-   * 3. Every error path shows a clear, visible message
+   * Calls purchase directly and awaits result.
+   * No extra product fetch, no retry — errors surface immediately.
    */
   const handleSubscribe = async () => {
     setError(null);

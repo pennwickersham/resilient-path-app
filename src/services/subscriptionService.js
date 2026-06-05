@@ -332,18 +332,16 @@ export async function getOfferings() {
 }
 
 /**
- * Core purchase logic — attempts to purchase with retry.
+ * Core purchase logic — simplified for BUILD 57.
  * 
- * BUILD 53: This function is called FIRE-AND-FORGET from the UI layer.
- * The UI does NOT await this — it detects completion via the
- * CustomerInfo listener and cache-busted polling instead.
+ * PREVIOUS BUILDS (53-56): Over-engineered with nested strategies and retries
+ * that took 34+ seconds in sandbox, causing "loaded indefinitely" rejections.
  * 
- * Strategy:
- *   1. Try purchaseStoreProduct with a FRESHLY-FETCHED product (most reliable)
- *   2. Fall back to purchasePackage with the original package (no cloning)
- * 
- * If both strategies fail with a non-cancel error, automatically retries
- * once after a 2-second delay before returning an error.
+ * BUILD 57 APPROACH:
+ *   1. Try purchasePackage with the original package object directly
+ *   2. No fresh product fetch (wastes 15s in sandbox for no benefit)
+ *   3. No retry logic (doubles wait time, reviewer gives up before it fires)
+ *   4. If purchase fails, return error immediately so UI can show it
  * 
  * CRITICAL: No syncPurchases anywhere in the purchase path.
  * NEVER deep-clone (JSON.parse/JSON.stringify) package or product objects.
@@ -362,76 +360,26 @@ export async function purchasePackage(pkg) {
     return { success: false, error: 'Unable to connect to the subscription service. Please restart the app and try again.' };
   }
 
-  const productId = pkg?.product?.identifier || pkg?.product?.productId || PRODUCT_ID;
-
-  // Attempt purchase with automatic retry on failure
-  const attemptPurchase = async () => {
-    // ── STRATEGY 1: Fresh product fetch + purchaseStoreProduct ──
-    // This is the most reliable path because it ensures the native bridge
-    // gets a product object it just created (not one sitting in React state).
-    console.log(`[SubscriptionService] Strategy 1: Fetching fresh product for ${productId}...`);
-    try {
-      const { products } = await withTimeout(
-        Purchases.getProducts({ productIdentifiers: [productId] }),
-        15000  // BUILD 55: Reduced from 20s — faster feedback in sandbox
-      );
-      
-      if (products && products.length > 0) {
-        const freshProduct = products[0];
-        console.log('[SubscriptionService] Strategy 1: Starting purchaseStoreProduct with fresh product...');
-        const { customerInfo } = await Purchases.purchaseStoreProduct({ product: freshProduct });
-        console.log('[SubscriptionService] Strategy 1: purchaseStoreProduct completed');
-        
-        const hasActive = Object.keys(customerInfo.entitlements.active).length > 0;
-        return { success: hasActive, customerInfo };
-      } else {
-        console.warn('[SubscriptionService] Strategy 1: No products returned, falling through to Strategy 2');
-      }
-    } catch (err) {
-      if (isPurchaseCancelled(err)) {
-        console.log('[SubscriptionService] Purchase cancelled by user');
-        return { success: false, error: 'cancelled' };
-      }
-      console.warn('[SubscriptionService] Strategy 1 failed:', err.message, '— trying Strategy 2');
-    }
-
-    // ── STRATEGY 2: Direct purchasePackage with original object ──
-    // Pass the original package object directly — DO NOT deep-clone.
-    console.log('[SubscriptionService] Strategy 2: Starting purchasePackage with original pkg...');
+  // BUILD 57: Direct purchase with the original package — no fresh fetch, no retry.
+  // The package comes from getOfferings() which was already fetched.
+  // Fetching a fresh product wasted 15s in sandbox (Builds 53-56).
+  console.log('[SubscriptionService] purchasePackage: calling Purchases.purchasePackage directly...');
+  try {
     const { customerInfo } = await Purchases.purchasePackage({ aPackage: pkg });
-    console.log('[SubscriptionService] Strategy 2: purchasePackage completed');
-    
+    console.log('[SubscriptionService] purchasePackage completed successfully');
     const hasActive = Object.keys(customerInfo.entitlements.active).length > 0;
     return { success: hasActive, customerInfo };
-  };
-
-  try {
-    return await attemptPurchase();
   } catch (err) {
     if (isPurchaseCancelled(err)) {
       console.log('[SubscriptionService] Purchase cancelled by user');
       return { success: false, error: 'cancelled' };
     }
-
-    // First attempt failed — retry once after 2s delay
-    console.warn('[SubscriptionService] First purchase attempt failed:', err.message, '— retrying in 2s...');
-    console.warn('[SubscriptionService] Error details — code:', err.code, 'readableErrorCode:', err.readableErrorCode);
-    
-    try {
-      await delay(2000);
-      return await attemptPurchase();
-    } catch (retryErr) {
-      if (isPurchaseCancelled(retryErr)) {
-        console.log('[SubscriptionService] Purchase cancelled by user (retry)');
-        return { success: false, error: 'cancelled' };
-      }
-      console.error('[SubscriptionService] Purchase failed after retry:', retryErr);
-      console.error('[SubscriptionService] Retry error details — code:', retryErr.code, 'message:', retryErr.message);
-      return { 
-        success: false, 
-        error: 'Unable to connect to the App Store right now. Please check your internet connection and payment method in Settings → Apple ID, then try again.' 
-      };
-    }
+    console.error('[SubscriptionService] purchasePackage failed:', err.message);
+    console.error('[SubscriptionService] Error details — code:', err.code, 'readableErrorCode:', err.readableErrorCode);
+    return { 
+      success: false, 
+      error: 'Unable to complete purchase. Please check your internet connection and try again.' 
+    };
   }
 }
 
@@ -439,11 +387,9 @@ export async function purchasePackage(pkg) {
  * Fallback: purchase by product identifier directly.
  * Used when offerings-based purchase isn't available.
  * 
+ * BUILD 57: Simplified — no retry logic (was doubling wait time in sandbox).
  * Fetches a fresh product by ID, then purchases it.
  * No timeout on the purchase call — StoreKit needs user interaction time.
- * NO deep-cloning — pass the fresh product directly to the bridge.
- * NO syncPurchases — removed in Build 43.
- * Automatic single-retry on failure.
  * 
  * @param {string} productId — The StoreKit product identifier
  * @returns {{ success: boolean, customerInfo?: Object, error?: string }}
@@ -454,23 +400,22 @@ export async function purchaseStoreProduct(productId = PRODUCT_ID) {
     return { success: false, error: 'Purchases not available on this platform' };
   }
 
-  // Ensure SDK is configured — critical fix for startup race condition
+  // Ensure SDK is configured
   if (!(await ensureConfigured())) {
     return { success: false, error: 'Unable to connect to the subscription service. Please restart the app and try again.' };
   }
 
-  const attemptPurchase = async () => {
-    // Fetch a fresh product directly by ID — give sandbox extra time
+  try {
+    // Fetch product by ID — 12s timeout (down from 15s)
     console.log(`[SubscriptionService] Fetching product: ${productId}`);
     const { products } = await withTimeout(
       Purchases.getProducts({ productIdentifiers: [productId] }),
-      15000  // BUILD 55: Reduced from 25s — faster feedback in sandbox
+      12000
     );
     if (!products || products.length === 0) {
       return { success: false, error: 'The subscription is temporarily unavailable. Please try again in a moment.' };
     }
 
-    // Pass the fresh product directly to the bridge — DO NOT deep-clone
     const product = products[0];
     console.log('[SubscriptionService] Starting purchaseStoreProduct...');
     const { customerInfo } = await Purchases.purchaseStoreProduct({ product });
@@ -478,33 +423,16 @@ export async function purchaseStoreProduct(productId = PRODUCT_ID) {
     
     const hasActive = Object.keys(customerInfo.entitlements.active).length > 0;
     return { success: hasActive, customerInfo };
-  };
-
-  try {
-    return await attemptPurchase();
   } catch (err) {
     if (isPurchaseCancelled(err)) {
       console.log('[SubscriptionService] Purchase cancelled by user');
       return { success: false, error: 'cancelled' };
     }
-
-    // First attempt failed — retry once after 2s delay
-    console.warn('[SubscriptionService] First purchaseStoreProduct attempt failed:', err.message, '— retrying in 2s...');
-    
-    try {
-      await delay(2000);
-      return await attemptPurchase();
-    } catch (retryErr) {
-      if (isPurchaseCancelled(retryErr)) {
-        console.log('[SubscriptionService] Purchase cancelled by user (retry)');
-        return { success: false, error: 'cancelled' };
-      }
-      console.error('[SubscriptionService] purchaseStoreProduct failed after retry:', retryErr);
-      return { 
-        success: false, 
-        error: 'Unable to connect to the App Store right now. Please check your internet connection and payment method in Settings → Apple ID, then try again.' 
-      };
-    }
+    console.error('[SubscriptionService] purchaseStoreProduct failed:', err.message);
+    return { 
+      success: false, 
+      error: 'Unable to complete purchase. Please check your internet connection and try again.' 
+    };
   }
 }
 
