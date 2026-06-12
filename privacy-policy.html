@@ -44,6 +44,12 @@
             margin-top: 2rem;
             margin-bottom: 0.75rem;
         }
+        h3 {
+            font-size: 1.05rem;
+            color: #2d3748;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
         p, li {
             font-size: 0.95rem;
             margin-bottom: 0.75rem;
@@ -74,23 +80,24 @@
     <div class="container">
         <h1>Privacy Policy</h1>
         <p class="app-name">Resilient Path — Managing Life with Chronic Pain</p>
-        <p class="effective-date">Effective Date: May 3, 2026 &nbsp;|&nbsp; Last Updated: May 3, 2026</p>
+        <p class="effective-date">Effective Date: June 12, 2026 &nbsp;|&nbsp; Last Updated: June 12, 2026</p>
 
         <p>This Privacy Policy describes how the Resilient Path mobile application ("App", "we", "our", or "us") handles your information. We are committed to protecting your privacy and being transparent about our data practices.</p>
 
         <h2>1. Information We Collect</h2>
-        <p><strong>We do not collect, store, or transmit any personal information, health data, or user-generated content.</strong> All workbook entries, symptom logs, and health tool data are stored locally on your device and are never sent to our servers.</p>
+        <p><strong>We do not collect, store, or transmit any personal information, health data, or user-generated content on our own servers.</strong> All workbook entries, symptom logs, and health tool data are stored locally on your device and are never sent to our servers.</p>
         
         <p>The only data processing that occurs is through our third-party service providers:</p>
         <ul>
-            <li><strong>Subscription &amp; Payment Data:</strong> If you purchase a subscription, payment processing is handled entirely by <strong>Apple (App Store)</strong> or <strong>Google (Google Play)</strong>. We use <strong>RevenueCat</strong> to manage subscription status. RevenueCat receives an anonymous app user ID and purchase receipt to verify your subscription. We do not have access to your credit card number, billing address, or other financial details.</li>
+            <li><strong>Subscription &amp; Payment Data:</strong> If you purchase a subscription, payment processing is handled entirely by <strong>Apple (App Store)</strong> or <strong>Google (Google Play)</strong>. We use <strong>RevenueCat Inc.</strong> to manage subscription status. RevenueCat receives an anonymous app user ID and purchase receipt to verify your subscription. We do not have access to your credit card number, billing address, or other financial details.</li>
+            <li><strong>AI Chat Messages:</strong> When you use the AI Therapist Guide feature, your chat messages are routed through <strong>Cloudflare Inc.</strong> (Worker proxy) to <strong>Google LLC</strong> (Gemini API) for processing. These messages are processed temporarily to generate responses.</li>
             <li><strong>Basic Device Information:</strong> RevenueCat may collect basic device identifiers (such as a vendor ID) solely for subscription management purposes. This data is not used for advertising or tracking.</li>
         </ul>
 
         <h2>2. Information We Do NOT Collect</h2>
         <ul>
             <li>Names, email addresses, or account credentials</li>
-            <li>Health or medical information</li>
+            <li>Health or medical information (stored locally only)</li>
             <li>Location data</li>
             <li>Contacts, photos, or files</li>
             <li>Browsing history or usage analytics</li>
@@ -102,15 +109,44 @@
         <ul>
             <li>Verify and manage your subscription status</li>
             <li>Process payments through Apple or Google</li>
+            <li>Provide AI-powered support through Google's Gemini API</li>
             <li>Provide customer support for subscription-related issues</li>
         </ul>
 
-        <h2>4. Third-Party Services</h2>
-        <p>Our App uses the following third-party services:</p>
+        <h2>4. Third-Party Services & Data Retention</h2>
+        <p>Our App uses the following third-party services, each with their own data retention and deletion policies:</p>
+        
+        <h3>RevenueCat Inc. (Subscription Management)</h3>
         <ul>
             <li><strong>RevenueCat:</strong> Subscription management. <a href="https://www.revenuecat.com/privacy/" target="_blank" rel="noopener">RevenueCat Privacy Policy</a></li>
             <li><strong>Apple App Store:</strong> Payment processing for iOS. <a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener">Apple Privacy Policy</a></li>
             <li><strong>Google Play Store:</strong> Payment processing for Android. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a></li>
+        </ul>
+
+        <h3>Cloudflare Inc. (Worker Proxy)</h3>
+        <ul>
+            <li><strong>Data Processed:</strong> AI chat messages (routed temporarily)</li>
+            <li><strong>Data Retention:</strong> Messages are not stored; processed only in transit</li>
+            <li><strong>Deletion Requests:</strong> No data stored, so no deletion necessary</li>
+            <li><a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Cloudflare Privacy Policy</a></li>
+        </ul>
+
+        <h3>Google LLC (Gemini API)</h3>
+        <ul>
+            <li><strong>Data Processed:</strong> AI chat messages</li>
+            <li><strong>Data Retention:</strong> Messages may be retained for up to 180 days for safety and improvement purposes</li>
+            <li><strong>Deletion Requests:</strong> Follow Google's instructions at <a href="https://myaccount.google.com/data-and-privacy" target="_blank" rel="noopener">Google Account Data & Privacy</a> to request deletion</li>
+            <li><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a></li>
+        </ul>
+
+        <h3>Apple App Store (iOS Payments)</h3>
+        <ul>
+            <li><a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener">Apple Privacy Policy</a></li>
+        </ul>
+
+        <h3>Google Play Store (Android Payments)</h3>
+        <ul>
+            <li><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a></li>
         </ul>
 
         <h2>5. Data Storage &amp; Security</h2>
