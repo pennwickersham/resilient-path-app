@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Shield, BookOpen, MessageCircle, ClipboardList, CheckCircle, Loader2, RotateCcw, RefreshCw } from 'lucide-react';
 import { useSubscription } from '../context/SubscriptionContext';
 import IAPDiagnostic from './IAPDiagnostic';
+import { Capacitor } from '@capacitor/core';
 
 /**
  * Paywall Component — BUILD 57
@@ -18,6 +19,8 @@ import IAPDiagnostic from './IAPDiagnostic';
  *   6. Polling + listener remain as backup detection mechanisms.
  */
 const Paywall = ({ onClose }) => {
+  const platform = Capacitor.getPlatform();
+  const isIOS = platform === 'ios';
   const {
     isSubscribed,
     offerings,
@@ -238,10 +241,11 @@ const Paywall = ({ onClose }) => {
 
   // Progressive status messages — reassuring, communicates activity, never alarming
   const getStatusMessage = () => {
-    if (purchaseElapsed >= 20) return 'Almost there — the App Store is still processing…';
-    if (purchaseElapsed >= 12) return 'Waiting for App Store response…';
-    if (purchaseElapsed >= 8) return 'Processing with the App Store…';
-    if (purchaseElapsed >= 4) return 'Connecting to the App Store…';
+    const storeName = isIOS ? 'App Store' : 'Google Play';
+    if (purchaseElapsed >= 20) return `Almost there — the ${storeName} is still processing…`;
+    if (purchaseElapsed >= 12) return `Waiting for ${storeName} response…`;
+    if (purchaseElapsed >= 8) return `Processing with the ${storeName}…`;
+    if (purchaseElapsed >= 4) return `Connecting to the ${storeName}…`;
     if (purchaseElapsed >= 2) return 'Starting purchase…';
     return 'Processing…';
   };
@@ -320,11 +324,13 @@ const Paywall = ({ onClose }) => {
             </p>
             <p className="text-secondary-500 text-sm mt-1">Auto-renewing monthly subscription</p>
             
-            <div className="mt-3 pt-3 border-t border-secondary-100">
-              <p className="text-secondary-400 text-xs">
-                Cancel anytime. Payment will be charged to your Apple ID account.
-              </p>
-            </div>
+            {isIOS && (
+              <div className="mt-3 pt-3 border-t border-secondary-100">
+                <p className="text-secondary-400 text-xs">
+                  Cancel anytime. Payment will be charged to your Apple ID account.
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -421,14 +427,18 @@ const Paywall = ({ onClose }) => {
 
         {/* Footer */}
         <div className="px-5 pb-5">
-          {/* Subscription details - required by App Store Guideline 3.1.2(c) */}
+          {/* Subscription details */}
           <div className="bg-secondary-50 rounded-xl p-3 mb-3 text-[10px] text-secondary-500 leading-relaxed">
             <p className="font-semibold text-secondary-600 mb-1">Resilient Path Monthly Subscription</p>
             <p>• Duration: 1 month, auto-renewing</p>
             <p>• Price: $3.99/month</p>
-            <p>• Payment charged to your Apple ID at confirmation of purchase</p>
+            {isIOS && (
+              <>
+                <p>• Payment charged to your Apple ID at confirmation of purchase</p>
+                <p>• Manage or cancel in iPhone Settings → Apple ID → Subscriptions</p>
+              </>
+            )}
             <p>• Subscription renews unless cancelled at least 24 hours before the end of the current period</p>
-            <p>• Manage or cancel in iPhone Settings → Apple ID → Subscriptions</p>
           </div>
 
           {/* Legal links - required by App Store Guideline 3.1.2(c) */}
