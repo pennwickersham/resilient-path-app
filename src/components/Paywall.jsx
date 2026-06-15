@@ -250,6 +250,60 @@ const Paywall = ({ onClose }) => {
     return 'Processing…';
   };
 
+  const handleManageSubscription = () => {
+    if (isIOS) {
+      // Open App Store subscription management
+      window.open('https://apps.apple.com/account/subscriptions', '_blank');
+    } else {
+      // Open Play Store subscription management
+      window.open('https://play.google.com/store/account/subscriptions', '_blank');
+    }
+  };
+
+  // If user is already subscribed, show a subscribed message with cancel/close button
+  if (isSubscribed) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-300">
+        <div className="bg-white rounded-3xl shadow-2xl max-w-sm w-full overflow-hidden">
+          <div className="bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-800 p-6 text-center relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+            <div className="relative z-10">
+              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-3 backdrop-blur-sm">
+                <CheckCircle className="text-white" size={32} />
+              </div>
+              <h2 className="text-white text-xl font-bold mb-1">You're Subscribed!</h2>
+              <p className="text-white/80 text-sm leading-snug">
+                Enjoy all features of Resilient Path
+              </p>
+            </div>
+          </div>
+          <div className="p-5 space-y-3">
+            <div className="text-center">
+              <p className="text-secondary-700 text-sm mb-4">
+                Your subscription is active and you have full access to all features.
+              </p>
+            </div>
+            <button
+              onClick={handleManageSubscription}
+              className="w-full bg-white border border-secondary-200 hover:bg-secondary-50 text-secondary-700 font-semibold py-3 px-6 rounded-xl transition-colors"
+            >
+              Manage Subscription
+            </button>
+            {onClose && (
+              <button
+                onClick={onClose}
+                className="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-primary-600/30 transition-all duration-200 active:scale-[0.98]"
+              >
+                Close
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-300">
       {showDiagnostic && <IAPDiagnostic onClose={() => setShowDiagnostic(false)} />}

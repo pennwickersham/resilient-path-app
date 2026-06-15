@@ -1,21 +1,11 @@
 /**
  * Subscription Service — RevenueCat Integration
- * 
+ *
  * Handles all RevenueCat interactions for the Resilient Path app.
  * Product: com.resilientpath.app.monthly ($3.99/month with 7-day free trial)
- * 
- * BUILD 53 ARCHITECTURE (fixes Guideline 2.1b rejection):
- * - Purchase calls are FIRE-AND-FORGET. The UI never awaits the purchase promise.
- *   Detection of a completed purchase happens entirely through:
- *   1. addCustomerInfoUpdateListener (primary, instant)
- *   2. invalidateAndCheckStatus polling (backup, every 3s)
- *   3. The purchase promise resolving (tertiary, best-effort)
- * - syncPurchases is ONLY called during init(). NEVER during purchase or polling.
- *   Even fire-and-forget, it causes StoreKit state mutations that interfere.
- * - No deep-cloning of package/product objects.
- * - Automatic single-retry with 2s delay on purchase errors.
  */
 import { Capacitor } from '@capacitor/core';
+import { Purchases, LOG_LEVEL, ENTITLEMENT_VERIFICATION_MODE, PURCHASES_ARE_COMPLETED_BY_TYPE, STOREKIT_VERSION } from '@revenuecat/purchases-capacitor';
 
 // ─── CONFIGURATION ───────────────────────────────────────────────
 // RevenueCat Public SDK API keys
@@ -25,22 +15,9 @@ const REVENUECAT_API_KEY_GOOGLE = 'goog_rsFTBscYVROFrHgGivMAhhRwiEn';
 const PRODUCT_ID = 'com.resilientpath.app.monthly';
 
 // ─── STATE ───────────────────────────────────────────────────────
-let purchasesModule = null;
 let isInitialized = false;
 let isConfiguredSuccessfully = false;
 let customerInfoListenerRemover = null;
-
-/**
- * Helper: race a promise against a timeout.
- * Used only for non-interactive calls (init, status checks, offerings).
- * NEVER wrap purchase calls in a timeout — StoreKit needs user interaction time.
- */
-function withTimeout(promise, ms) {
-  return Promise.race([
-    promise,
-    new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT')), ms)),
-  ]);
-}
 
 /**
  * Helper: detect user-initiated purchase cancellation across RevenueCat versions.
@@ -56,40 +33,12 @@ function isPurchaseCancelled(err) {
 }
 
 /**
- * Helper: delay for the given number of milliseconds.
- */
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-/**
- * Dynamically import RevenueCat only on native platforms.
- * Returns null on web/desktop where native IAP isn't available.
- */
-async function getPurchasesModule() {
-  if (purchasesModule) return purchasesModule;
-  if (!Capacitor.isNativePlatform()) return null;
-  
-  try {
-    const mod = await import('@revenuecat/purchases-capacitor');
-    purchasesModule = mod.Purchases;
-    return purchasesModule;
-  } catch (err) {
-    console.warn('[SubscriptionService] Failed to load RevenueCat:', err);
-    return null;
-  }
-}
-
-/**
  * Initialize RevenueCat SDK. Call once on app startup.
- * syncPurchases is called here (and ONLY here) to clear stale sandbox transactions.
- * BUILD 55: Added retry logic for configure() — Apple's sandbox is flaky.
  */
 export async function initializeRevenueCat() {
   if (isInitialized) return;
-  
-  const Purchases = await getPurchasesModule();
-  if (!Purchases) {
+
+  if (!Capacitor.isNativePlatform()) {
     console.log('[SubscriptionService] Skipping init — not on native platform');
     isInitialized = true;
     return;
@@ -98,52 +47,31 @@ export async function initializeRevenueCat() {
   const platform = Capacitor.getPlatform();
   const apiKey = platform === 'ios' ? REVENUECAT_API_KEY_APPLE : REVENUECAT_API_KEY_GOOGLE;
 
-  // Enable verbose logging for sandbox debugging
   try {
-    await Purchases.setLogLevel({ level: 'DEBUG' });
-  } catch (_) { /* ignore if not supported */ }
-
-  // BUILD 55: Try configure twice — sandbox often fails on first attempt
-  for (let attempt = 1; attempt <= 2; attempt++) {
-    try {
-      await withTimeout(Purchases.configure({ apiKey }), 12000);
-      isInitialized = true;
-      isConfiguredSuccessfully = true;
-      console.log(`[SubscriptionService] RevenueCat initialized for ${platform} (attempt ${attempt})`);
-
-      // Sync purchases once during init — clears stale sandbox transactions.
-      Purchases.syncPurchases()
-        .then(() => console.log('[SubscriptionService] syncPurchases completed (init)'))
-        .catch((e) => console.warn('[SubscriptionService] syncPurchases failed (non-critical):', e.message));
-      
-      return; // Success — exit
-    } catch (err) {
-      console.error(`[SubscriptionService] Init attempt ${attempt} failed:`, err);
-      if (attempt < 2) {
-        console.log('[SubscriptionService] Retrying configure in 2s...');
-        await delay(2000);
-      }
-      // On final failure, fall through — ensureConfigured() will retry later
-    }
+    await Purchases.setLogLevel({ level: LOG_LEVEL.DEBUG });
+    await Purchases.configure({
+      apiKey,
+      entitlementVerificationMode: ENTITLEMENT_VERIFICATION_MODE.INFORMATIONAL,
+      pendingTransactionsForPrepaidPlansEnabled: true,
+      diagnosticsEnabled: true,
+      purchasesAreCompletedBy: PURCHASES_ARE_COMPLETED_BY_TYPE.REVENUECAT,
+    });
+    isInitialized = true;
+    isConfiguredSuccessfully = true;
+    console.log(`[SubscriptionService] RevenueCat initialized for ${platform}`);
+  } catch (err) {
+    console.error('[SubscriptionService] Init failed:', err);
   }
 }
 
 /**
  * Register a listener for CustomerInfo updates from RevenueCat.
- * BUILD 51: This is the RECOMMENDED way to detect purchases that complete
- * on StoreKit but whose Capacitor bridge callback is dropped.
- * The listener fires whenever customer info changes — including after
- * a purchase, even if purchaseStoreProduct() never resolves.
  *
  * @param {Function} onUpdate — called with { isActive, isTrialing } whenever status changes
  * @returns {Function} cleanup function to remove the listener
  */
 export async function setupCustomerInfoListener(onUpdate) {
-  const Purchases = await getPurchasesModule();
-  if (!Purchases) return () => {};
-
-  // Ensure SDK is configured before adding listener
-  await ensureConfigured();
+  if (!Capacitor.isNativePlatform()) return () => {};
 
   try {
     // Remove any existing listener first
@@ -181,23 +109,24 @@ export async function setupCustomerInfoListener(onUpdate) {
 
 /**
  * Ensure RevenueCat SDK is configured before making API calls.
- * This handles the case where initializeRevenueCat() failed at startup
- * (e.g., timing issue, race condition, network error).
- * 
- * Called by purchasePackage and purchaseStoreProduct before any purchase attempt.
  */
 async function ensureConfigured() {
   if (isConfiguredSuccessfully) return true;
-  
-  const Purchases = await getPurchasesModule();
-  if (!Purchases) return false;
-  
+
+  if (!Capacitor.isNativePlatform()) return false;
+
   const platform = Capacitor.getPlatform();
   const apiKey = platform === 'ios' ? REVENUECAT_API_KEY_APPLE : REVENUECAT_API_KEY_GOOGLE;
-  
+
   console.log('[SubscriptionService] ensureConfigured: SDK not configured, attempting configure...');
   try {
-    await Purchases.configure({ apiKey });
+    await Purchases.configure({
+      apiKey,
+      entitlementVerificationMode: ENTITLEMENT_VERIFICATION_MODE.INFORMATIONAL,
+      pendingTransactionsForPrepaidPlansEnabled: true,
+      diagnosticsEnabled: true,
+      purchasesAreCompletedBy: PURCHASES_ARE_COMPLETED_BY_TYPE.REVENUECAT,
+    });
     isInitialized = true;
     isConfiguredSuccessfully = true;
     console.log('[SubscriptionService] ensureConfigured: SUCCESS — SDK now configured');
@@ -218,25 +147,19 @@ export async function checkSubscriptionStatus() {
     return { isActive: true, isTrialing: false, expirationDate: null };
   }
 
-  const Purchases = await getPurchasesModule();
-  if (!Purchases) {
-    return { isActive: true, isTrialing: false, expirationDate: null };
-  }
-
-  // Ensure SDK is configured — needed for polling to work after startup init failure
   await ensureConfigured();
 
   try {
-    const { customerInfo } = await withTimeout(Purchases.getCustomerInfo(), 8000);
+    const { customerInfo } = await Purchases.getCustomerInfo();
     const entitlements = customerInfo.entitlements.active;
-    
+
     // Check if any entitlement is active
     const hasActive = Object.keys(entitlements).length > 0;
-    
+
     // Check trial status from the first active entitlement
     let isTrialing = false;
     let expirationDate = null;
-    
+
     if (hasActive) {
       const firstEntitlement = Object.values(entitlements)[0];
       isTrialing = firstEntitlement.periodType === 'TRIAL';
@@ -251,40 +174,22 @@ export async function checkSubscriptionStatus() {
 }
 
 /**
- * BUILD 53: Invalidate cache then check status — forces a fresh server fetch.
- * Used during purchase polling to detect purchases that completed on StoreKit
- * but whose callback was dropped by the Capacitor bridge.
- * 
- * getCustomerInfo() normally returns CACHED data which may not reflect
- * a purchase that just completed. invalidateCustomerInfoCache() forces
- * the next call to fetch fresh data from RevenueCat's servers.
- * 
- * CRITICAL: Do NOT call syncPurchases() here. It causes StoreKit state
- * mutations that interfere with an in-progress purchase (Build 43 lesson).
+ * Invalidate cache then check status — forces a fresh server fetch.
  */
 export async function invalidateAndCheckStatus() {
-  const Purchases = await getPurchasesModule();
-  if (!Purchases) return { isActive: false, isTrialing: false, expirationDate: null };
+  if (!Capacitor.isNativePlatform()) {
+    return { isActive: false, isTrialing: false, expirationDate: null };
+  }
 
   await ensureConfigured();
 
   try {
     // Invalidate cache so getCustomerInfo fetches fresh from server
-    try {
-      await Purchases.invalidateCustomerInfoCache();
-    } catch (_) {
-      // Some older plugin versions may not have this method
-      console.warn('[SubscriptionService] invalidateCustomerInfoCache not available');
-    }
-
-    // NOTE: syncPurchases() was intentionally REMOVED here in Build 53.
-    // It was re-introduced in Build 51 but causes StoreKit state conflicts
-    // with active purchases — the exact problem Apple keeps rejecting for.
-
-    const { customerInfo } = await withTimeout(Purchases.getCustomerInfo(), 10000);
+    await Purchases.invalidateCustomerInfoCache();
+    const { customerInfo } = await Purchases.getCustomerInfo();
     const entitlements = customerInfo.entitlements.active;
     const hasActive = Object.keys(entitlements).length > 0;
-    
+
     let isTrialing = false;
     let expirationDate = null;
     if (hasActive) {
@@ -302,67 +207,38 @@ export async function invalidateAndCheckStatus() {
 
 /**
  * Fetch available subscription offerings from RevenueCat.
- * Retries up to 3 times with exponential backoff for resilience in sandbox.
  * @returns {Object|null} The current offering, or null if unavailable.
  */
 export async function getOfferings() {
-  const Purchases = await getPurchasesModule();
-  if (!Purchases) return null;
+  if (!Capacitor.isNativePlatform()) return null;
 
-  const MAX_RETRIES = 3;
-  const DELAYS = [2000, 4000, 6000]; // exponential backoff
-  let lastErr = null;
+  await ensureConfigured();
 
-  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-    try {
-      const { offerings } = await withTimeout(Purchases.getOfferings(), 10000);
-      if (offerings?.current) return offerings.current;
-      // If current is null, wait and retry (sandbox can be slow)
-      console.warn(`[SubscriptionService] offerings.current is null (attempt ${attempt + 1}/${MAX_RETRIES})`);
-    } catch (err) {
-      lastErr = err;
-      console.warn(`[SubscriptionService] getOfferings attempt ${attempt + 1}/${MAX_RETRIES} failed:`, err.message);
-    }
-    if (attempt < MAX_RETRIES - 1) {
-      await new Promise(r => setTimeout(r, DELAYS[attempt]));
-    }
+  try {
+    const offerings = await Purchases.getOfferings();
+    if (offerings?.current) return offerings.current;
+    console.warn('[SubscriptionService] offerings.current is null');
+    return null;
+  } catch (err) {
+    console.error('[SubscriptionService] getOfferings failed:', err.message);
+    return null;
   }
-  console.error('[SubscriptionService] Get offerings failed after retries:', lastErr);
-  return null;
 }
 
 /**
- * Core purchase logic — simplified for BUILD 57.
- * 
- * PREVIOUS BUILDS (53-56): Over-engineered with nested strategies and retries
- * that took 34+ seconds in sandbox, causing "loaded indefinitely" rejections.
- * 
- * BUILD 57 APPROACH:
- *   1. Try purchasePackage with the original package object directly
- *   2. No fresh product fetch (wastes 15s in sandbox for no benefit)
- *   3. No retry logic (doubles wait time, reviewer gives up before it fires)
- *   4. If purchase fails, return error immediately so UI can show it
- * 
- * CRITICAL: No syncPurchases anywhere in the purchase path.
- * NEVER deep-clone (JSON.parse/JSON.stringify) package or product objects.
- * 
+ * Purchase a package
  * @param {Object} pkg — A RevenueCat package object from getOfferings()
  * @returns {{ success: boolean, customerInfo?: Object, error?: string }}
  */
 export async function purchasePackage(pkg) {
-  const Purchases = await getPurchasesModule();
-  if (!Purchases) {
+  if (!Capacitor.isNativePlatform()) {
     return { success: false, error: 'Purchases not available on this platform' };
   }
 
-  // Ensure SDK is configured — critical fix for startup race condition
   if (!(await ensureConfigured())) {
     return { success: false, error: 'Unable to connect to the subscription service. Please restart the app and try again.' };
   }
 
-  // BUILD 57: Direct purchase with the original package — no fresh fetch, no retry.
-  // The package comes from getOfferings() which was already fetched.
-  // Fetching a fresh product wasted 15s in sandbox (Builds 53-56).
   console.log('[SubscriptionService] purchasePackage: calling Purchases.purchasePackage directly...');
   try {
     const { customerInfo } = await Purchases.purchasePackage({ aPackage: pkg });
@@ -375,43 +251,30 @@ export async function purchasePackage(pkg) {
       return { success: false, error: 'cancelled' };
     }
     console.error('[SubscriptionService] purchasePackage failed:', err.message);
-    console.error('[SubscriptionService] Error details — code:', err.code, 'readableErrorCode:', err.readableErrorCode);
-    return { 
-      success: false, 
-      error: 'Unable to complete purchase. Please check your internet connection and try again.' 
+    return {
+      success: false,
+      error: 'Unable to complete purchase. Please check your internet connection and try again.'
     };
   }
 }
 
 /**
  * Fallback: purchase by product identifier directly.
- * Used when offerings-based purchase isn't available.
- * 
- * BUILD 57: Simplified — no retry logic (was doubling wait time in sandbox).
- * Fetches a fresh product by ID, then purchases it.
- * No timeout on the purchase call — StoreKit needs user interaction time.
- * 
  * @param {string} productId — The StoreKit product identifier
  * @returns {{ success: boolean, customerInfo?: Object, error?: string }}
  */
 export async function purchaseStoreProduct(productId = PRODUCT_ID) {
-  const Purchases = await getPurchasesModule();
-  if (!Purchases) {
+  if (!Capacitor.isNativePlatform()) {
     return { success: false, error: 'Purchases not available on this platform' };
   }
 
-  // Ensure SDK is configured
   if (!(await ensureConfigured())) {
     return { success: false, error: 'Unable to connect to the subscription service. Please restart the app and try again.' };
   }
 
   try {
-    // Fetch product by ID — 12s timeout (down from 15s)
     console.log(`[SubscriptionService] Fetching product: ${productId}`);
-    const { products } = await withTimeout(
-      Purchases.getProducts({ productIdentifiers: [productId] }),
-      12000
-    );
+    const { products } = await Purchases.getProducts({ productIdentifiers: [productId] });
     if (!products || products.length === 0) {
       return { success: false, error: 'The subscription is temporarily unavailable. Please try again in a moment.' };
     }
@@ -420,7 +283,7 @@ export async function purchaseStoreProduct(productId = PRODUCT_ID) {
     console.log('[SubscriptionService] Starting purchaseStoreProduct...');
     const { customerInfo } = await Purchases.purchaseStoreProduct({ product });
     console.log('[SubscriptionService] purchaseStoreProduct completed');
-    
+
     const hasActive = Object.keys(customerInfo.entitlements.active).length > 0;
     return { success: hasActive, customerInfo };
   } catch (err) {
@@ -429,9 +292,9 @@ export async function purchaseStoreProduct(productId = PRODUCT_ID) {
       return { success: false, error: 'cancelled' };
     }
     console.error('[SubscriptionService] purchaseStoreProduct failed:', err.message);
-    return { 
-      success: false, 
-      error: 'Unable to complete purchase. Please check your internet connection and try again.' 
+    return {
+      success: false,
+      error: 'Unable to complete purchase. Please check your internet connection and try again.'
     };
   }
 }
@@ -441,24 +304,16 @@ export async function purchaseStoreProduct(productId = PRODUCT_ID) {
  * @returns {{ isActive: boolean }}
  */
 export async function restorePurchases() {
-  const Purchases = await getPurchasesModule();
-  if (!Purchases) {
+  if (!Capacitor.isNativePlatform()) {
     return { isActive: true }; // Web fallback
   }
 
   try {
-    const { customerInfo } = await withTimeout(
-      Purchases.restorePurchases(),
-      15000
-    );
+    const { customerInfo } = await Purchases.restorePurchases();
     const hasActive = Object.keys(customerInfo.entitlements.active).length > 0;
     return { isActive: hasActive };
   } catch (err) {
-    if (err.message === 'TIMEOUT') {
-      console.error('[SubscriptionService] restorePurchases timed out');
-    } else {
-      console.error('[SubscriptionService] Restore failed:', err);
-    }
+    console.error('[SubscriptionService] Restore failed:', err);
     return { isActive: false };
   }
 }

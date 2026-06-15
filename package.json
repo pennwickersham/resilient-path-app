@@ -1,7 +1,7 @@
 {
   "name": "resilient-path-app",
   "private": true,
-  "version": "2.2.9",
+  "version": "2.3.0",
   "type": "module",
   "main": "dist-electron/main.js",
   "scripts": {
@@ -24,14 +24,14 @@
     }
   },
   "dependencies": {
-    "@capacitor/android": "^8.3.0",
+    "@capacitor/android": "8.4.0",
     "@capacitor/app": "^8.1.0",
-    "@capacitor/cli": "^8.3.0",
-    "@capacitor/core": "^8.3.0",
+    "@capacitor/cli": "^8.4.0",
+    "@capacitor/core": "^8.4.0",
     "@capacitor/filesystem": "^8.1.2",
-    "@capacitor/ios": "^8.3.0",
+    "@capacitor/ios": "8.4.0",
     "@capacitor/share": "^8.0.1",
-    "@revenuecat/purchases-capacitor": "^13.1.4",
+    "@revenuecat/purchases-capacitor": "^13.1.7",
     "clsx": "^2.1.1",
     "lucide-react": "^1.7.0",
     "react": "^19.2.4",
