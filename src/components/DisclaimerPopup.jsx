@@ -46,7 +46,7 @@ const DisclaimerPopup = () => {
         paddingBottom: 'env(safe-area-inset-bottom)'
       }}
     >
-      <div className="bg-white max-w-md w-full rounded-2xl p-6 shadow-2xl">
+      <div className="bg-white max-w-md w-full rounded-2xl p-6 shadow-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto">
 
         {/* ── Step 1: Medical Disclaimer ── */}
         {step === 'medical' && (
