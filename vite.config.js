@@ -25,5 +25,14 @@ export default defineConfig(async ({ mode }) => {
     );
   }
 
-  return { plugins };
+  // 👇 Return your plugins along with source map configurations
+  return {
+    plugins,
+    build: {
+      sourcemap: true, // 👈 Generates .js.map files for Capacitor/Electron builds
+    },
+    css: {
+      devSourcemap: true // 👈 Generates maps for Tailwind CSS classes during dev
+    }
+  };
 })

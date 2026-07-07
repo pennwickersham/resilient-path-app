@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { workbookData } from '../data/workbookForms';
 import { Printer, Share2, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import storage, { STORAGE_KEYS } from '../services/storage';
 import { Capacitor } from '@capacitor/core';
 import { Share } from '@capacitor/share';
 
@@ -11,15 +12,15 @@ const WorkbookForms = () => {
   const printRef = useRef();
 
   useEffect(() => {
-    // Load from local storage on mount
-    const saved = localStorage.getItem('resilientPathWorkbook');
-    if (saved) {
+    // Load from durable storage on mount (auto-migrates old localStorage data)
+    (async () => {
       try {
-        setAnswers(JSON.parse(saved));
+        const saved = await storage.get(STORAGE_KEYS.WORKBOOK);
+        if (saved && typeof saved === 'object') setAnswers(saved);
       } catch (e) {
-        console.error('Failed to parse workbook from local storage', e);
+        console.error('Failed to load workbook answers', e);
       }
-    }
+    })();
   }, []);
 
   const handleChange = (id, value, type) => {
@@ -33,7 +34,7 @@ const WorkbookForms = () => {
       [id]: newValue,
     };
     setAnswers(newAnswers);
-    localStorage.setItem('resilientPathWorkbook', JSON.stringify(newAnswers));
+    storage.set(STORAGE_KEYS.WORKBOOK, newAnswers);
   };
 
   const handleShareAllAnswers = async () => {
@@ -111,7 +112,7 @@ const WorkbookForms = () => {
         });
       });
       setAnswers(newAnswers);
-      localStorage.setItem('resilientPathWorkbook', JSON.stringify(newAnswers));
+      storage.set(STORAGE_KEYS.WORKBOOK, newAnswers);
     }
   };
 

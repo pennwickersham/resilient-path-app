@@ -122,7 +122,7 @@ const Home = () => {
           <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 transition duration-300">
             <MessageCircle className="text-primary-600" size={26} strokeWidth={2.5} />
           </div>
-          <h3 className="font-semibold text-primary-900 text-sm">Ask the Therapist AI</h3>
+          <h3 className="font-semibold text-primary-900 text-sm">Ask the Program Guide</h3>
         </Link>
       </div>
 

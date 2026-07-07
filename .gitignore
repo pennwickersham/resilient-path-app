@@ -35,3 +35,29 @@ upload_to_apple.bat
 *.njsproj
 *.sln
 *.sw?
+
+# ─── Added: keep secrets, builds, and manuscripts out of git ───
+# Signing keys — NEVER commit. See SECURITY-CLEANUP.md
+*.keystore
+*.jks
+*.p12
+*.mobileprovision
+
+# Build artifacts — attach to GitHub Releases instead
+*.apk
+*.aab
+*.ipa
+appflow.exe
+release/
+dist-electron/
+
+# Manuscript source files — keep in cloud storage, not the app repo
+Copy of The Resilient Path*.docx
+The_resilient_path_workbook*.docx
+Managing Life with Chronic Pain*.pdf
+Managing Life with Chronic Pain*.jpeg
+
+# Local env (holds VITE_PROXY_URL / VITE_APP_TOKEN)
+.env
+.env.*
+!.env.example

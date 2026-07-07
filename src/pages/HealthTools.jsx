@@ -1,8 +1,150 @@
 import { useState, useEffect } from 'react';
-import { Pill, Stethoscope, ClipboardList, Activity, Share2, Printer, Plus, Trash2, Download, Check } from 'lucide-react';
+import { Pill, Stethoscope, ClipboardList, Activity, Share2, Printer, Plus, Trash2, Download, Check, TrendingUp } from 'lucide-react';
 import { Capacitor } from '@capacitor/core';
 import { Share } from '@capacitor/share';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import storage, { STORAGE_KEYS } from '../services/storage';
+
+// ─── Symptom helpers: quick entry, trends, weekly summary ───
+
+const todayStr = () => new Date().toISOString().split('T')[0];
+const toNum = (v) => {
+  const n = parseFloat(v);
+  return Number.isFinite(n) ? Math.max(0, Math.min(10, n)) : null;
+};
+
+/** Tap-to-select 0–10 scale — a daily check-in should take seconds, not typing. */
+const ScalePicker = ({ label, value, onChange }) => (
+  <div className="flex flex-col gap-1.5">
+    <label className="text-xs font-semibold text-secondary-500 uppercase tracking-wide">{label}</label>
+    <div className="flex gap-1">
+      {Array.from({ length: 11 }, (_, i) => (
+        <button
+          key={i}
+          type="button"
+          onClick={() => onChange(String(value) === String(i) ? '' : String(i))}
+          className={`flex-1 min-w-0 h-9 rounded-lg text-xs font-bold transition-colors border ${
+            String(value) === String(i)
+              ? 'bg-primary-600 text-white border-primary-600 shadow-sm'
+              : 'bg-white text-secondary-500 border-secondary-200 hover:border-primary-300'
+          }`}
+        >
+          {i}
+        </button>
+      ))}
+    </div>
+  </div>
+);
+
+const METRICS = [
+  { key: 'pain', label: 'Pain', stroke: '#dc2626', betterWhen: 'down' },
+  { key: 'fatigue', label: 'Fatigue', stroke: '#d97706', betterWhen: 'down' },
+  { key: 'sleep', label: 'Sleep', stroke: '#059669', betterWhen: 'up' },
+];
+
+/** Lightweight inline SVG trend chart — no chart library needed. */
+const TrendChart = ({ entries }) => {
+  const points = entries
+    .filter(e => e.date)
+    .map(e => ({ ts: Date.parse(e.date), pain: toNum(e.pain), fatigue: toNum(e.fatigue), sleep: toNum(e.sleep) }))
+    .filter(p => Number.isFinite(p.ts) && (p.pain !== null || p.fatigue !== null || p.sleep !== null))
+    .sort((a, b) => a.ts - b.ts)
+    .slice(-30);
+
+  if (points.length < 2) return null;
+
+  const W = 320, H = 120, PAD = 8;
+  const t0 = points[0].ts, t1 = points[points.length - 1].ts;
+  const x = (ts) => PAD + ((ts - t0) / Math.max(1, t1 - t0)) * (W - 2 * PAD);
+  const y = (v) => H - PAD - (v / 10) * (H - 2 * PAD);
+
+  const path = (key) => {
+    const pts = points.filter(p => p[key] !== null);
+    if (pts.length < 2) return null;
+    return pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${x(p.ts).toFixed(1)},${y(p[key]).toFixed(1)}`).join(' ');
+  };
+
+  const fmtDate = (ts) => new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+
+  return (
+    <div className="bg-secondary-50 rounded-xl border border-secondary-100 p-3">
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-xs font-bold text-secondary-700 flex items-center gap-1"><TrendingUp size={13} /> Trends (last {points.length} entries)</span>
+        <div className="flex gap-2">
+          {METRICS.map(m => (
+            <span key={m.key} className="flex items-center gap-1 text-[10px] font-semibold text-secondary-500">
+              <span className="w-2 h-2 rounded-full inline-block" style={{ background: m.stroke }} /> {m.label}
+            </span>
+          ))}
+        </div>
+      </div>
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" role="img" aria-label="Symptom trends chart">
+        {[0, 5, 10].map(v => (
+          <g key={v}>
+            <line x1={PAD} x2={W - PAD} y1={y(v)} y2={y(v)} stroke="#e2e8f0" strokeWidth="1" />
+            <text x={W - PAD} y={y(v) - 2} fontSize="7" fill="#94a3b8" textAnchor="end">{v}</text>
+          </g>
+        ))}
+        {METRICS.map(m => {
+          const d = path(m.key);
+          return d ? <path key={m.key} d={d} fill="none" stroke={m.stroke} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" /> : null;
+        })}
+      </svg>
+      <div className="flex justify-between text-[9px] text-secondary-400 px-1">
+        <span>{fmtDate(t0)}</span><span>{fmtDate(t1)}</span>
+      </div>
+    </div>
+  );
+};
+
+/** "Pain avg 5.2 (down 0.8 vs prior week)" — the payoff that makes logging worth it. */
+const WeeklySummary = ({ entries }) => {
+  const now = Date.now(), DAY = 86400000;
+  const parsed = entries
+    .filter(e => e.date)
+    .map(e => ({ ...e, ts: Date.parse(e.date) }))
+    .filter(e => Number.isFinite(e.ts));
+  const thisWeek = parsed.filter(e => now - e.ts <= 7 * DAY);
+  const lastWeek = parsed.filter(e => now - e.ts > 7 * DAY && now - e.ts <= 14 * DAY);
+  if (thisWeek.length === 0) return null;
+
+  const avgOf = (list, key) => {
+    const xs = list.map(e => toNum(e[key])).filter(v => v !== null);
+    return xs.length ? xs.reduce((a, v) => a + v, 0) / xs.length : null;
+  };
+
+  const items = METRICS.map(m => {
+    const cur = avgOf(thisWeek, m.key);
+    if (cur === null) return null;
+    const prev = avgOf(lastWeek, m.key);
+    let delta = null, improving = false;
+    if (prev !== null && Math.abs(cur - prev) >= 0.3) {
+      delta = cur - prev;
+      improving = (delta < 0 && m.betterWhen === 'down') || (delta > 0 && m.betterWhen === 'up');
+    }
+    return { ...m, cur, delta, improving };
+  }).filter(Boolean);
+
+  if (!items.length) return null;
+
+  return (
+    <div className="bg-primary-50 rounded-xl border border-primary-100 p-3">
+      <p className="text-xs font-bold text-primary-800 mb-1.5">This week ({thisWeek.length} {thisWeek.length === 1 ? 'entry' : 'entries'})</p>
+      <div className="flex flex-wrap gap-x-4 gap-y-1">
+        {items.map(it => (
+          <span key={it.key} className="text-xs text-primary-900">
+            <span className="font-semibold">{it.label}:</span> {it.cur.toFixed(1)}
+            {it.delta !== null && (
+              <span className={`ml-1 font-semibold ${it.improving ? 'text-emerald-700' : 'text-secondary-500'}`}>
+                ({it.delta > 0 ? '+' : ''}{it.delta.toFixed(1)} vs last week{it.improving ? ' ✓' : ''})
+              </span>
+            )}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const TABS = [
   { id: 'medications', label: 'Medications', icon: Pill },
@@ -32,27 +174,55 @@ const HealthTools = () => {
   // Symptom tracker state
   const [symptoms, setSymptoms] = useState([{ ...emptySymptomEntry }]);
 
-  // Load from localStorage on mount
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('resilientPathHealthTools');
-      if (saved) {
-        const data = JSON.parse(saved);
-        if (data.medications?.length) setMedications(data.medications);
-        if (data.doctors?.length) setDoctors(data.doctors);
-        if (data.history) setHistory(data.history);
-        if (data.symptoms?.length) setSymptoms(data.symptoms);
+  // Quick daily check-in — date defaults to today, scales are tap-to-select.
+  const [quickEntry, setQuickEntry] = useState({ ...emptySymptomEntry, date: todayStr() });
+  const [quickLogged, setQuickLogged] = useState(false);
+
+  const handleQuickLog = () => {
+    const hasData = quickEntry.pain !== '' || quickEntry.fatigue !== '' || quickEntry.sleep !== '' ||
+      quickEntry.mood.trim() || quickEntry.triggers.trim() || quickEntry.notes.trim();
+    if (!hasData) return;
+    setSymptoms(prev => {
+      // One entry per day: logging again on the same date updates it.
+      const withoutBlank = prev.filter(e => e.date || e.pain || e.fatigue || e.sleep || e.mood || e.notes || e.triggers);
+      const existingIdx = withoutBlank.findIndex(e => e.date === quickEntry.date);
+      if (existingIdx >= 0) {
+        return withoutBlank.map((e, i) => (i === existingIdx ? { ...e, ...quickEntry } : e));
       }
-    } catch (e) {
-      console.error('Failed to load health tools data', e);
-    }
+      return [{ ...quickEntry }, ...withoutBlank];
+    });
+    setQuickEntry({ ...emptySymptomEntry, date: todayStr() });
+    setQuickLogged(true);
+    setTimeout(() => setQuickLogged(false), 2500);
+  };
+
+  // Track initial load so we don't overwrite saved data with defaults.
+  const [loaded, setLoaded] = useState(false);
+
+  // Load from durable storage on mount (auto-migrates old localStorage data).
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await storage.get(STORAGE_KEYS.HEALTH_TOOLS);
+        if (data) {
+          if (data.medications?.length) setMedications(data.medications);
+          if (data.doctors?.length) setDoctors(data.doctors);
+          if (data.history) setHistory(data.history);
+          if (data.symptoms?.length) setSymptoms(data.symptoms);
+        }
+      } catch (e) {
+        console.error('Failed to load health tools data', e);
+      } finally {
+        setLoaded(true);
+      }
+    })();
   }, []);
 
-  // Save to localStorage on any change
+  // Save to durable storage on any change (after initial load completes).
   useEffect(() => {
-    const data = { medications, doctors, history, symptoms };
-    localStorage.setItem('resilientPathHealthTools', JSON.stringify(data));
-  }, [medications, doctors, history, symptoms]);
+    if (!loaded) return;
+    storage.set(STORAGE_KEYS.HEALTH_TOOLS, { medications, doctors, history, symptoms });
+  }, [loaded, medications, doctors, history, symptoms]);
 
   // Sharing helpers
   const formatMedicationsText = () => {
@@ -256,6 +426,55 @@ const HealthTools = () => {
         <h2 className="text-2xl font-bold text-primary-800">Health Tools</h2>
         <div className="flex items-center gap-2 flex-wrap">
           <button
+            onClick={async () => {
+              // Full-app backup: workbook answers + health data + chat, one JSON file.
+              try {
+                const { filename, json } = await storage.exportBackup();
+                if (Capacitor.isNativePlatform()) {
+                  setSaveStatus(`Backup saved to Documents: ${filename}`);
+                } else {
+                  const blob = new Blob([json], { type: 'application/json' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url; a.download = filename; a.click();
+                  URL.revokeObjectURL(url);
+                  setSaveStatus(`Downloaded ${filename}`);
+                }
+                setTimeout(() => setSaveStatus(''), 5000);
+              } catch (e) {
+                console.error('Backup failed', e);
+                setSaveStatus('Backup failed — please try again.');
+                setTimeout(() => setSaveStatus(''), 5000);
+              }
+            }}
+            className="flex items-center gap-1.5 bg-secondary-100 hover:bg-secondary-200 text-secondary-800 px-3 py-2 rounded-lg text-sm font-semibold transition-colors"
+          >
+            <Download size={16} />
+            Back Up All Data
+          </button>
+          <label className="flex items-center gap-1.5 bg-secondary-100 hover:bg-secondary-200 text-secondary-800 px-3 py-2 rounded-lg text-sm font-semibold transition-colors cursor-pointer">
+            Restore
+            <input
+              type="file"
+              accept="application/json,.json"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                e.target.value = '';
+                if (!file) return;
+                try {
+                  await storage.importBackup(await file.text());
+                  setSaveStatus('Backup restored — reloading...');
+                  setTimeout(() => window.location.reload(), 800);
+                } catch (err) {
+                  console.error('Restore failed', err);
+                  setSaveStatus(err.message || 'Restore failed — not a valid backup file.');
+                  setTimeout(() => setSaveStatus(''), 5000);
+                }
+              }}
+            />
+          </label>
+          <button
             onClick={() => handleSaveToPhone('all')}
             className="flex items-center gap-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-3 py-2 rounded-lg text-sm font-semibold transition-colors"
           >
@@ -448,6 +667,54 @@ const HealthTools = () => {
             <p className="text-secondary-500 text-xs">
               Log your daily symptoms to share with your healthcare team and spot patterns over time.
             </p>
+
+            {/* ── Quick Daily Check-in ── */}
+            <div className="bg-white p-4 rounded-xl border-2 border-primary-200 space-y-3 shadow-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-bold text-primary-800">Today's Check-in</span>
+                <input
+                  type="date"
+                  value={quickEntry.date}
+                  onChange={(e) => setQuickEntry(prev => ({ ...prev, date: e.target.value }))}
+                  className="text-xs border border-secondary-200 rounded-lg px-2 py-1 text-secondary-700 bg-white"
+                />
+              </div>
+              <ScalePicker label="Pain (0–10)" value={quickEntry.pain} onChange={(v) => setQuickEntry(prev => ({ ...prev, pain: v }))} />
+              <ScalePicker label="Fatigue (0–10)" value={quickEntry.fatigue} onChange={(v) => setQuickEntry(prev => ({ ...prev, fatigue: v }))} />
+              <ScalePicker label="Sleep Quality (0–10)" value={quickEntry.sleep} onChange={(v) => setQuickEntry(prev => ({ ...prev, sleep: v }))} />
+              <div className="grid grid-cols-2 gap-3">
+                <input
+                  type="text" placeholder="Mood (optional)"
+                  className="border border-secondary-200 rounded-xl p-2.5 text-sm text-secondary-800 outline-none focus:ring-2 focus:ring-primary-500 bg-white"
+                  value={quickEntry.mood}
+                  onChange={(e) => setQuickEntry(prev => ({ ...prev, mood: e.target.value }))}
+                />
+                <input
+                  type="text" placeholder="Triggers (optional)"
+                  className="border border-secondary-200 rounded-xl p-2.5 text-sm text-secondary-800 outline-none focus:ring-2 focus:ring-primary-500 bg-white"
+                  value={quickEntry.triggers}
+                  onChange={(e) => setQuickEntry(prev => ({ ...prev, triggers: e.target.value }))}
+                />
+              </div>
+              <input
+                type="text" placeholder="Notes (optional)"
+                className="w-full border border-secondary-200 rounded-xl p-2.5 text-sm text-secondary-800 outline-none focus:ring-2 focus:ring-primary-500 bg-white"
+                value={quickEntry.notes}
+                onChange={(e) => setQuickEntry(prev => ({ ...prev, notes: e.target.value }))}
+              />
+              <button
+                onClick={handleQuickLog}
+                className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm transition-colors shadow-sm ${
+                  quickLogged ? 'bg-emerald-600 text-white' : 'bg-primary-600 hover:bg-primary-700 text-white'
+                }`}
+              >
+                {quickLogged ? (<><Check size={16} /> Logged!</>) : 'Log Entry'}
+              </button>
+            </div>
+
+            {/* ── Insight: what the logging earns you ── */}
+            <WeeklySummary entries={symptoms} />
+            <TrendChart entries={symptoms} />
 
             {symptoms.map((entry, idx) => (
               <div key={idx} className="bg-secondary-50 p-4 rounded-xl border border-secondary-100 space-y-3 relative">
