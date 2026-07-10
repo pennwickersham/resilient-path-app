@@ -24,6 +24,7 @@ const Paywall = ({ onClose }) => {
   const {
     isSubscribed,
     offerings,
+    productInfo,
     offeringsLoading,
     beginPurchase,
     beginPurchaseFallback,
@@ -33,6 +34,22 @@ const Paywall = ({ onClose }) => {
     refreshOfferings,
     refreshStatusWithSync,
   } = useSubscription();
+
+  // Helper to get price with fallback
+  const getPriceDisplay = () => {
+    if (productInfo?.priceString) {
+      // Remove trailing .00 for cleaner display, add /month
+      const priceWithoutTrailingZeros = productInfo.priceString.replace('.00', '');
+      return `${priceWithoutTrailingZeros}/month`;
+    }
+    // Fallback
+    return '$3.99/month';
+  };
+  
+  // Helper to get price string without suffix for button
+  const getPriceString = () => {
+    return productInfo?.priceString || '$3.99';
+  };
 
   const [restoring, setRestoring] = useState(false);
   const [error, setError] = useState(null);
@@ -374,7 +391,7 @@ const Paywall = ({ onClose }) => {
           <div className="border border-secondary-200 rounded-2xl p-5 text-center bg-white">
             {/* PRIMARY: Billed amount — largest, boldest element */}
             <p className="text-secondary-900 font-extrabold text-2xl leading-tight">
-              $3.99<span className="text-base font-bold text-secondary-600">/month</span>
+              {getPriceString()}<span className="text-base font-bold text-secondary-600">/month</span>
             </p>
             <p className="text-secondary-500 text-sm mt-1">Auto-renewing monthly subscription</p>
             
@@ -404,7 +421,7 @@ const Paywall = ({ onClose }) => {
             ) : (
               <>
                 <CheckCircle size={18} />
-                Subscribe — $3.99/month
+                Subscribe — {getPriceDisplay()}
               </>
             )}
           </button>
@@ -485,7 +502,7 @@ const Paywall = ({ onClose }) => {
           <div className="bg-secondary-50 rounded-xl p-3 mb-3 text-[10px] text-secondary-500 leading-relaxed">
             <p className="font-semibold text-secondary-600 mb-1">Resilient Path Monthly Subscription</p>
             <p>• Duration: 1 month, auto-renewing</p>
-            <p>• Price: $3.99/month</p>
+            <p>• Price: {getPriceDisplay()}</p>
             {isIOS && (
               <>
                 <p>• Payment charged to your Apple ID at confirmation of purchase</p>

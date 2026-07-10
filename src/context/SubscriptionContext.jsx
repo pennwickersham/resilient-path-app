@@ -7,18 +7,20 @@ import {
   getOfferings,
   purchasePackage,
   purchaseStoreProduct,
-  restorePurchases
+  restorePurchases,
+  getProductInfoFromOfferings
 } from '../services/subscriptionService';
 
 const SubscriptionContext = createContext(null);
 
-const PRODUCT_ID = 'com.resilientpath.app.monthly';
+const PRODUCT_ID = 'com.resilient-path-app.monthly';
 
 export function SubscriptionProvider({ children }) {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isTrialing, setIsTrialing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [offerings, setOfferings] = useState(null);
+  const [productInfo, setProductInfo] = useState(null);
   const [offeringsLoading, setOfferingsLoading] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
   const [purchaseInProgress, setPurchaseInProgress] = useState(false);
@@ -75,6 +77,8 @@ export function SubscriptionProvider({ children }) {
           if (cancelled) return;
           if (o) {
             setOfferings(o);
+            const pi = getProductInfoFromOfferings(o);
+            setProductInfo(pi);
             setOfferingsLoading(false);
           } else {
             // First fetch returned null — retry after a delay
@@ -82,7 +86,13 @@ export function SubscriptionProvider({ children }) {
             setTimeout(() => {
               if (cancelled) return;
               getOfferings()
-                .then(o2 => { if (!cancelled) setOfferings(o2); })
+                .then(o2 => { 
+                  if (!cancelled) {
+                    setOfferings(o2);
+                    const pi2 = getProductInfoFromOfferings(o2);
+                    setProductInfo(pi2);
+                  }
+                })
                 .catch(() => {})
                 .finally(() => { if (!cancelled) setOfferingsLoading(false); });
             }, 3000);
@@ -128,6 +138,8 @@ export function SubscriptionProvider({ children }) {
     try {
       const o = await getOfferings();
       setOfferings(o);
+      const pi = getProductInfoFromOfferings(o);
+      setProductInfo(pi);
       return o;
     } catch {
       return null;
@@ -254,6 +266,7 @@ export function SubscriptionProvider({ children }) {
     isTrialing,
     isLoading,
     offerings,
+    productInfo,
     offeringsLoading,
     showPaywall,
     setShowPaywall,

@@ -4,8 +4,18 @@ import { useSubscription } from '../context/SubscriptionContext';
 import Paywall from '../components/Paywall';
 
 const Home = () => {
-  const { isSubscribed, showPaywall, setShowPaywall } = useSubscription();
+  const { isSubscribed, showPaywall, setShowPaywall, productInfo } = useSubscription();
   const navigate = useNavigate();
+  
+  // Helper to get price with fallback
+  const getPriceDisplay = () => {
+    if (productInfo?.priceString) {
+      const priceWithoutTrailingZeros = productInfo.priceString.replace('.00', '');
+      return `${priceWithoutTrailingZeros}/month`;
+    }
+    // Fallback
+    return '$3.99/month';
+  };
 
   const handleGatedNav = (e, path) => {
     if (!isSubscribed) {
@@ -56,7 +66,7 @@ const Home = () => {
             {isSubscribed ? '✓ Subscribed — Manage Plan' : 'Get Full Access'}
           </p>
           <p className="text-white/80 text-xs mt-0.5">
-            {isSubscribed ? 'Tap to view or manage your subscription' : '$3.99/month · Cancel anytime'}
+            {isSubscribed ? 'Tap to view or manage your subscription' : `${getPriceDisplay()} · Cancel anytime`}
           </p>
         </div>
         <div className="bg-white/20 rounded-xl px-3 py-1.5 text-sm font-bold shrink-0 ml-3">
