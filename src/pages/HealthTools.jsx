@@ -1,18 +1,18 @@
-import { useState, useEffect } from 'react';
-import { Pill, Stethoscope, ClipboardList, Activity, Share2, Printer, Plus, Trash2, Download, Check, TrendingUp } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Pill, Stethoscope, ClipboardList, Activity, Share2, Printer, Plus, Trash2, Download, Check, LayoutDashboard, History } from 'lucide-react';
 import { Capacitor } from '@capacitor/core';
 import { Share } from '@capacitor/share';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import storage, { STORAGE_KEYS } from '../services/storage';
+import SymptomDashboard from '../components/SymptomDashboard';
+import ReminderCard from '../components/ReminderCard';
+import { ensureReminderScheduled } from '../services/reminders';
+import { STARTER_FOODS, PRACTICES, getRecentFoods, analyzeFoodTriggers, analyzePractices, validEntries, toNum } from '../services/symptomAnalysis';
+import { FileText } from 'lucide-react';
 
 // ─── Symptom helpers: quick entry, trends, weekly summary ───
 
 const todayStr = () => new Date().toISOString().split('T')[0];
-const toNum = (v) => {
-  const n = parseFloat(v);
-  return Number.isFinite(n) ? Math.max(0, Math.min(10, n)) : null;
-};
-
 /** Tap-to-select 0–10 scale — a daily check-in should take seconds, not typing. */
 const ScalePicker = ({ label, value, onChange }) => (
   <div className="flex flex-col gap-1.5">
@@ -36,116 +36,6 @@ const ScalePicker = ({ label, value, onChange }) => (
   </div>
 );
 
-const METRICS = [
-  { key: 'pain', label: 'Pain', stroke: '#dc2626', betterWhen: 'down' },
-  { key: 'fatigue', label: 'Fatigue', stroke: '#d97706', betterWhen: 'down' },
-  { key: 'sleep', label: 'Sleep', stroke: '#059669', betterWhen: 'up' },
-];
-
-/** Lightweight inline SVG trend chart — no chart library needed. */
-const TrendChart = ({ entries }) => {
-  const points = entries
-    .filter(e => e.date)
-    .map(e => ({ ts: Date.parse(e.date), pain: toNum(e.pain), fatigue: toNum(e.fatigue), sleep: toNum(e.sleep) }))
-    .filter(p => Number.isFinite(p.ts) && (p.pain !== null || p.fatigue !== null || p.sleep !== null))
-    .sort((a, b) => a.ts - b.ts)
-    .slice(-30);
-
-  if (points.length < 2) return null;
-
-  const W = 320, H = 120, PAD = 8;
-  const t0 = points[0].ts, t1 = points[points.length - 1].ts;
-  const x = (ts) => PAD + ((ts - t0) / Math.max(1, t1 - t0)) * (W - 2 * PAD);
-  const y = (v) => H - PAD - (v / 10) * (H - 2 * PAD);
-
-  const path = (key) => {
-    const pts = points.filter(p => p[key] !== null);
-    if (pts.length < 2) return null;
-    return pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${x(p.ts).toFixed(1)},${y(p[key]).toFixed(1)}`).join(' ');
-  };
-
-  const fmtDate = (ts) => new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-
-  return (
-    <div className="bg-secondary-50 rounded-xl border border-secondary-100 p-3">
-      <div className="flex items-center justify-between mb-1">
-        <span className="text-xs font-bold text-secondary-700 flex items-center gap-1"><TrendingUp size={13} /> Trends (last {points.length} entries)</span>
-        <div className="flex gap-2">
-          {METRICS.map(m => (
-            <span key={m.key} className="flex items-center gap-1 text-[10px] font-semibold text-secondary-500">
-              <span className="w-2 h-2 rounded-full inline-block" style={{ background: m.stroke }} /> {m.label}
-            </span>
-          ))}
-        </div>
-      </div>
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" role="img" aria-label="Symptom trends chart">
-        {[0, 5, 10].map(v => (
-          <g key={v}>
-            <line x1={PAD} x2={W - PAD} y1={y(v)} y2={y(v)} stroke="#e2e8f0" strokeWidth="1" />
-            <text x={W - PAD} y={y(v) - 2} fontSize="7" fill="#94a3b8" textAnchor="end">{v}</text>
-          </g>
-        ))}
-        {METRICS.map(m => {
-          const d = path(m.key);
-          return d ? <path key={m.key} d={d} fill="none" stroke={m.stroke} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" /> : null;
-        })}
-      </svg>
-      <div className="flex justify-between text-[9px] text-secondary-400 px-1">
-        <span>{fmtDate(t0)}</span><span>{fmtDate(t1)}</span>
-      </div>
-    </div>
-  );
-};
-
-/** "Pain avg 5.2 (down 0.8 vs prior week)" — the payoff that makes logging worth it. */
-const WeeklySummary = ({ entries }) => {
-  const now = Date.now(), DAY = 86400000;
-  const parsed = entries
-    .filter(e => e.date)
-    .map(e => ({ ...e, ts: Date.parse(e.date) }))
-    .filter(e => Number.isFinite(e.ts));
-  const thisWeek = parsed.filter(e => now - e.ts <= 7 * DAY);
-  const lastWeek = parsed.filter(e => now - e.ts > 7 * DAY && now - e.ts <= 14 * DAY);
-  if (thisWeek.length === 0) return null;
-
-  const avgOf = (list, key) => {
-    const xs = list.map(e => toNum(e[key])).filter(v => v !== null);
-    return xs.length ? xs.reduce((a, v) => a + v, 0) / xs.length : null;
-  };
-
-  const items = METRICS.map(m => {
-    const cur = avgOf(thisWeek, m.key);
-    if (cur === null) return null;
-    const prev = avgOf(lastWeek, m.key);
-    let delta = null, improving = false;
-    if (prev !== null && Math.abs(cur - prev) >= 0.3) {
-      delta = cur - prev;
-      improving = (delta < 0 && m.betterWhen === 'down') || (delta > 0 && m.betterWhen === 'up');
-    }
-    return { ...m, cur, delta, improving };
-  }).filter(Boolean);
-
-  if (!items.length) return null;
-
-  return (
-    <div className="bg-primary-50 rounded-xl border border-primary-100 p-3">
-      <p className="text-xs font-bold text-primary-800 mb-1.5">This week ({thisWeek.length} {thisWeek.length === 1 ? 'entry' : 'entries'})</p>
-      <div className="flex flex-wrap gap-x-4 gap-y-1">
-        {items.map(it => (
-          <span key={it.key} className="text-xs text-primary-900">
-            <span className="font-semibold">{it.label}:</span> {it.cur.toFixed(1)}
-            {it.delta !== null && (
-              <span className={`ml-1 font-semibold ${it.improving ? 'text-emerald-700' : 'text-secondary-500'}`}>
-                ({it.delta > 0 ? '+' : ''}{it.delta.toFixed(1)} vs last week{it.improving ? ' ✓' : ''})
-              </span>
-            )}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-};
-
 const TABS = [
   { id: 'medications', label: 'Medications', icon: Pill },
   { id: 'doctors', label: 'Doctors', icon: Stethoscope },
@@ -155,7 +45,7 @@ const TABS = [
 
 const emptyMedication = { name: '', dose: '', frequency: '', doctor: '', purpose: '', sideEffects: '' };
 const emptyDoctor = { name: '', specialty: '', phone: '', portal: '', notes: '' };
-const emptySymptomEntry = { date: '', pain: '', fatigue: '', mood: '', sleep: '', notes: '', triggers: '' };
+const emptySymptomEntry = { date: '', pain: '', fatigue: '', mood: '', sleep: '', notes: '', triggers: '', foods: [], practices: [] };
 
 const HealthTools = () => {
   const [activeTab, setActiveTab] = useState('medications');
@@ -168,32 +58,75 @@ const HealthTools = () => {
 
   // Medical history state
   const [history, setHistory] = useState({
-    conditions: '', surgeries: '', allergies: '', familyHistory: '', otherNotes: ''
+    conditions: '', surgeries: '', allergies: '', familyHistory: '', otherNotes: '', visitQuestions: ''
   });
 
   // Symptom tracker state
   const [symptoms, setSymptoms] = useState([{ ...emptySymptomEntry }]);
 
   // Quick daily check-in — date defaults to today, scales are tap-to-select.
-  const [quickEntry, setQuickEntry] = useState({ ...emptySymptomEntry, date: todayStr() });
+  const [quickEntry, setQuickEntry] = useState({ ...emptySymptomEntry, date: todayStr(), foods: [], practices: [] });
   const [quickLogged, setQuickLogged] = useState(false);
+
+  // Symptom tracker sub-view — the dashboard is the landing view.
+  const [symptomView, setSymptomView] = useState('dashboard'); // 'dashboard' | 'checkin' | 'history'
+
+  // Food diary input + quick-add chips (user's recent foods first, then common triggers)
+  const [foodDraft, setFoodDraft] = useState('');
+  const foodSuggestions = useMemo(() => {
+    const merged = [...getRecentFoods(symptoms)];
+    STARTER_FOODS.forEach(f => {
+      if (!merged.some(m => m.toLowerCase() === f.toLowerCase())) merged.push(f);
+    });
+    return merged
+      .filter(f => !(quickEntry.foods || []).some(x => x.toLowerCase() === f.toLowerCase()))
+      .slice(0, 8);
+  }, [symptoms, quickEntry.foods]);
+
+  const addFood = (name) => {
+    const v = (name !== undefined ? name : foodDraft).trim();
+    if (!v) return;
+    setQuickEntry(prev =>
+      (prev.foods || []).some(f => f.toLowerCase() === v.toLowerCase())
+        ? prev
+        : { ...prev, foods: [...(prev.foods || []), v] }
+    );
+    setFoodDraft('');
+  };
+
+  const removeFood = (name) => {
+    setQuickEntry(prev => ({ ...prev, foods: (prev.foods || []).filter(f => f !== name) }));
+  };
+
+  const togglePractice = (name) => {
+    setQuickEntry(prev => {
+      const cur = prev.practices || [];
+      return cur.includes(name)
+        ? { ...prev, practices: cur.filter(p => p !== name) }
+        : { ...prev, practices: [...cur, name] };
+    });
+  };
 
   const handleQuickLog = () => {
     const hasData = quickEntry.pain !== '' || quickEntry.fatigue !== '' || quickEntry.sleep !== '' ||
-      quickEntry.mood.trim() || quickEntry.triggers.trim() || quickEntry.notes.trim();
+      quickEntry.mood.trim() || quickEntry.triggers.trim() || quickEntry.notes.trim() ||
+      (quickEntry.foods && quickEntry.foods.length > 0) ||
+      (quickEntry.practices && quickEntry.practices.length > 0);
     if (!hasData) return;
     setSymptoms(prev => {
       // One entry per day: logging again on the same date updates it.
-      const withoutBlank = prev.filter(e => e.date || e.pain || e.fatigue || e.sleep || e.mood || e.notes || e.triggers);
+      const withoutBlank = prev.filter(e => e.date || e.pain || e.fatigue || e.sleep || e.mood || e.notes || e.triggers || (e.foods && e.foods.length) || (e.practices && e.practices.length));
       const existingIdx = withoutBlank.findIndex(e => e.date === quickEntry.date);
       if (existingIdx >= 0) {
         return withoutBlank.map((e, i) => (i === existingIdx ? { ...e, ...quickEntry } : e));
       }
       return [{ ...quickEntry }, ...withoutBlank];
     });
-    setQuickEntry({ ...emptySymptomEntry, date: todayStr() });
+    setQuickEntry({ ...emptySymptomEntry, date: todayStr(), foods: [], practices: [] });
     setQuickLogged(true);
     setTimeout(() => setQuickLogged(false), 2500);
+    // Land back on the dashboard so the payoff of logging is immediate.
+    setTimeout(() => setSymptomView('dashboard'), 900);
   };
 
   // Track initial load so we don't overwrite saved data with defaults.
@@ -207,7 +140,7 @@ const HealthTools = () => {
         if (data) {
           if (data.medications?.length) setMedications(data.medications);
           if (data.doctors?.length) setDoctors(data.doctors);
-          if (data.history) setHistory(data.history);
+          if (data.history) setHistory(prev => ({ ...prev, ...data.history }));
           if (data.symptoms?.length) setSymptoms(data.symptoms);
         }
       } catch (e) {
@@ -215,6 +148,7 @@ const HealthTools = () => {
       } finally {
         setLoaded(true);
       }
+      ensureReminderScheduled();
     })();
   }, []);
 
@@ -261,6 +195,78 @@ const HealthTools = () => {
     if (history.allergies) text += `Allergies:\n${history.allergies}\n\n`;
     if (history.familyHistory) text += `Family History:\n${history.familyHistory}\n\n`;
     if (history.otherNotes) text += `Other Notes:\n${history.otherNotes}\n\n`;
+    if (history.visitQuestions) text += `Questions for My Next Appointment:\n${history.visitQuestions}\n\n`;
+    return text;
+  };
+
+  /**
+   * Visit Prep Report — one page that makes a 15-minute appointment count:
+   * current meds, care team, key history, 30-day symptom picture, suspected
+   * food triggers, what's been helping, and the patient's own questions.
+   */
+  const formatVisitSummary = () => {
+    const dateStr = new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+    let text = `═══ APPOINTMENT VISIT SUMMARY ═══\nPrepared ${dateStr} with the Resilient Path app\n\n`;
+
+    // Questions first — the thing most likely to get squeezed out of a visit.
+    if (history.visitQuestions && history.visitQuestions.trim()) {
+      text += `── MY QUESTIONS FOR THIS VISIT ──\n${history.visitQuestions.trim()}\n\n`;
+    }
+
+    // 30-day symptom picture
+    const sorted = validEntries(symptoms);
+    const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 30);
+    const cutoffStr = cutoff.toISOString().split('T')[0];
+    const last30 = sorted.filter(e => e.date >= cutoffStr);
+    if (last30.length > 0) {
+      const avgOf = (key) => {
+        const xs = last30.map(e => toNum(e[key])).filter(v => v !== null);
+        return xs.length ? (xs.reduce((a, v) => a + v, 0) / xs.length) : null;
+      };
+      const p = avgOf('pain'), f = avgOf('fatigue'), s = avgOf('sleep');
+      text += `── LAST 30 DAYS (${last30.length} check-ins) ──\n`;
+      if (p !== null) text += `Average pain: ${p.toFixed(1)}/10\n`;
+      if (f !== null) text += `Average fatigue: ${f.toFixed(1)}/10\n`;
+      if (s !== null) text += `Average sleep quality: ${s.toFixed(1)}/10\n`;
+      const worst = last30.reduce((w, e) => (toNum(e.pain) ?? -1) > (toNum(w.pain) ?? -1) ? e : w, last30[0]);
+      if (toNum(worst.pain) !== null) {
+        text += `Worst pain day: ${worst.date} (${toNum(worst.pain)}/10${worst.triggers ? `; possible triggers: ${worst.triggers}` : ''})\n`;
+      }
+      text += '\n';
+    }
+
+    // Suspected food triggers
+    const fa = analyzeFoodTriggers(symptoms);
+    const suspects = fa.ready ? fa.results.filter(r => r.delta >= 1).slice(0, 4) : [];
+    if (suspects.length > 0) {
+      text += `── POSSIBLE FOOD TRIGGERS (from my food diary) ──\n`;
+      suspects.forEach(r => {
+        text += `- ${r.food}: symptom burden avg ${r.expAvg.toFixed(1)} the ${r.window} vs ${r.nonAvg.toFixed(1)} otherwise (${r.timesEaten} days)\n`;
+      });
+      text += '(Patterns from self-tracking, not a diagnosis)\n\n';
+    }
+
+    // What's been helping
+    const pa = analyzePractices(symptoms);
+    const helpers = pa.ready ? pa.results.filter(r => r.benefit >= 1).slice(0, 4) : [];
+    if (helpers.length > 0) {
+      text += `── WHAT SEEMS TO HELP ──\n`;
+      helpers.forEach(r => {
+        text += `- ${r.practice}: symptom burden avg ${r.benefit.toFixed(1)} points lower on practice days (${r.timesDone} days)\n`;
+      });
+      text += '\n';
+    }
+
+    // Meds, providers, key history (reuse existing formatters)
+    text += formatMedicationsText() + '\n';
+    text += formatDoctorsText() + '\n';
+    if (history.conditions || history.allergies) {
+      text += `── KEY HISTORY ──\n`;
+      if (history.conditions) text += `Conditions: ${history.conditions}\n`;
+      if (history.allergies) text += `Allergies: ${history.allergies}\n`;
+      text += '\n';
+    }
+
     return text;
   };
 
@@ -273,6 +279,8 @@ const HealthTools = () => {
       if (entry.fatigue) text += `   Fatigue: ${entry.fatigue}/10\n`;
       if (entry.mood) text += `   Mood: ${entry.mood}\n`;
       if (entry.sleep) text += `   Sleep Quality: ${entry.sleep}/10\n`;
+      if (entry.foods && entry.foods.length > 0) text += `   Foods: ${entry.foods.join(', ')}\n`;
+      if (entry.practices && entry.practices.length > 0) text += `   Practiced: ${entry.practices.join(', ')}\n`;
       if (entry.triggers) text += `   Triggers: ${entry.triggers}\n`;
       if (entry.notes) text += `   Notes: ${entry.notes}\n`;
       text += '\n';
@@ -299,6 +307,10 @@ const HealthTools = () => {
       case 'symptoms':
         text = formatSymptomsText();
         title = 'Symptom Tracker';
+        break;
+      case 'visit':
+        text = formatVisitSummary();
+        title = 'Visit Summary';
         break;
       case 'all':
         text = formatMedicationsText() + '\n' + formatDoctorsText() + '\n' + formatHistoryText() + '\n' + formatSymptomsText();
@@ -345,6 +357,10 @@ const HealthTools = () => {
       case 'symptoms':
         text = formatSymptomsText();
         filename = `Resilient_Path_Symptom_Tracker_${dateStr}.txt`;
+        break;
+      case 'visit':
+        text = formatVisitSummary();
+        filename = `Resilient_Path_Visit_Summary_${dateStr}.txt`;
         break;
       default:
         text = formatMedicationsText() + '\n' + formatDoctorsText() + '\n' + formatHistoryText() + '\n' + formatSymptomsText();
@@ -502,6 +518,34 @@ const HealthTools = () => {
         Keep all your important health information in one place. Easy to save to your phone or share with your healthcare team via email, text, or print.
       </p>
 
+      {/* ── Visit Prep Report ── */}
+      <div className="bg-white p-4 rounded-2xl shadow-sm border border-primary-200 flex items-center gap-3">
+        <div className="w-11 h-11 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center shrink-0">
+          <FileText size={22} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-bold text-secondary-900 leading-tight">Preparing for an appointment?</p>
+          <p className="text-xs text-secondary-500 leading-snug">
+            One-page summary: your questions, meds, 30-day trends, and what your tracking has found.
+          </p>
+        </div>
+        <div className="flex flex-col gap-1.5 shrink-0">
+          <button
+            onClick={() => handleShare('visit')}
+            className="flex items-center gap-1 text-xs font-bold text-white bg-primary-600 hover:bg-primary-700 px-3 py-1.5 rounded-lg transition-colors"
+          >
+            {Capacitor.isNativePlatform() ? <Share2 size={12} /> : <Printer size={12} />}
+            {Capacitor.isNativePlatform() ? 'Share' : 'Print'}
+          </button>
+          <button
+            onClick={() => handleSaveToPhone('visit')}
+            className="flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-3 py-1.5 rounded-lg transition-colors"
+          >
+            <Download size={12} /> Save
+          </button>
+        </div>
+      </div>
+
       {/* Tab Selector */}
       <div className="flex overflow-x-auto gap-2 pb-1 custom-scrollbar">
         {TABS.map((tab) => {
@@ -638,6 +682,7 @@ const HealthTools = () => {
             {renderField('Allergies', history.allergies, (v) => setHistory(prev => ({ ...prev, allergies: v })), 'textarea', 'Medications, foods, environmental...')}
             {renderField('Family History', history.familyHistory, (v) => setHistory(prev => ({ ...prev, familyHistory: v })), 'textarea', 'Relevant family medical history...')}
             {renderField('Other Notes', history.otherNotes, (v) => setHistory(prev => ({ ...prev, otherNotes: v })), 'textarea', 'Anything else important...')}
+            {renderField('Questions for My Next Appointment', history.visitQuestions, (v) => setHistory(prev => ({ ...prev, visitQuestions: v })), 'textarea', 'Write questions as they occur to you — they lead your Visit Prep Report so nothing gets forgotten in the room.')}
           </div>
         )}
 
@@ -668,7 +713,51 @@ const HealthTools = () => {
               Log your daily symptoms to share with your healthcare team and spot patterns over time.
             </p>
 
-            {/* ── Quick Daily Check-in ── */}
+            {/* ── Sub-view tabs: Dashboard is the landing view ── */}
+            {(() => {
+              const goCheckin = () => {
+                // Prefill from today's entry if it already exists
+                const existing = symptoms.find(e => e.date === todayStr());
+                if (existing) setQuickEntry({ ...emptySymptomEntry, ...existing, foods: existing.foods || [], practices: existing.practices || [] });
+                setSymptomView('checkin');
+              };
+              const sub = (id, label, icon) => (
+                <button
+                  onClick={() => (id === 'checkin' ? goCheckin() : setSymptomView(id))}
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold transition-colors ${
+                    symptomView === id
+                      ? 'bg-white text-primary-700 shadow-sm'
+                      : 'text-secondary-500 hover:text-secondary-700'
+                  }`}
+                >
+                  {icon} {label}
+                </button>
+              );
+              return (
+                <div className="flex gap-1 bg-secondary-100 p-1 rounded-xl">
+                  {sub('dashboard', 'Dashboard', <LayoutDashboard size={14} />)}
+                  {sub('checkin', 'Check-in', <Activity size={14} />)}
+                  {sub('history', 'History', <History size={14} />)}
+                </div>
+              );
+            })()}
+
+            {/* ── DASHBOARD VIEW ── */}
+            {symptomView === 'dashboard' && (<>
+              <SymptomDashboard
+                entries={symptoms}
+                onLogToday={() => {
+                  const existing = symptoms.find(e => e.date === todayStr());
+                  if (existing) setQuickEntry({ ...emptySymptomEntry, ...existing, foods: existing.foods || [], practices: existing.practices || [] });
+                  setSymptomView('checkin');
+                }}
+                onViewHistory={() => setSymptomView('history')}
+              />
+              <ReminderCard />
+            </>)}
+
+            {/* ── CHECK-IN VIEW ── */}
+            {symptomView === 'checkin' && (
             <div className="bg-white p-4 rounded-xl border-2 border-primary-200 space-y-3 shadow-sm">
               <div className="flex justify-between items-center">
                 <span className="text-sm font-bold text-primary-800">Today's Check-in</span>
@@ -702,6 +791,90 @@ const HealthTools = () => {
                 value={quickEntry.notes}
                 onChange={(e) => setQuickEntry(prev => ({ ...prev, notes: e.target.value }))}
               />
+
+              {/* ── Food Diary ── */}
+              <div className="pt-1 border-t border-secondary-100">
+                <p className="text-xs font-semibold text-secondary-500 uppercase tracking-wide mb-1 mt-2">Food Diary</p>
+                <p className="text-[11px] text-secondary-400 leading-snug mb-2">
+                  Log what you ate — after a few days, your Dashboard flags foods that tend to precede worse symptoms.
+                </p>
+                {quickEntry.foods && quickEntry.foods.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    {quickEntry.foods.map(f => (
+                      <span key={f} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-50 border border-primary-200 text-xs font-semibold text-primary-800">
+                        {f}
+                        <button
+                          type="button"
+                          onClick={() => removeFood(f)}
+                          aria-label={`Remove ${f}`}
+                          className="text-primary-400 hover:text-primary-700 leading-none"
+                        >
+                          ✕
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <div className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    placeholder="Add a food (e.g. dairy, coffee)..."
+                    className="flex-1 border border-secondary-200 rounded-xl p-2.5 text-sm text-secondary-800 outline-none focus:ring-2 focus:ring-primary-500 bg-white"
+                    value={foodDraft}
+                    onChange={(e) => setFoodDraft(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && addFood()}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => addFood()}
+                    className="px-4 rounded-xl border border-primary-200 text-primary-700 bg-primary-50 hover:bg-primary-100 font-semibold text-sm transition-colors"
+                  >
+                    Add
+                  </button>
+                </div>
+                {foodSuggestions.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {foodSuggestions.map(f => (
+                      <button
+                        key={f}
+                        type="button"
+                        onClick={() => addFood(f)}
+                        className="px-2.5 py-1 rounded-full bg-secondary-50 border border-secondary-200 text-xs text-secondary-600 hover:border-primary-300 transition-colors"
+                      >
+                        + {f}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* ── What did you practice today? ── */}
+              <div className="pt-1 border-t border-secondary-100">
+                <p className="text-xs font-semibold text-secondary-500 uppercase tracking-wide mb-1 mt-2">What did you practice today?</p>
+                <p className="text-[11px] text-secondary-400 leading-snug mb-2">
+                  Tap the skills you used — your Dashboard will show which ones line up with your better days.
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {PRACTICES.map(p => {
+                    const on = (quickEntry.practices || []).includes(p);
+                    return (
+                      <button
+                        key={p}
+                        type="button"
+                        onClick={() => togglePractice(p)}
+                        className={`px-2.5 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
+                          on
+                            ? 'bg-emerald-600 text-white border-emerald-600'
+                            : 'bg-secondary-50 border-secondary-200 text-secondary-600 hover:border-emerald-300'
+                        }`}
+                      >
+                        {on ? '✓ ' : ''}{p}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               <button
                 onClick={handleQuickLog}
                 className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm transition-colors shadow-sm ${
@@ -711,11 +884,10 @@ const HealthTools = () => {
                 {quickLogged ? (<><Check size={16} /> Logged!</>) : 'Log Entry'}
               </button>
             </div>
+            )}
 
-            {/* ── Insight: what the logging earns you ── */}
-            <WeeklySummary entries={symptoms} />
-            <TrendChart entries={symptoms} />
-
+            {/* ── HISTORY VIEW ── */}
+            {symptomView === 'history' && (<>
             {symptoms.map((entry, idx) => (
               <div key={idx} className="bg-secondary-50 p-4 rounded-xl border border-secondary-100 space-y-3 relative">
                 <div className="flex justify-between items-center mb-1">
@@ -737,6 +909,17 @@ const HealthTools = () => {
                 {renderField('Mood', entry.mood, (v) => updateListItem(setSymptoms, idx, 'mood', v), 'text', 'e.g., calm, frustrated, hopeful')}
                 {renderField('Triggers', entry.triggers, (v) => updateListItem(setSymptoms, idx, 'triggers', v), 'text', 'What may have contributed?')}
                 {renderField('Notes', entry.notes, (v) => updateListItem(setSymptoms, idx, 'notes', v), 'text', 'Anything else to note?')}
+                {entry.foods && entry.foods.length > 0 && (
+                  <p className="text-xs text-secondary-600">
+                    <b className="text-secondary-900">Foods:</b> {entry.foods.join(', ')}
+                    <span className="text-secondary-400"> (edit via Check-in on that date)</span>
+                  </p>
+                )}
+                {entry.practices && entry.practices.length > 0 && (
+                  <p className="text-xs text-secondary-600">
+                    <b className="text-secondary-900">Practiced:</b> {entry.practices.join(', ')}
+                  </p>
+                )}
               </div>
             ))}
 
@@ -747,6 +930,7 @@ const HealthTools = () => {
               <Plus size={18} />
               Add Entry
             </button>
+            </>)}
           </div>
         )}
       </div>

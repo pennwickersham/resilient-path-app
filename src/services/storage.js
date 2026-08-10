@@ -35,6 +35,7 @@ export const STORAGE_KEYS = {
   CHAT_HISTORY: 'resilientPathChatHistory',
   AI_CONSENT: 'aiConsentAccepted',
   PERSONALIZATION: 'aiPersonalizationEnabled',
+  REMINDER: 'resilientPathReminder',
 };
 
 const fileFor = (key) => `${FILE_PREFIX}${key}.json`;

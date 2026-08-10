@@ -6,6 +6,7 @@ import WorkbookForms from './pages/WorkbookForms';
 import Chatbot from './pages/Chatbot';
 import EmergencyGuidance from './pages/EmergencyGuidance';
 import HealthTools from './pages/HealthTools';
+import CopingTools from './pages/CopingTools';
 import DisclaimerPopup from './components/DisclaimerPopup';
 import BackButtonHandler from './components/BackButtonHandler';
 
@@ -22,6 +23,7 @@ function App() {
             <Route path="chatbot" element={<Chatbot />} />
             <Route path="emergency" element={<EmergencyGuidance />} />
             <Route path="health-tools" element={<HealthTools />} />
+            <Route path="coping-tools" element={<CopingTools />} />
           </Route>
         </Routes>
       </Router>

@@ -30,6 +30,7 @@
     "@capacitor/core": "^8.4.0",
     "@capacitor/filesystem": "^8.1.2",
     "@capacitor/ios": "8.4.0",
+    "@capacitor/local-notifications": "^8.2.1",
     "@capacitor/share": "^8.0.1",
     "@revenuecat/purchases-capacitor": "^13.1.7",
     "clsx": "^2.1.1",

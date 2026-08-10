@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { workbookData } from '../data/workbookForms';
 import { Printer, Share2, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import storage, { STORAGE_KEYS } from '../services/storage';
@@ -8,7 +9,13 @@ import { Share } from '@capacitor/share';
 const WorkbookForms = () => {
   const topRef = useRef();
   const [answers, setAnswers] = useState({});
-  const [activeModule, setActiveModule] = useState(1);
+  const [searchParams] = useSearchParams();
+  // Deep link support: /workbook?module=17 opens that module directly
+  // (used by the tracker dashboard's "Suggested for You" card).
+  const [activeModule, setActiveModule] = useState(() => {
+    const m = parseInt(searchParams.get('module'), 10);
+    return workbookData.some(w => w.moduleId === m) ? m : 1;
+  });
   const printRef = useRef();
 
   useEffect(() => {

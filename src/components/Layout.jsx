@@ -1,5 +1,5 @@
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Home, FileText, MessageCircle, ClipboardList, AlertTriangle, Loader2, Lock } from 'lucide-react';
+import { Home, FileText, MessageCircle, ClipboardList, AlertTriangle, Loader2, Lock, Wind } from 'lucide-react';
 import { useSubscription } from '../context/SubscriptionContext';
 import Paywall from './Paywall';
 
@@ -25,6 +25,7 @@ const Layout = () => {
     { name: 'Workbook', path: '/workbook', icon: FileText, gated: true },
     { name: 'Chat', path: '/chatbot', icon: MessageCircle, gated: true },
     { name: 'Health', path: '/health-tools', icon: ClipboardList, gated: true },
+    { name: 'Relax', path: '/coping-tools', icon: Wind, gated: false },
     { name: 'Emergency', path: '/emergency', icon: AlertTriangle, gated: false },
   ];
 
