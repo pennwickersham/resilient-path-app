@@ -15,6 +15,16 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 import storage, { STORAGE_KEYS } from './storage';
 
 const NOTIFICATION_ID = 7001;
+const WEEKLY_SUMMARY_ID = 7002;
+
+/* Sunday-evening "your week in review" invitation. Local notifications are
+   static, so the numbers live on the dashboard — this just opens the door. */
+const weeklySummaryNotification = () => ({
+  id: WEEKLY_SUMMARY_ID,
+  title: 'Your week in review',
+  body: 'Your dashboard has this week\u2019s trends, what helped, and any patterns worth a look.',
+  schedule: { on: { weekday: 1, hour: 18, minute: 0 }, allowWhileIdle: true }, // Sunday 6pm
+});
 
 export const isReminderSupported = () => Capacitor.isNativePlatform();
 
@@ -44,7 +54,7 @@ export async function enableReminder(hour, minute) {
         // Deliberately gentle: no streaks, no guilt — an invitation, not a demand.
         body: 'A 30-second check-in, whenever you\u2019re ready. No pressure.',
         schedule: { on: { hour, minute }, allowWhileIdle: true },
-      }],
+      }, weeklySummaryNotification()],
     });
     await storage.set(STORAGE_KEYS.REMINDER, { enabled: true, hour, minute });
     return { ok: true };
@@ -66,7 +76,7 @@ export async function disableReminder() {
 
 async function cancelPending() {
   const pending = await LocalNotifications.getPending();
-  const ours = (pending.notifications || []).filter(n => n.id === NOTIFICATION_ID);
+  const ours = (pending.notifications || []).filter(n => n.id === NOTIFICATION_ID || n.id === WEEKLY_SUMMARY_ID);
   if (ours.length) await LocalNotifications.cancel({ notifications: ours.map(n => ({ id: n.id })) });
 }
 
@@ -82,17 +92,18 @@ export async function ensureReminderScheduled() {
     const perm = await LocalNotifications.checkPermissions();
     if (perm.display !== 'granted') return;
     const pending = await LocalNotifications.getPending();
-    const exists = (pending.notifications || []).some(n => n.id === NOTIFICATION_ID);
-    if (!exists) {
-      await LocalNotifications.schedule({
-        notifications: [{
-          id: NOTIFICATION_ID,
-          title: 'Resilient Path',
-          body: 'A 30-second check-in, whenever you\u2019re ready. No pressure.',
-          schedule: { on: { hour: pref.hour, minute: pref.minute }, allowWhileIdle: true },
-        }],
+    const have = new Set((pending.notifications || []).map(n => n.id));
+    const toSchedule = [];
+    if (!have.has(NOTIFICATION_ID)) {
+      toSchedule.push({
+        id: NOTIFICATION_ID,
+        title: 'Resilient Path',
+        body: 'A 30-second check-in, whenever you\u2019re ready. No pressure.',
+        schedule: { on: { hour: pref.hour, minute: pref.minute }, allowWhileIdle: true },
       });
     }
+    if (!have.has(WEEKLY_SUMMARY_ID)) toSchedule.push(weeklySummaryNotification());
+    if (toSchedule.length) await LocalNotifications.schedule({ notifications: toSchedule });
   } catch (e) {
     console.error('Reminder re-schedule failed', e);
   }

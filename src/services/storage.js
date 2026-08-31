@@ -36,6 +36,10 @@ export const STORAGE_KEYS = {
   AI_CONSENT: 'aiConsentAccepted',
   PERSONALIZATION: 'aiPersonalizationEnabled',
   REMINDER: 'resilientPathReminder',
+  FLARES: 'resilientPathFlares',           // flare event log (Flare Mode)
+  PROFILE: 'resilientPathProfile',         // onboarding answers + crisis contact
+  PROGRESS: 'resilientPathProgress',       // module completion + last visited
+  LAST_BACKUP: 'resilientPathLastBackup',  // ISO timestamp of last export (backup nudge)
 };
 
 const fileFor = (key) => `${FILE_PREFIX}${key}.json`;
@@ -131,6 +135,11 @@ export const storage = {
     }
     const json = JSON.stringify(payload, null, 2);
     const filename = `Resilient_Path_Backup_${new Date().toISOString().split('T')[0]}.json`;
+
+    // Record when the last backup happened so the Home screen can nudge
+    // gently when data is going unprotected. Set before the write so a
+    // successful share-fallback still counts.
+    await this.set(STORAGE_KEYS.LAST_BACKUP, new Date().toISOString());
 
     if (isNative) {
       await Filesystem.writeFile({

@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { workbookData } from '../data/workbookForms';
-import { Printer, Share2, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Printer, Share2, Trash2, ChevronLeft, ChevronRight, CheckCircle2, Circle, Check } from 'lucide-react';
 import storage, { STORAGE_KEYS } from '../services/storage';
+import { getProgress, toggleModuleComplete, setLastVisited } from '../services/progress';
+import VoiceInputButton from '../components/VoiceInputButton';
 import { Capacitor } from '@capacitor/core';
 import { Share } from '@capacitor/share';
 
@@ -18,17 +20,32 @@ const WorkbookForms = () => {
   });
   const printRef = useRef();
 
+  // Module completion — user-controlled, drives the Home progress card.
+  const [completed, setCompleted] = useState({});
+
   useEffect(() => {
     // Load from durable storage on mount (auto-migrates old localStorage data)
     (async () => {
       try {
         const saved = await storage.get(STORAGE_KEYS.WORKBOOK);
         if (saved && typeof saved === 'object') setAnswers(saved);
+        const prog = await getProgress();
+        setCompleted(prog.completed);
       } catch (e) {
         console.error('Failed to load workbook answers', e);
       }
     })();
   }, []);
+
+  // Remember the open module so Home can offer "pick up where you left off".
+  useEffect(() => {
+    setLastVisited(activeModule).catch(() => {});
+  }, [activeModule]);
+
+  const handleToggleComplete = async () => {
+    const prog = await toggleModuleComplete(activeModule);
+    setCompleted({ ...prog.completed });
+  };
 
   const handleChange = (id, value, type) => {
     let newValue = value;
@@ -172,12 +189,15 @@ const WorkbookForms = () => {
           <button
             key={m.moduleId}
             onClick={() => setActiveModule(m.moduleId)}
-            className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              activeModule === m.moduleId 
-                ? 'bg-primary-600 text-white shadow-md' 
-                : 'bg-white text-secondary-600 border border-secondary-200 hover:bg-secondary-50'
+            className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
+              activeModule === m.moduleId
+                ? 'bg-primary-600 text-white shadow-md'
+                : completed[String(m.moduleId)]
+                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
+                  : 'bg-white text-secondary-600 border border-secondary-200 hover:bg-secondary-50'
             }`}
           >
+            {completed[String(m.moduleId)] && <Check size={13} className={activeModule === m.moduleId ? 'text-white' : 'text-emerald-600'} />}
             Module {m.moduleId}
           </button>
         ))}
@@ -258,12 +278,23 @@ const WorkbookForms = () => {
                            <label className="text-sm font-medium text-secondary-900 leading-snug">
                              {field.label}
                            </label>
-                           <textarea
-                             className="w-full border border-secondary-300 rounded-xl p-3 text-secondary-800 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none resize-y min-h-[100px] print:border-none print:resize-none print:bg-secondary-50 print:min-h-0"
-                             placeholder="Type your response here..."
-                             value={answers[field.id] || ''}
-                             onChange={(e) => handleChange(field.id, e.target.value, 'textarea')}
-                           />
+                           <div className="relative">
+                             <textarea
+                               className="w-full border border-secondary-300 rounded-xl p-3 pr-12 text-secondary-800 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none resize-y min-h-[100px] print:border-none print:resize-none print:bg-secondary-50 print:min-h-0"
+                               placeholder="Type your response here, or tap the mic to dictate..."
+                               value={answers[field.id] || ''}
+                               onChange={(e) => handleChange(field.id, e.target.value, 'textarea')}
+                             />
+                             {/* Dictation — typing long answers hurts; speaking doesn't. */}
+                             <VoiceInputButton
+                               className="absolute top-2 right-2 w-8 h-8 no-print"
+                               size={15}
+                               onText={(t) => {
+                                 const cur = answers[field.id] || '';
+                                 handleChange(field.id, cur ? `${cur.replace(/\s+$/, '')} ${t}` : t, 'textarea');
+                               }}
+                             />
+                           </div>
                          </div>
                        )}
 
@@ -304,6 +335,20 @@ const WorkbookForms = () => {
                 </div>
               </div>
             ))}
+
+            {/* Mark Complete — the user's own call, never automatic */}
+            <button
+              onClick={handleToggleComplete}
+              className={`no-print w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm transition-all active:scale-[0.99] ${
+                completed[String(activeModule)]
+                  ? 'bg-emerald-50 text-emerald-700 border-2 border-emerald-300'
+                  : 'bg-white text-primary-700 border-2 border-dashed border-primary-300 hover:bg-primary-50'
+              }`}
+            >
+              {completed[String(activeModule)]
+                ? (<><CheckCircle2 size={18} /> Module Complete{completed[String(activeModule)] !== true ? ` · ${completed[String(activeModule)]}` : ''} — tap to unmark</>)
+                : (<><Circle size={18} /> Mark This Module Complete</>)}
+            </button>
           </div>
         )}
       </div>

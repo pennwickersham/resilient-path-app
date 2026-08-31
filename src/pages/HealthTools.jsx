@@ -8,7 +8,9 @@ import SymptomDashboard from '../components/SymptomDashboard';
 import ReminderCard from '../components/ReminderCard';
 import { ensureReminderScheduled } from '../services/reminders';
 import { STARTER_FOODS, PRACTICES, getRecentFoods, analyzeFoodTriggers, analyzePractices, validEntries, toNum } from '../services/symptomAnalysis';
-import { FileText } from 'lucide-react';
+import { FileText, FileDown, Loader2 } from 'lucide-react';
+import { saveAndShareVisitPacket } from '../services/pdfReport';
+import VoiceInputButton from '../components/VoiceInputButton';
 
 // ─── Symptom helpers: quick entry, trends, weekly summary ───
 
@@ -43,7 +45,7 @@ const TABS = [
   { id: 'symptoms', label: 'Symptoms', icon: Activity },
 ];
 
-const emptyMedication = { name: '', dose: '', frequency: '', doctor: '', purpose: '', sideEffects: '' };
+const emptyMedication = { name: '', dose: '', frequency: '', doctor: '', purpose: '', sideEffects: '', startDate: '' };
 const emptyDoctor = { name: '', specialty: '', phone: '', portal: '', notes: '' };
 const emptySymptomEntry = { date: '', pain: '', fatigue: '', mood: '', sleep: '', notes: '', triggers: '', foods: [], practices: [] };
 
@@ -63,6 +65,12 @@ const HealthTools = () => {
 
   // Symptom tracker state
   const [symptoms, setSymptoms] = useState([{ ...emptySymptomEntry }]);
+
+  // Flare events (logged by Flare Mode) — excuse streak gaps, annotate trends.
+  const [flares, setFlares] = useState([]);
+
+  // PDF visit packet generation state
+  const [pdfBusy, setPdfBusy] = useState(false);
 
   // Quick daily check-in — date defaults to today, scales are tap-to-select.
   const [quickEntry, setQuickEntry] = useState({ ...emptySymptomEntry, date: todayStr(), foods: [], practices: [] });
@@ -143,6 +151,8 @@ const HealthTools = () => {
           if (data.history) setHistory(prev => ({ ...prev, ...data.history }));
           if (data.symptoms?.length) setSymptoms(data.symptoms);
         }
+        const flareLog = await storage.get(STORAGE_KEYS.FLARES);
+        if (Array.isArray(flareLog)) setFlares(flareLog);
       } catch (e) {
         console.error('Failed to load health tools data', e);
       } finally {
@@ -166,6 +176,7 @@ const HealthTools = () => {
       text += `${i + 1}. ${med.name || '(unnamed)'}\n`;
       if (med.dose) text += `   Dose: ${med.dose}\n`;
       if (med.frequency) text += `   Frequency: ${med.frequency}\n`;
+      if (med.startDate) text += `   Started: ${med.startDate}\n`;
       if (med.doctor) text += `   Prescribing Doctor: ${med.doctor}\n`;
       if (med.purpose) text += `   Purpose: ${med.purpose}\n`;
       if (med.sideEffects) text += `   Side Effects: ${med.sideEffects}\n`;
@@ -335,6 +346,23 @@ const HealthTools = () => {
 
   // Save-to-phone state
   const [saveStatus, setSaveStatus] = useState('');
+
+  /** Formatted PDF visit packet — the version a clinician actually reads. */
+  const handleVisitPacketPDF = async () => {
+    if (pdfBusy) return;
+    setPdfBusy(true);
+    try {
+      const filename = await saveAndShareVisitPacket({ medications, doctors, history, symptoms });
+      setSaveStatus(Capacitor.isNativePlatform() ? `PDF saved to Documents: ${filename}` : `Downloaded ${filename}`);
+      setTimeout(() => setSaveStatus(''), 5000);
+    } catch (e) {
+      console.error('Visit packet PDF failed', e);
+      setSaveStatus('PDF generation failed — the text version below still works.');
+      setTimeout(() => setSaveStatus(''), 5000);
+    } finally {
+      setPdfBusy(false);
+    }
+  };
 
   const handleSaveToPhone = async (section = 'all') => {
     let text = '';
@@ -531,6 +559,14 @@ const HealthTools = () => {
         </div>
         <div className="flex flex-col gap-1.5 shrink-0">
           <button
+            onClick={handleVisitPacketPDF}
+            disabled={pdfBusy}
+            className="flex items-center gap-1 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-60"
+          >
+            {pdfBusy ? <Loader2 size={12} className="animate-spin" /> : <FileDown size={12} />}
+            PDF Packet
+          </button>
+          <button
             onClick={() => handleShare('visit')}
             className="flex items-center gap-1 text-xs font-bold text-white bg-primary-600 hover:bg-primary-700 px-3 py-1.5 rounded-lg transition-colors"
           >
@@ -601,7 +637,10 @@ const HealthTools = () => {
                   {renderField('Dose', med.dose, (v) => updateListItem(setMedications, idx, 'dose', v), 'text', 'e.g., 50mg')}
                   {renderField('Frequency', med.frequency, (v) => updateListItem(setMedications, idx, 'frequency', v), 'text', 'e.g., twice daily')}
                 </div>
-                {renderField('Prescribing Doctor', med.doctor, (v) => updateListItem(setMedications, idx, 'doctor', v))}
+                <div className="grid grid-cols-2 gap-3">
+                  {renderField('Prescribing Doctor', med.doctor, (v) => updateListItem(setMedications, idx, 'doctor', v))}
+                  {renderField('Date Started', med.startDate || '', (v) => updateListItem(setMedications, idx, 'startDate', v), 'date')}
+                </div>
                 {renderField('Purpose', med.purpose, (v) => updateListItem(setMedications, idx, 'purpose', v), 'text', 'What is this for?')}
                 {renderField('Side Effects Noted', med.sideEffects, (v) => updateListItem(setMedications, idx, 'sideEffects', v), 'text', 'Any side effects?')}
               </div>
@@ -746,6 +785,8 @@ const HealthTools = () => {
             {symptomView === 'dashboard' && (<>
               <SymptomDashboard
                 entries={symptoms}
+                medications={medications}
+                flares={flares}
                 onLogToday={() => {
                   const existing = symptoms.find(e => e.date === todayStr());
                   if (existing) setQuickEntry({ ...emptySymptomEntry, ...existing, foods: existing.foods || [], practices: existing.practices || [] });
@@ -785,12 +826,18 @@ const HealthTools = () => {
                   onChange={(e) => setQuickEntry(prev => ({ ...prev, triggers: e.target.value }))}
                 />
               </div>
-              <input
-                type="text" placeholder="Notes (optional)"
-                className="w-full border border-secondary-200 rounded-xl p-2.5 text-sm text-secondary-800 outline-none focus:ring-2 focus:ring-primary-500 bg-white"
-                value={quickEntry.notes}
-                onChange={(e) => setQuickEntry(prev => ({ ...prev, notes: e.target.value }))}
-              />
+              <div className="flex gap-2">
+                <input
+                  type="text" placeholder="Notes (optional) — or tap the mic"
+                  className="flex-1 border border-secondary-200 rounded-xl p-2.5 text-sm text-secondary-800 outline-none focus:ring-2 focus:ring-primary-500 bg-white"
+                  value={quickEntry.notes}
+                  onChange={(e) => setQuickEntry(prev => ({ ...prev, notes: e.target.value }))}
+                />
+                <VoiceInputButton
+                  size={15}
+                  onText={(t) => setQuickEntry(prev => ({ ...prev, notes: prev.notes ? `${prev.notes.replace(/\s+$/, '')} ${t}` : t }))}
+                />
+              </div>
 
               {/* ── Food Diary ── */}
               <div className="pt-1 border-t border-secondary-100">

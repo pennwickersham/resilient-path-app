@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Activity, TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Check, ChevronRight, BookOpen, Sparkles } from 'lucide-react';
+import { Activity, TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Check, ChevronRight, BookOpen, Sparkles, Flame } from 'lucide-react';
+import { computeStreak } from '../services/streaks';
 import {
   computeDashboard, analyzeFoodTriggers, analyzePractices, getSuggestions, statusFromWellness, toNum
 } from '../services/symptomAnalysis';
@@ -47,7 +48,7 @@ function StatusRing({ pct, color, size = 140 }) {
 }
 
 /** Multi-metric trend chart over the last 30 valid entries (inline SVG). */
-function TrendChart({ entries }) {
+function TrendChart({ entries, medications = [] }) {
   const points = entries
     .map(e => ({ ts: Date.parse(e.date), pain: toNum(e.pain), fatigue: toNum(e.fatigue), sleep: toNum(e.sleep) }))
     .filter(p => Number.isFinite(p.ts))
@@ -95,6 +96,24 @@ function TrendChart({ entries }) {
           const d = path(m.key);
           return d ? <path key={m.key} d={d} fill="none" stroke={m.stroke} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" /> : null;
         })}
+        {/* Medication start markers — links treatment changes to what the
+            symptoms did next, which is the question every follow-up visit
+            is actually about. */}
+        {medications
+          .filter(m => m.name && m.startDate && /^\d{4}-\d{2}-\d{2}$/.test(m.startDate))
+          .map(m => ({ name: m.name, ts: Date.parse(m.startDate) }))
+          .filter(m => Number.isFinite(m.ts) && m.ts >= t0 && m.ts <= t1)
+          .map((m, i) => (
+            <g key={`${m.name}-${i}`}>
+              <line x1={x(m.ts)} x2={x(m.ts)} y1={PAD} y2={H - PAD} stroke="#0d9488" strokeWidth="1" strokeDasharray="3,2" />
+              <text
+                x={Math.min(x(m.ts) + 2, W - 40)} y={PAD + 7 + (i % 2) * 8}
+                fontSize="6.5" fill="#0d9488" fontWeight="bold"
+              >
+                {m.name.slice(0, 14)} ▸
+              </text>
+            </g>
+          ))}
       </svg>
       <div className="flex justify-between text-[9px] text-secondary-400 px-1">
         <span>{fmtDate(t0)}</span><span>{fmtDate(t1)}</span>
@@ -152,6 +171,33 @@ function WeeklySummary({ entries }) {
             )}
           </span>
         ))}
+      </div>
+    </div>
+  );
+}
+
+/** Flare-tolerant streak — momentum without guilt. Grace days and logged
+    flares keep the streak alive; only the truly abandoned streak resets. */
+function StreakCard({ entries, flares }) {
+  const streak = useMemo(() => computeStreak(entries, flares), [entries, flares]);
+  if (streak.current < 2 && streak.best < 3) return null; // earn its place first
+  return (
+    <div className="bg-white rounded-xl border border-secondary-100 p-4 shadow-sm flex items-center gap-4">
+      <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center shrink-0">
+        <Flame size={24} />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-extrabold text-secondary-900 leading-tight">
+          {streak.current}-day check-in streak
+          {streak.best > streak.current && <span className="text-secondary-400 font-semibold"> · best {streak.best}</span>}
+        </p>
+        <p className="text-[11px] text-secondary-500 leading-snug mt-0.5">
+          {streak.graceUsed > 0
+            ? 'Grace days covered the gaps — flare days never break your streak.'
+            : streak.activeToday
+              ? 'Logged today. Every entry sharpens your patterns.'
+              : 'Still alive — a check-in today keeps it going, but a missed day or two won\u2019t end it.'}
+        </p>
       </div>
     </div>
   );
@@ -300,7 +346,7 @@ function FoodPatterns({ entries, onLogToday }) {
  *   onLogToday   — switch to the check-in sub-view
  *   onViewHistory — switch to the history sub-view
  */
-export default function SymptomDashboard({ entries, onLogToday, onViewHistory }) {
+export default function SymptomDashboard({ entries, medications = [], flares = [], onLogToday, onViewHistory }) {
   const dash = useMemo(() => computeDashboard(entries), [entries]);
 
   /* First-use onboarding */
@@ -375,6 +421,9 @@ export default function SymptomDashboard({ entries, onLogToday, onViewHistory })
         )}
       </div>
 
+      {/* Streak — flare-tolerant by design */}
+      <StreakCard entries={entries} flares={flares} />
+
       {/* Book & tool suggestions matched to today's state */}
       <SuggestedForYou entries={entries} />
 
@@ -404,7 +453,7 @@ export default function SymptomDashboard({ entries, onLogToday, onViewHistory })
       {/* Trend chart */}
       <div className="bg-white rounded-xl border border-secondary-100 p-4 shadow-sm">
         <p className="text-xs font-bold text-secondary-700 uppercase tracking-wide mb-2">Trends</p>
-        <TrendChart entries={dash.sorted} />
+        <TrendChart entries={dash.sorted} medications={medications} />
       </div>
 
       {/* Food & flare patterns */}

@@ -13,6 +13,8 @@
 
 import storage, { STORAGE_KEYS } from './storage';
 import { workbookData } from '../data/workbookForms';
+import { getProgress, summarizeProgress } from './progress';
+import { getSuggestions } from './symptomAnalysis';
 
 const num = (v) => {
   const n = parseFloat(v);
@@ -100,12 +102,56 @@ export async function buildWorkbookSummary({ maxChars = 1500 } = {}) {
   return out.trim();
 }
 
+/** Profile, program progress, recent flares, and a data-matched module
+ *  suggestion — lets the guide say "your fatigue has been climbing; Module 17
+ *  on pacing may help" and mean it. */
+export async function buildProgramSummary() {
+  const lines = [];
+  try {
+    const profile = await storage.get(STORAGE_KEYS.PROFILE);
+    if (profile?.condition) lines.push(`- Condition (self-described): ${profile.condition}`);
+    if (profile?.goal) {
+      const goals = {
+        impact: 'reduce pain\u2019s impact on daily life',
+        patterns: 'understand symptom patterns and triggers',
+        sleep: 'sleep better',
+        appointments: 'get more out of doctor visits',
+        emotional: 'cope better emotionally',
+      };
+      lines.push(`- Stated goal: ${goals[profile.goal] || profile.goal}`);
+    }
+
+    const prog = summarizeProgress(await getProgress());
+    if (prog.done > 0) {
+      lines.push(`- Program progress: ${prog.done}/${prog.total} modules marked complete${prog.resume ? `; currently around Module ${prog.resume}` : ''}`);
+    }
+
+    const flares = await storage.get(STORAGE_KEYS.FLARES);
+    if (Array.isArray(flares)) {
+      const recent = flares.filter(f => Number.isFinite(Date.parse(f.date)) && Date.now() - Date.parse(f.date) <= 30 * 86400000);
+      if (recent.length) lines.push(`- Flare days logged in last 30 days: ${recent.length} (most recent ${recent[0].date})`);
+    }
+
+    const health = await storage.get(STORAGE_KEYS.HEALTH_TOOLS);
+    const suggestions = getSuggestions(health?.symptoms || []);
+    if (suggestions.length) {
+      lines.push(`- Modules matched to their current data (suggest these naturally when relevant, by number and name): ${suggestions.map(s => `${s.title} \u2192 ${s.to}`).join('; ')}`);
+    }
+  } catch (e) {
+    console.error('Program summary failed', e);
+  }
+  return lines.length ? `Program context:\n${lines.join('\n')}` : null;
+}
+
 /** Combined block for the system prompt, or null if nothing to share. */
 export async function buildPersonalContext() {
-  const [symptoms, workbook] = await Promise.all([buildSymptomSummary(), buildWorkbookSummary()]);
-  if (!symptoms && !workbook) return null;
+  const [symptoms, workbook, program] = await Promise.all([
+    buildSymptomSummary(), buildWorkbookSummary(), buildProgramSummary(),
+  ]);
+  if (!symptoms && !workbook && !program) return null;
   return [
     'PRIVATE USER CONTEXT (shared with the user\u2019s explicit consent \u2014 use it to personalize guidance, reference it naturally, and never repeat it back verbatim as a list):',
+    program,
     symptoms,
     workbook,
   ].filter(Boolean).join('\n\n');

@@ -47,5 +47,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSSpeechRecognitionUsageDescription</key>
+    <string>Dictate workbook answers and notes instead of typing.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>The microphone is used only when you tap the dictation button.</string>
 </dict>
 </plist>

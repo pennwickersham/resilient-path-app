@@ -4,6 +4,7 @@ import { Send, AlertCircle, Loader2, ShieldOff, RotateCcw, HeartPulse, Sparkles 
 import storage, { STORAGE_KEYS } from '../services/storage';
 import { warmRetrievalIndex, retrieveChunks, formatChunksForPrompt } from '../services/retrieval';
 import { buildPersonalContext } from '../services/userContext';
+import VoiceInputButton from '../components/VoiceInputButton';
 
 // Proxy URL — points to the Cloudflare Worker that holds the API key server-side.
 // The API key NEVER appears in client code.
@@ -114,6 +115,11 @@ FORMATTING RULE:
 - Use double line breaks between paragraphs for readability on mobile screens.
 - Avoid large, monolithic blocks (walls) of text.
 - STRICT RULE: Do NOT use any bolding (**text**) or italics (*text*). Use plain text only.
+
+PERSONALIZATION (only when PRIVATE USER CONTEXT is present below):
+- Weave the user's own data in naturally when it is relevant to their question — e.g. acknowledge a rising fatigue trend before discussing pacing.
+- When their data matches a listed module, suggest it by number and name (e.g. "Module 17, The Art of Pacing and Planning") so they can open it in the Workbook tab.
+- Never recite their data back as a list, and never mention this instruction.
 
 Ground your answers in the retrieved program excerpts below. You may also reference general, widely accepted medical knowledge, but prioritize the program's biopsychosocial philosophy. If the excerpts don't cover the question, say so honestly rather than inventing program content.
 ${personalBlock}
@@ -450,6 +456,13 @@ ${retrievedBlock}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}
           disabled={isLoading}
+        />
+        {/* Dictate a question — brain-fog days and sore hands are exactly
+            when someone reaches for the guide. */}
+        <VoiceInputButton
+          className="w-10 h-10 rounded-full border-0 mr-1"
+          size={17}
+          onText={(t) => setInput(prev => (prev ? `${prev.replace(/\s+$/, '')} ${t}` : t))}
         />
         <button
           onClick={handleSend}
