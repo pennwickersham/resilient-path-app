@@ -12,6 +12,7 @@ import Onboarding from './pages/Onboarding';
 import DisclaimerPopup from './components/DisclaimerPopup';
 import BackButtonHandler from './components/BackButtonHandler';
 import ScrollToTop from './components/ScrollToTop';
+import Settings from './pages/Settings';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             <Route path="emergency" element={<EmergencyGuidance />} />
             <Route path="health-tools" element={<HealthTools />} />
             <Route path="coping-tools" element={<CopingTools />} />
+            <Route path="settings" element={<Settings />} />
             {/* Flare Mode is deliberately ungated — never paywall a crisis */}
             <Route path="flare" element={<FlareMode />} />
           </Route>

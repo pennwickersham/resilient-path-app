@@ -7,9 +7,14 @@ import { getProgress, toggleModuleComplete, setLastVisited } from '../services/p
 import VoiceInputButton from '../components/VoiceInputButton';
 import { Capacitor } from '@capacitor/core';
 import { Share } from '@capacitor/share';
+import { Lock } from 'lucide-react';
+import { useSubscription } from '../context/SubscriptionContext';
+import { FREE_WORKBOOK_MODULE } from '../utils/freeTier';
 
 const WorkbookForms = () => {
   const topRef = useRef();
+  const { isSubscribed, isLoading: subLoading, setShowPaywall } = useSubscription();
+  const isLocked = (moduleId) => !isSubscribed && moduleId !== FREE_WORKBOOK_MODULE;
   const [answers, setAnswers] = useState({});
   const [searchParams] = useSearchParams();
   // Deep link support: /workbook?module=17 opens that module directly
@@ -199,13 +204,28 @@ const WorkbookForms = () => {
           >
             {completed[String(m.moduleId)] && <Check size={13} className={activeModule === m.moduleId ? 'text-white' : 'text-emerald-600'} />}
             Module {m.moduleId}
+            {isLocked(m.moduleId) && <Lock size={12} aria-label="locked" />}
           </button>
         ))}
       </div>
 
       {/* Form Display area (Printable) */}
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-secondary-100 print:shadow-none print:border-none print:p-0" ref={printRef}>
-        {currentModuleData && (
+        {currentModuleData && isLocked(activeModule) && (
+          <div className="flex flex-col items-center text-center gap-3 py-10">
+            <Lock size={28} className="text-secondary-400" />
+            <h3 className="font-bold text-primary-900">{currentModuleData.title}</h3>
+            <p className="text-sm text-secondary-600 max-w-xs">
+              {subLoading ? 'Checking your subscription…' : 'Module 1 is a free preview. Subscribe to unlock every module of the workbook.'}
+            </p>
+            {!subLoading && (
+              <button onClick={() => setShowPaywall(true)} className="bg-primary-600 text-white rounded-full px-5 py-2.5 text-sm font-semibold">
+                See subscription options
+              </button>
+            )}
+          </div>
+        )}
+        {currentModuleData && !isLocked(activeModule) && (
           <div className="space-y-8">
             {/* Module Orientation Header */}
             <div className="bg-gradient-to-br from-primary-50 to-white border border-primary-100 p-6 rounded-2xl mb-8 shadow-inner overflow-hidden relative group">

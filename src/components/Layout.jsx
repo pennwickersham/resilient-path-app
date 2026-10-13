@@ -4,7 +4,8 @@ import { useSubscription } from '../context/SubscriptionContext';
 import Paywall from './Paywall';
 
 // Pages that require a subscription
-const GATED_PATHS = ['/workbook', '/chatbot', '/health-tools'];
+// Workbook (Module 1) and Chat (a few messages) are free previews and gate themselves.
+const GATED_PATHS = ['/health-tools'];
 
 const Layout = () => {
   const { isSubscribed, isLoading, showPaywall, setShowPaywall } = useSubscription();
@@ -22,8 +23,8 @@ const Layout = () => {
 
   const navItems = [
     { name: 'Home', path: '/', icon: Home, gated: false },
-    { name: 'Workbook', path: '/workbook', icon: FileText, gated: true },
-    { name: 'Chat', path: '/chatbot', icon: MessageCircle, gated: true },
+    { name: 'Workbook', path: '/workbook', icon: FileText, gated: false },
+    { name: 'Chat', path: '/chatbot', icon: MessageCircle, gated: false },
     { name: 'Health', path: '/health-tools', icon: ClipboardList, gated: true },
     { name: 'Relax', path: '/coping-tools', icon: Wind, gated: false },
     { name: 'Emergency', path: '/emergency', icon: AlertTriangle, gated: false },

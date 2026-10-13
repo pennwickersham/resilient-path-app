@@ -114,6 +114,9 @@ const Home = () => {
 
       {/* Book Cover / Hero Section */}
       <section className="relative w-full h-72 rounded-3xl overflow-hidden shadow-md flex items-center justify-center bg-black group">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-700 to-primary-900 flex items-center justify-center p-6 text-center">
+          <p className="text-white/90 text-2xl font-bold leading-tight">Managing Life with Chronic Pain<br /><span className="text-lg font-medium">The Resilient Path</span></p>
+        </div>
         <img
           src="./book-cover.jpg"
           alt="The Resilient Path Book Cover"
@@ -129,7 +132,6 @@ const Home = () => {
         <section
           className="bg-white p-5 rounded-2xl shadow-sm border border-secondary-100 cursor-pointer hover:border-primary-200 transition-colors"
           onClick={() => {
-            if (!isSubscribed) { setShowPaywall(true); return; }
             navigate(progress.resume ? `/workbook?module=${progress.resume}` : '/workbook');
           }}
         >
@@ -237,13 +239,10 @@ const Home = () => {
 
         <Link
           to="/workbook"
-          onClick={handleGatedNav}
           className="bg-primary-50 p-5 rounded-2xl border border-primary-100 flex flex-col items-center text-center justify-center hover:bg-primary-100 transition shadow-sm group cursor-pointer relative"
         >
           {!isSubscribed && (
-            <div className="absolute top-2 right-2 w-6 h-6 bg-secondary-200 rounded-full flex items-center justify-center">
-              <Lock className="text-secondary-500" size={12} />
-            </div>
+            <span className="absolute top-2 right-2 text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded-full px-2 py-0.5">Free preview</span>
           )}
           <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 transition duration-300">
             <BookOpen className="text-primary-600" size={26} strokeWidth={2.5} />
@@ -253,13 +252,10 @@ const Home = () => {
 
         <Link
           to="/chatbot"
-          onClick={handleGatedNav}
           className="bg-primary-50 p-5 rounded-2xl border border-primary-100 flex flex-col items-center text-center justify-center hover:bg-primary-100 transition shadow-sm group cursor-pointer relative"
         >
           {!isSubscribed && (
-            <div className="absolute top-2 right-2 w-6 h-6 bg-secondary-200 rounded-full flex items-center justify-center">
-              <Lock className="text-secondary-500" size={12} />
-            </div>
+            <span className="absolute top-2 right-2 text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded-full px-2 py-0.5">Free preview</span>
           )}
           <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 transition duration-300">
             <MessageCircle className="text-primary-600" size={26} strokeWidth={2.5} />
@@ -286,6 +282,8 @@ const Home = () => {
           <p className="text-primary-600/80 text-xs font-medium leading-tight mt-0.5">Medications, doctors, history & symptom tracker — easy to share.</p>
         </div>
       </Link>
+
+      <Link to="/settings" className="text-center text-sm text-secondary-600 underline py-2">Settings and text size</Link>
 
       <Link to="/emergency" className="bg-purple-50 p-4 rounded-2xl border border-purple-200 flex items-center gap-4 hover:bg-purple-100 transition shadow-sm mt-2 cursor-pointer group">
         <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition duration-300">

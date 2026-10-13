@@ -5,6 +5,8 @@ import storage, { STORAGE_KEYS } from '../services/storage';
 import { warmRetrievalIndex, retrieveChunks, formatChunksForPrompt } from '../services/retrieval';
 import { buildPersonalContext } from '../services/userContext';
 import VoiceInputButton from '../components/VoiceInputButton';
+import { useSubscription } from '../context/SubscriptionContext';
+import { FREE_CHAT_LIMIT, freeChatsLeft, recordFreeChat } from '../utils/freeTier';
 
 // Proxy URL — points to the Cloudflare Worker that holds the API key server-side.
 // The API key NEVER appears in client code.
@@ -30,6 +32,8 @@ const Chatbot = () => {
   const [aiConsent, setAiConsent] = useState(null); // null = loading
   const [personalize, setPersonalize] = useState(false);
   const [showCrisisBanner, setShowCrisisBanner] = useState(false);
+  const { isSubscribed, setShowPaywall } = useSubscription();
+  const [freeLeft, setFreeLeft] = useState(() => freeChatsLeft());
 
   const messagesEndRef = useRef(null);
   const abortRef = useRef(null);
@@ -164,6 +168,18 @@ ${retrievedBlock}
     if (!input.trim() || isLoading) return;
 
     const userMessage = input.trim();
+
+    // Free preview: a few messages, then the subscription screen.
+    // Crisis messages are never blocked or counted.
+    if (!isSubscribed && !CRISIS_RE.test(userMessage)) {
+      if (freeChatsLeft() <= 0) {
+        setShowPaywall(true);
+        return;
+      }
+      recordFreeChat();
+      setFreeLeft(freeChatsLeft());
+    }
+
     setInput('');
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     setIsLoading(true);
@@ -382,6 +398,12 @@ ${retrievedBlock}
         <AlertCircle size={14} className="shrink-0" />
         AI is for educational purposes based on The Resilient Path. Not medical advice.
       </p>
+
+      {!isSubscribed && (
+        <p className="text-xs text-secondary-500 mb-2 shrink-0" role="status">
+          {freeLeft > 0 ? `${freeLeft} of ${FREE_CHAT_LIMIT} free messages left. Subscribe for unlimited chat.` : 'You have used your free messages. Subscribe for unlimited chat.'}
+        </p>
+      )}
 
       {personalize && (
         <p className="text-[11px] text-secondary-500 mb-2 shrink-0 px-1">
