@@ -142,6 +142,19 @@ const Paywall = ({ onClose }) => {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // LOCK BACKGROUND SCROLL: While the paywall is open, disable scrolling on
+  // the app's scroll container (<main>) so gestures over the modal don't
+  // scroll the content behind it (scroll chaining).
+  useEffect(() => {
+    const main = document.querySelector('main');
+    if (!main) return;
+    const prevOverflow = main.style.overflow;
+    main.style.overflow = 'hidden';
+    return () => {
+      main.style.overflow = prevOverflow;
+    };
+  }, []);
+
   // AUTO-CLOSE: When subscription is detected while purchase was in progress
   useEffect(() => {
     if (isSubscribed && purchaseInProgress) {
@@ -280,7 +293,8 @@ const Paywall = ({ onClose }) => {
   // If user is already subscribed, show a subscribed message with cancel/close button
   if (isSubscribed) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-300">
+      <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-black/50 backdrop-blur-sm animate-in fade-in duration-300">
+        <div className="min-h-full flex items-center justify-center p-4">
         <div className="bg-white rounded-3xl shadow-2xl max-w-sm w-full overflow-hidden">
           <div className="bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-800 p-6 text-center relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
@@ -317,14 +331,16 @@ const Paywall = ({ onClose }) => {
             )}
           </div>
         </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-black/50 backdrop-blur-sm animate-in fade-in duration-300">
       {showDiagnostic && <IAPDiagnostic onClose={() => setShowDiagnostic(false)} />}
-      <div className="bg-white rounded-3xl shadow-2xl max-w-sm w-full overflow-hidden max-h-[90vh] overflow-y-auto">
+      <div className="min-h-full flex items-center justify-center p-4">
+      <div className="bg-white rounded-3xl shadow-2xl max-w-sm w-full overflow-x-hidden overflow-y-auto max-h-[90vh]">
         
         {/* Header with gradient */}
         <div className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 p-6 text-center relative overflow-hidden">
@@ -542,6 +558,7 @@ const Paywall = ({ onClose }) => {
             </button>
           )}
         </div>
+      </div>
       </div>
     </div>
   );
