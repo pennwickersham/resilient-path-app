@@ -14,10 +14,10 @@
  */
 
 import { validEntries } from './symptomAnalysis';
+import { localDateStr, addDays, dateKeyTs, DAY_MS } from '../utils/dates';
 
-const DAY = 86400000;
-
-const isoOf = (ts) => new Date(ts).toISOString().split('T')[0];
+// Whole calendar days from key a to key b (DST-safe: keys anchor at local noon).
+const dayDiff = (a, b) => Math.round((dateKeyTs(b) - dateKeyTs(a)) / DAY_MS);
 
 /**
  * @param entries  symptoms array (HealthTools shape)
@@ -29,22 +29,19 @@ export function computeStreak(entries, flares = []) {
   const flareDays = new Set((flares || []).map(f => f.date).filter(Boolean));
   if (logged.size === 0) return { current: 0, best: 0, graceUsed: 0, activeToday: false };
 
-  const today = new Date(); today.setHours(0, 0, 0, 0);
-  const todayIso = isoOf(today.getTime());
+  const todayIso = localDateStr();
 
   // Walk backward from today (or yesterday, if today isn't logged yet —
   // an unfinished today never breaks a streak).
-  let cursor = today.getTime();
-  if (!logged.has(todayIso)) cursor -= DAY;
+  let iso = logged.has(todayIso) ? todayIso : addDays(todayIso, -1);
 
   let current = 0;
   let graceUsed = 0;
   let consecutiveMisses = 0;
   let pendingGrace = 0;    // grace only counts once a logged day follows it
-  const graceSpent = [];   // timestamps of non-flare grace, for the 7-day budget
+  const graceSpent = [];   // date keys of non-flare grace, for the 7-day budget
 
   for (let guard = 0; guard < 3660; guard++) {
-    const iso = isoOf(cursor);
     if (logged.has(iso)) {
       current++;
       consecutiveMisses = 0;
@@ -54,16 +51,16 @@ export function computeStreak(entries, flares = []) {
       const excusedByFlare = flareDays.has(iso);
       // Budget: at most 2 non-flare grace days per rolling 7 days. We walk
       // backward, so previously spent grace lies AFTER the cursor in time.
-      const budgetLeft = graceSpent.filter(t => t - cursor < 7 * DAY).length < 2;
+      const budgetLeft = graceSpent.filter(k => dayDiff(iso, k) < 7).length < 2;
       if (excusedByFlare || (consecutiveMisses < 2 && budgetLeft)) {
         consecutiveMisses++;
         pendingGrace++;
-        if (!excusedByFlare) graceSpent.push(cursor);
+        if (!excusedByFlare) graceSpent.push(iso);
       } else {
         break; // streak ends; trailing pendingGrace is discarded
       }
     }
-    cursor -= DAY;
+    iso = addDays(iso, -1);
   }
 
   // Best streak: same walk over the full history, segment by segment.
@@ -72,11 +69,11 @@ export function computeStreak(entries, flares = []) {
   if (allDates.length) {
     let run = 1;
     for (let i = 1; i < allDates.length; i++) {
-      const gap = Math.round((Date.parse(allDates[i]) - Date.parse(allDates[i - 1])) / DAY);
+      const gap = dayDiff(allDates[i - 1], allDates[i]);
       // Gaps of up to 3 calendar days (2 missed days) survive, matching the
       // grace rule; flare-excused gaps of any length survive too.
       const gapDays = [];
-      for (let g = 1; g < gap; g++) gapDays.push(isoOf(Date.parse(allDates[i - 1]) + g * DAY));
+      for (let g = 1; g < gap; g++) gapDays.push(addDays(allDates[i - 1], g));
       const excused = gap <= 3 || gapDays.every(d => flareDays.has(d));
       if (excused) run++;
       else { best = Math.max(best, run); run = 1; }

@@ -25,12 +25,13 @@ import {
   AlertCircle, ClipboardList, ChevronRight, ChevronLeft, Stethoscope, Footprints, MessageSquareHeart, X
 } from 'lucide-react';
 import storage, { STORAGE_KEYS } from '../services/storage';
+import { localDateStr, daysAgo } from '../utils/dates';
 import { speak, stopSpeaking, speechAvailable } from '../services/speech';
 import { BreathingTool } from './CopingTools';
 import ReadAloudButton from '../components/ReadAloudButton';
 import FlareMessageList from '../components/FlareMessageList';
 
-const todayStr = () => new Date().toISOString().split('T')[0];
+const todayStr = () => localDateStr();
 
 /* Module 25 field map — labels shortened for a screen read under stress. */
 const PLAN_FIELDS = [
@@ -222,8 +223,8 @@ const FlareMode = () => {
   const hasPlan = PLAN_FIELDS.some(f => (plan[f.id] || '').trim());
   const calmingPhrase = (plan['m25_s1_q2'] || '').trim();
   const recentFlareCount = (flares || []).filter(f => {
-    const ts = Date.parse(f.date);
-    return Number.isFinite(ts) && now - ts <= 30 * 86400000;
+    const ago = daysAgo(f.date, now);
+    return Number.isFinite(ago) && ago < 30;
   }).length;
 
   const planText = PLAN_FIELDS

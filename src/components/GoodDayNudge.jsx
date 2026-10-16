@@ -10,7 +10,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Sun, X } from 'lucide-react';
 import { getSettings, saveSettings } from '../utils/settings';
-import { getDaily, markGoodDayNudge, localDateStr } from '../services/daily';
+import { getDaily, markGoodDayNudge } from '../services/daily';
+import { localDateStr } from '../utils/dates';
 
 const GoodDayNudge = ({ onClose }) => {
   const [pref, setPref] = useState(() => getSettings().goodDayNudge);

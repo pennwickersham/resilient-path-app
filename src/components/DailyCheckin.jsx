@@ -17,8 +17,9 @@ import { BatteryLow, BatteryMedium, BatteryFull, Sparkles, Plus, X, ChevronRight
 import storage, { STORAGE_KEYS } from '../services/storage';
 import {
   getDaily, setEnergy, toggleWin, addCustomWin, removeCustomWin, winsThisWeek,
-  localDateStr, ENERGY_LEVELS, DEFAULT_WINS,
+  ENERGY_LEVELS, DEFAULT_WINS,
 } from '../services/daily';
+import { localDateStr } from '../utils/dates';
 
 const ENERGY_ICONS = { low: BatteryLow, steady: BatteryMedium, high: BatteryFull };
 

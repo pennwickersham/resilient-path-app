@@ -11,13 +11,14 @@ import { STARTER_FOODS, PRACTICES, getRecentFoods, analyzeFoodTriggers, analyzeP
 import { FileText, FileDown, Loader2 } from 'lucide-react';
 import { saveAndShareVisitPacket } from '../services/pdfReport';
 import VoiceInputButton from '../components/VoiceInputButton';
+import { localDateStr, daysAgoStr } from '../utils/dates';
 import GoodDayNudge from '../components/GoodDayNudge';
 import { isGoodDay } from '../services/daily';
 import { getSettings } from '../utils/settings';
 
 // ─── Symptom helpers: quick entry, trends, weekly summary ───
 
-const todayStr = () => new Date().toISOString().split('T')[0];
+const todayStr = () => localDateStr();
 /** Tap-to-select 0–10 scale — a daily check-in should take seconds, not typing. */
 const ScalePicker = ({ label, value, onChange }) => (
   <div className="flex flex-col gap-1.5">
@@ -235,8 +236,7 @@ const HealthTools = () => {
 
     // 30-day symptom picture
     const sorted = validEntries(symptoms);
-    const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 30);
-    const cutoffStr = cutoff.toISOString().split('T')[0];
+    const cutoffStr = daysAgoStr(30);
     const last30 = sorted.filter(e => e.date >= cutoffStr);
     if (last30.length > 0) {
       const avgOf = (key) => {
@@ -376,7 +376,7 @@ const HealthTools = () => {
   const handleSaveToPhone = async (section = 'all') => {
     let text = '';
     let filename = '';
-    const dateStr = new Date().toISOString().split('T')[0];
+    const dateStr = localDateStr();
 
     switch (section) {
       case 'medications':

@@ -15,6 +15,7 @@ import storage, { STORAGE_KEYS } from './storage';
 import { workbookData } from '../data/workbookForms';
 import { getProgress, summarizeProgress } from './progress';
 import { getSuggestions } from './symptomAnalysis';
+import { dateKeyTs, daysAgo } from '../utils/dates';
 
 const num = (v) => {
   const n = parseFloat(v);
@@ -33,16 +34,14 @@ export async function buildSymptomSummary() {
   const data = await storage.get(STORAGE_KEYS.HEALTH_TOOLS);
   const entries = (data?.symptoms || [])
     .filter(e => e.date && (num(e.pain) !== null || num(e.fatigue) !== null || num(e.sleep) !== null))
-    .map(e => ({ ...e, ts: Date.parse(e.date) }))
+    .map(e => ({ ...e, ts: dateKeyTs(e.date), ago: daysAgo(e.date) }))
     .filter(e => Number.isFinite(e.ts))
     .sort((a, b) => a.ts - b.ts);
 
   if (entries.length === 0) return null;
 
-  const now = Date.now();
-  const DAY = 86400000;
-  const recent = entries.filter(e => now - e.ts <= 14 * DAY);
-  const prior = entries.filter(e => now - e.ts > 14 * DAY && now - e.ts <= 28 * DAY);
+  const recent = entries.filter(e => e.ago < 14);
+  const prior = entries.filter(e => e.ago >= 14 && e.ago < 28);
   const scope = recent.length ? recent : entries.slice(-10);
 
   const metric = (list, k) => avg(list.map(e => num(e[k])));
@@ -128,7 +127,7 @@ export async function buildProgramSummary() {
 
     const flares = await storage.get(STORAGE_KEYS.FLARES);
     if (Array.isArray(flares)) {
-      const recent = flares.filter(f => Number.isFinite(Date.parse(f.date)) && Date.now() - Date.parse(f.date) <= 30 * 86400000);
+      const recent = flares.filter(f => daysAgo(f.date) < 30);
       if (recent.length) lines.push(`- Flare days logged in last 30 days: ${recent.length} (most recent ${recent[0].date})`);
     }
 

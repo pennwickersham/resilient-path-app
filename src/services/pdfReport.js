@@ -22,6 +22,7 @@ import { Capacitor } from '@capacitor/core';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { validEntries, toNum, analyzeFoodTriggers, analyzePractices } from './symptomAnalysis';
+import { localDateStr, daysAgoStr, dateKeyTs } from '../utils/dates';
 
 /* Palette — matches the app's teal primary and slate secondaries. */
 const TEAL = [13, 148, 136];
@@ -97,8 +98,7 @@ export async function generateVisitPacket({ medications, doctors, history, sympt
 
   /* ── 2. 30-day picture + chart ── */
   const sorted = validEntries(symptoms || []);
-  const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 30);
-  const cutoffStr = cutoff.toISOString().split('T')[0];
+  const cutoffStr = daysAgoStr(30);
   const last30 = sorted.filter(e => e.date >= cutoffStr);
 
   if (last30.length > 0) {
@@ -136,7 +136,7 @@ export async function generateVisitPacket({ medications, doctors, history, sympt
 
     // Trend chart (drawn, not rasterized — crisp at any zoom)
     const chartPts = last30.map(e => ({
-      ts: Date.parse(e.date),
+      ts: dateKeyTs(e.date),
       pain: toNum(e.pain), fatigue: toNum(e.fatigue), sleep: toNum(e.sleep),
     })).sort((a, b) => a.ts - b.ts);
 
@@ -174,7 +174,7 @@ export async function generateVisitPacket({ medications, doctors, history, sympt
       // turns a symptom diary into treatment-decision evidence.
       const medStarts = (medications || [])
         .filter(m => m.name && m.startDate && /^\d{4}-\d{2}-\d{2}$/.test(m.startDate))
-        .map(m => ({ name: m.name, ts: Date.parse(m.startDate) }))
+        .map(m => ({ name: m.name, ts: dateKeyTs(m.startDate) }))
         .filter(m => m.ts >= t0 && m.ts <= t1);
       doc.setLineWidth(0.35);
       medStarts.forEach(m => {
@@ -328,7 +328,7 @@ export async function generateVisitPacket({ medications, doctors, history, sympt
 /** Generate, save, and (on native) open the share sheet. Returns filename. */
 export async function saveAndShareVisitPacket(data) {
   const doc = await generateVisitPacket(data);
-  const filename = `Resilient_Path_Visit_Packet_${new Date().toISOString().split('T')[0]}.pdf`;
+  const filename = `Resilient_Path_Visit_Packet_${localDateStr()}.pdf`;
 
   if (Capacitor.isNativePlatform()) {
     const base64 = doc.output('datauristring').split(',')[1];

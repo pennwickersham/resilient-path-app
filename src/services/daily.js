@@ -13,11 +13,7 @@
  */
 
 import storage, { STORAGE_KEYS } from './storage';
-
-export const localDateStr = (d = new Date()) => {
-  const p = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
-};
+import { localDateStr } from '../utils/dates';
 
 /* Pacing templates — Module 17's principles (stop before the limit, the
    80% baseline, proactive rest) turned into one screen per energy level. */
