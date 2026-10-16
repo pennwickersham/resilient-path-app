@@ -5,6 +5,7 @@ import { computeStreak } from '../services/streaks';
 import {
   computeDashboard, analyzeFoodTriggers, analyzePractices, getSuggestions, statusFromWellness, toNum
 } from '../services/symptomAnalysis';
+import { localDateStr, daysAgoStr, parseDateKey, dateKeyTs, daysAgo } from '../utils/dates';
 
 /* Tone → Tailwind colors (default palette; teal is the app primary) */
 const TONES = {
@@ -19,14 +20,12 @@ const METRICS = [
   { key: 'sleep', label: 'Sleep', stroke: '#059669', betterWhen: 'up' },
 ];
 
-const todayStr = () => new Date().toISOString().split('T')[0];
+const todayStr = () => localDateStr();
 
 const friendlyDate = (iso) => {
-  const t = new Date(); t.setHours(0, 0, 0, 0);
-  const y = new Date(t); y.setDate(y.getDate() - 1);
-  if (iso === t.toISOString().split('T')[0]) return 'Today';
-  if (iso === y.toISOString().split('T')[0]) return 'Yesterday';
-  return new Date(iso + 'T00:00:00').toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+  if (iso === todayStr()) return 'Today';
+  if (iso === daysAgoStr(1)) return 'Yesterday';
+  return parseDateKey(iso).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
 };
 
 function StatusRing({ pct, color, size = 140 }) {
@@ -50,7 +49,7 @@ function StatusRing({ pct, color, size = 140 }) {
 /** Multi-metric trend chart over the last 30 valid entries (inline SVG). */
 function TrendChart({ entries, medications = [] }) {
   const points = entries
-    .map(e => ({ ts: Date.parse(e.date), pain: toNum(e.pain), fatigue: toNum(e.fatigue), sleep: toNum(e.sleep) }))
+    .map(e => ({ ts: dateKeyTs(e.date), pain: toNum(e.pain), fatigue: toNum(e.fatigue), sleep: toNum(e.sleep) }))
     .filter(p => Number.isFinite(p.ts))
     .sort((a, b) => a.ts - b.ts)
     .slice(-30);
@@ -101,7 +100,7 @@ function TrendChart({ entries, medications = [] }) {
             is actually about. */}
         {medications
           .filter(m => m.name && m.startDate && /^\d{4}-\d{2}-\d{2}$/.test(m.startDate))
-          .map(m => ({ name: m.name, ts: Date.parse(m.startDate) }))
+          .map(m => ({ name: m.name, ts: dateKeyTs(m.startDate) }))
           .filter(m => Number.isFinite(m.ts) && m.ts >= t0 && m.ts <= t1)
           .map((m, i) => (
             <g key={`${m.name}-${i}`}>
@@ -127,12 +126,12 @@ function WeeklySummary({ entries }) {
   // Reference timestamp captured once per mount (purity rule: no Date.now() in render)
   const [now] = useState(() => Date.now());
   const { items, count } = useMemo(() => {
-    const DAY = 86400000;
+    // Calendar days back from today: this week = today + 6 prior days.
     const parsed = entries
-      .map(e => ({ ...e, ts: Date.parse(e.date) }))
-      .filter(e => Number.isFinite(e.ts));
-    const thisWeek = parsed.filter(e => now - e.ts <= 7 * DAY);
-    const lastWeek = parsed.filter(e => now - e.ts > 7 * DAY && now - e.ts <= 14 * DAY);
+      .map(e => ({ ...e, ago: daysAgo(e.date, now) }))
+      .filter(e => Number.isFinite(e.ago));
+    const thisWeek = parsed.filter(e => e.ago < 7);
+    const lastWeek = parsed.filter(e => e.ago >= 7 && e.ago < 14);
     if (thisWeek.length === 0) return { items: [], count: 0 };
 
     const avgOf = (list, key) => {

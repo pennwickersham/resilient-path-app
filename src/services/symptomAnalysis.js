@@ -14,6 +14,8 @@
  * entries (e.g. entry.hrv, entry.steps) and extend burden/trends here.
  */
 
+import { daysAgoStr as isoDaysAgo, addDays } from '../utils/dates';
+
 export const toNum = (v) => {
   const n = parseFloat(v);
   return Number.isFinite(n) ? Math.max(0, Math.min(10, n)) : null;
@@ -47,13 +49,6 @@ export function statusFromWellness(w) {
   if (w >= 40) return { label: 'Moderate Day', tone: 'mid', desc: 'Some symptom activity — pace yourself and use your coping tools.' };
   return { label: 'Tough Stretch', tone: 'hard', desc: 'High symptom burden. Be gentle with yourself, and reach out to your care team if this persists.' };
 }
-
-const isoDaysAgo = (n) => {
-  const d = new Date();
-  d.setHours(0, 0, 0, 0);
-  d.setDate(d.getDate() - n);
-  return d.toISOString().split('T')[0];
-};
 
 const avg = (a) => (a.length ? a.reduce((s, v) => s + v, 0) / a.length : null);
 
@@ -142,11 +137,7 @@ function analyzeFactorImpact(entries, listKey) {
   const byDate = new Map(sorted.map(e => [e.date, e]));
   const allDates = sorted.map(e => e.date);
 
-  const prevKey = (iso) => {
-    const d = new Date(iso + 'T00:00:00');
-    d.setDate(d.getDate() - 1);
-    return d.toISOString().split('T')[0];
-  };
+  const prevKey = (iso) => addDays(iso, -1);
 
   const factors = new Map();
   withFactor.forEach(e => {

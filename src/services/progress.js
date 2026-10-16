@@ -12,6 +12,7 @@
 
 import storage, { STORAGE_KEYS } from './storage';
 import { workbookData } from '../data/workbookForms';
+import { localDateStr } from '../utils/dates';
 
 const EMPTY = { completed: {}, lastVisited: null };
 
@@ -25,7 +26,7 @@ export async function toggleModuleComplete(moduleId) {
   const p = await getProgress();
   const key = String(moduleId);
   if (p.completed[key]) delete p.completed[key];
-  else p.completed[key] = new Date().toISOString().split('T')[0];
+  else p.completed[key] = localDateStr();
   await storage.set(STORAGE_KEYS.PROGRESS, p);
   return p;
 }

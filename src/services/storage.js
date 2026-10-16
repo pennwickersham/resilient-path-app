@@ -24,6 +24,7 @@
 
 import { Capacitor } from '@capacitor/core';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { localDateStr } from '../utils/dates';
 
 const isNative = Capacitor.isNativePlatform();
 const FILE_PREFIX = 'rp-store-';
@@ -134,7 +135,7 @@ export const storage = {
       payload.data[key] = await this.get(key);
     }
     const json = JSON.stringify(payload, null, 2);
-    const filename = `Resilient_Path_Backup_${new Date().toISOString().split('T')[0]}.json`;
+    const filename = `Resilient_Path_Backup_${localDateStr()}.json`;
 
     // Record when the last backup happened so the Home screen can nudge
     // gently when data is going unprotected. Set before the write so a
