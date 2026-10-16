@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { BookOpen, MessageCircle, AlertTriangle, ClipboardList, Lock, Wind, Flame, ChevronRight, ShieldAlert, X } from 'lucide-react';
+import { BookOpen, MessageCircle, AlertTriangle, ClipboardList, Lock, Wind, Flame, ChevronRight, ShieldAlert, X, MessagesSquare } from 'lucide-react';
 import { useSubscription } from '../context/SubscriptionContext';
 import Paywall from '../components/Paywall';
+import DailyCheckin from '../components/DailyCheckin';
 import storage, { STORAGE_KEYS } from '../services/storage';
 import { getProgress, summarizeProgress } from '../services/progress';
 
@@ -111,6 +112,9 @@ const Home = () => {
           </button>
         </div>
       )}
+
+      {/* Daily habits: energy check-in + tiny wins */}
+      <DailyCheckin />
 
       {/* Book Cover / Hero Section */}
       <section className="relative w-full h-72 rounded-3xl overflow-hidden shadow-md flex items-center justify-center bg-black group">
@@ -262,6 +266,23 @@ const Home = () => {
           </div>
           <h3 className="font-semibold text-primary-900 text-sm">Ask the Program Guide</h3>
         </Link>
+
+        <Link
+          to="/conversations"
+          onClick={handleGatedNav}
+          className="bg-primary-50 p-5 rounded-2xl border border-primary-100 flex flex-col items-center text-center justify-center hover:bg-primary-100 transition shadow-sm group cursor-pointer relative"
+        >
+          {!isSubscribed && (
+            <div className="absolute top-2 right-2 w-6 h-6 bg-secondary-200 rounded-full flex items-center justify-center">
+              <Lock className="text-secondary-500" size={12} />
+            </div>
+          )}
+          <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 transition duration-300">
+            <MessagesSquare className="text-primary-600" size={26} strokeWidth={2.5} />
+          </div>
+          <h3 className="font-semibold text-primary-900 text-sm">Hard Conversations</h3>
+          <p className="text-[11px] text-secondary-500 mt-0.5">Scripts for family, work, doctors</p>
+        </Link>
       </div>
 
       <Link
@@ -283,7 +304,7 @@ const Home = () => {
         </div>
       </Link>
 
-      <Link to="/settings" className="text-center text-sm text-secondary-600 underline py-2">Settings and text size</Link>
+      <Link to="/settings" className="text-center text-sm text-secondary-600 underline py-2">Settings, text size, and flare messages</Link>
 
       <Link to="/emergency" className="bg-purple-50 p-4 rounded-2xl border border-purple-200 flex items-center gap-4 hover:bg-purple-100 transition shadow-sm mt-2 cursor-pointer group">
         <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition duration-300">

@@ -41,6 +41,9 @@ export const STORAGE_KEYS = {
   PROFILE: 'resilientPathProfile',         // onboarding answers + crisis contact
   PROGRESS: 'resilientPathProgress',       // module completion + last visited
   LAST_BACKUP: 'resilientPathLastBackup',  // ISO timestamp of last export (backup nudge)
+  DAILY: 'resilientPathDaily',             // morning energy check-in + tiny wins, by date
+  FLARE_MESSAGES: 'resilientPathFlareMessages', // pre-written texts sent from Flare Mode
+  SCRIPTS: 'resilientPathScripts',         // saved Hard Conversations scripts
 };
 
 const fileFor = (key) => `${FILE_PREFIX}${key}.json`;
