@@ -7,12 +7,16 @@ export const TEXT_SIZES = {
   xlarge: { label: 'Extra large', px: 20 },
 };
 
+// goodDayNudge: null until the person is asked, then true/false (opt-in).
 export function getSettings() {
   try {
     const s = JSON.parse(localStorage.getItem(KEY) || '{}');
-    return { textSize: TEXT_SIZES[s.textSize] ? s.textSize : 'normal' };
+    return {
+      textSize: TEXT_SIZES[s.textSize] ? s.textSize : 'normal',
+      goodDayNudge: typeof s.goodDayNudge === 'boolean' ? s.goodDayNudge : null,
+    };
   } catch {
-    return { textSize: 'normal' };
+    return { textSize: 'normal', goodDayNudge: null };
   }
 }
 
