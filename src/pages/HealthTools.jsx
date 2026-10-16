@@ -11,6 +11,9 @@ import { STARTER_FOODS, PRACTICES, getRecentFoods, analyzeFoodTriggers, analyzeP
 import { FileText, FileDown, Loader2 } from 'lucide-react';
 import { saveAndShareVisitPacket } from '../services/pdfReport';
 import VoiceInputButton from '../components/VoiceInputButton';
+import GoodDayNudge from '../components/GoodDayNudge';
+import { isGoodDay } from '../services/daily';
+import { getSettings } from '../utils/settings';
 
 // ─── Symptom helpers: quick entry, trends, weekly summary ───
 
@@ -78,6 +81,7 @@ const HealthTools = () => {
 
   // Symptom tracker sub-view — the dashboard is the landing view.
   const [symptomView, setSymptomView] = useState('dashboard'); // 'dashboard' | 'checkin' | 'history'
+  const [goodDay, setGoodDay] = useState(false);
 
   // Food diary input + quick-add chips (user's recent foods first, then common triggers)
   const [foodDraft, setFoodDraft] = useState('');
@@ -121,6 +125,11 @@ const HealthTools = () => {
       (quickEntry.foods && quickEntry.foods.length > 0) ||
       (quickEntry.practices && quickEntry.practices.length > 0);
     if (!hasData) return;
+    // Boom-bust guardrail: a good check-in for today gets a pacing reminder.
+    if (quickEntry.date === todayStr() && getSettings().goodDayNudge !== false &&
+        isGoodDay(quickEntry, symptoms.slice(0, 30))) {
+      setGoodDay(true);
+    }
     setSymptoms(prev => {
       // One entry per day: logging again on the same date updates it.
       const withoutBlank = prev.filter(e => e.date || e.pain || e.fatigue || e.sleep || e.mood || e.notes || e.triggers || (e.foods && e.foods.length) || (e.practices && e.practices.length));
@@ -751,6 +760,8 @@ const HealthTools = () => {
             <p className="text-secondary-500 text-xs">
               Log your daily symptoms to share with your healthcare team and spot patterns over time.
             </p>
+
+            {goodDay && <GoodDayNudge onClose={() => setGoodDay(false)} />}
 
             {/* ── Sub-view tabs: Dashboard is the landing view ── */}
             {(() => {

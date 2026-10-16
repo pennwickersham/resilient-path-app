@@ -8,6 +8,8 @@ import EmergencyGuidance from './pages/EmergencyGuidance';
 import HealthTools from './pages/HealthTools';
 import CopingTools from './pages/CopingTools';
 import FlareMode from './pages/FlareMode';
+import FlareMessages from './pages/FlareMessages';
+import Conversations from './pages/Conversations';
 import Onboarding from './pages/Onboarding';
 import DisclaimerPopup from './components/DisclaimerPopup';
 import BackButtonHandler from './components/BackButtonHandler';
@@ -34,6 +36,8 @@ function App() {
             <Route path="settings" element={<Settings />} />
             {/* Flare Mode is deliberately ungated — never paywall a crisis */}
             <Route path="flare" element={<FlareMode />} />
+            <Route path="flare-messages" element={<FlareMessages />} />
+            <Route path="conversations" element={<Conversations />} />
           </Route>
         </Routes>
       </Router>

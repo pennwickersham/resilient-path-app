@@ -5,7 +5,7 @@ import Paywall from './Paywall';
 
 // Pages that require a subscription
 // Workbook (Module 1) and Chat (a few messages) are free previews and gate themselves.
-const GATED_PATHS = ['/health-tools'];
+const GATED_PATHS = ['/health-tools', '/conversations'];
 
 const Layout = () => {
   const { isSubscribed, isLoading, showPaywall, setShowPaywall } = useSubscription();

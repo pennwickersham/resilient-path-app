@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Wind, Footprints, Hand, Gamepad2, Play, Pause, RotateCcw, ChevronRight, ChevronLeft } from 'lucide-react';
+import { speak, stopSpeaking, speechAvailable } from '../services/speech';
 
 /* Cross-promotion for the coping-skills game in the Resilient Path family.
    TODO: once SootheQuest launches on the app stores, point this at the store
@@ -33,20 +34,33 @@ const PATTERNS = {
   },
 };
 
-function BreathingTool() {
+/* `minutes` turns it into a timed session that stops itself (Flare Mode
+   uses 3); spoken cues let someone breathe along with their eyes closed. */
+export function BreathingTool({ minutes = null }) {
   const [patternId, setPatternId] = useState('box');
   const [running, setRunning] = useState(false);
   const [phaseIdx, setPhaseIdx] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(PATTERNS.box.phases[0].secs);
   const [cycles, setCycles] = useState(0);
+  const [elapsed, setElapsed] = useState(0);
+  const [spokenCues, setSpokenCues] = useState(false);
   const timerRef = useRef(null);
+  const elapsedRef = useRef(0);
 
   const pattern = PATTERNS[patternId];
   const phase = pattern.phases[phaseIdx];
+  const limit = minutes ? minutes * 60 : null;
+  const finished = limit !== null && elapsed >= limit;
 
   useEffect(() => {
     if (!running) return undefined;
     timerRef.current = setInterval(() => {
+      elapsedRef.current += 1;
+      setElapsed(elapsedRef.current);
+      if (limit !== null && elapsedRef.current >= limit) {
+        setRunning(false);
+        return;
+      }
       setSecondsLeft(prev => {
         if (prev > 1) return prev - 1;
         // advance phase
@@ -59,7 +73,22 @@ function BreathingTool() {
       });
     }, 1000);
     return () => clearInterval(timerRef.current);
-  }, [running, pattern.phases.length]);
+  }, [running, pattern.phases.length, limit]);
+
+  // Speak each phase as it starts; go quiet on pause. Only stop speech this
+  // tool started, so it never cuts off a read-aloud elsewhere on the page.
+  const cuesActiveRef = useRef(false);
+  useEffect(() => {
+    if (running && spokenCues) {
+      cuesActiveRef.current = true;
+      speak(pattern.phases[phaseIdx].name);
+    } else if (cuesActiveRef.current) {
+      cuesActiveRef.current = false;
+      stopSpeaking();
+    }
+  }, [running, spokenCues, phaseIdx, pattern]);
+
+  useEffect(() => () => { if (cuesActiveRef.current) stopSpeaking(); }, []);
 
   // When the phase changes, load its duration.
   useEffect(() => {
@@ -72,7 +101,12 @@ function BreathingTool() {
     setPhaseIdx(0);
     setSecondsLeft(PATTERNS[id].phases[0].secs);
     setCycles(0);
+    elapsedRef.current = 0;
+    setElapsed(0);
   };
+
+  const remaining = limit !== null ? Math.max(0, limit - elapsed) : null;
+  const mmss = (t) => `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`;
 
   return (
     <div className="space-y-4">
@@ -113,10 +147,10 @@ function BreathingTool() {
 
       <div className="flex items-center justify-center gap-3">
         <button
-          onClick={() => setRunning(r => !r)}
+          onClick={() => (finished ? (reset(), setRunning(true)) : setRunning(r => !r))}
           className="flex items-center gap-2 px-6 py-3 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-bold text-sm transition-colors shadow-sm"
         >
-          {running ? <><Pause size={16} /> Pause</> : <><Play size={16} /> Start</>}
+          {running ? <><Pause size={16} /> Pause</> : <><Play size={16} /> {finished ? 'Again' : 'Start'}</>}
         </button>
         <button
           onClick={() => reset()}
@@ -125,7 +159,25 @@ function BreathingTool() {
           <RotateCcw size={15} /> Reset
         </button>
       </div>
-      {cycles > 0 && (
+      {speechAvailable() && (
+        <label className="flex items-center justify-center gap-2 text-xs font-semibold text-secondary-600">
+          <input
+            type="checkbox"
+            checked={spokenCues}
+            onChange={(e) => setSpokenCues(e.target.checked)}
+            className="w-4 h-4 accent-primary-600"
+          />
+          Speak each step (eyes-closed mode)
+        </label>
+      )}
+      {remaining !== null && !finished && (
+        <p className="text-center text-xs font-semibold text-secondary-500">{mmss(remaining)} left</p>
+      )}
+      {finished ? (
+        <p className="text-center text-sm font-semibold text-emerald-700">
+          {minutes} minutes done. Notice how your body feels now compared to when you started.
+        </p>
+      ) : cycles > 0 && (
         <p className="text-center text-xs font-semibold text-emerald-700">
           {cycles} full {cycles === 1 ? 'cycle' : 'cycles'} complete — well done.
         </p>
