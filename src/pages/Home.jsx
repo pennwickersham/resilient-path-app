@@ -304,7 +304,7 @@ const Home = () => {
         </div>
       </Link>
 
-      <Link to="/settings" className="text-center text-sm text-secondary-600 underline py-2">Settings, text size, and flare messages</Link>
+      <Link to="/settings" className="text-center text-sm text-secondary-600 underline py-2">Settings, reminders, text size, and flare messages</Link>
 
       <Link to="/emergency" className="bg-purple-50 p-4 rounded-2xl border border-purple-200 flex items-center gap-4 hover:bg-purple-100 transition shadow-sm mt-2 cursor-pointer group">
         <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition duration-300">

@@ -14,8 +14,20 @@ import { Capacitor } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import storage, { STORAGE_KEYS } from './storage';
 
-const NOTIFICATION_ID = 7001;
-const WEEKLY_SUMMARY_ID = 7002;
+export const NOTIFICATION_ID = 7001;
+export const WEEKLY_SUMMARY_ID = 7002;
+
+// Where a tapped notification should land (read by NotificationHandler).
+export const TAP_TARGET = { CHECKIN: 'checkin', DASHBOARD: 'dashboard' };
+
+const dailyNotification = (hour, minute) => ({
+  id: NOTIFICATION_ID,
+  title: 'Resilient Path',
+  // Deliberately gentle: no streaks, no guilt — an invitation, not a demand.
+  body: 'A 30-second check-in, whenever you\u2019re ready. No pressure.',
+  schedule: { on: { hour, minute }, allowWhileIdle: true },
+  extra: { target: TAP_TARGET.CHECKIN },
+});
 
 /* Sunday-evening "your week in review" invitation. Local notifications are
    static, so the numbers live on the dashboard — this just opens the door. */
@@ -24,6 +36,7 @@ const weeklySummaryNotification = () => ({
   title: 'Your week in review',
   body: 'Your dashboard has this week\u2019s trends, what helped, and any patterns worth a look.',
   schedule: { on: { weekday: 1, hour: 18, minute: 0 }, allowWhileIdle: true }, // Sunday 6pm
+  extra: { target: TAP_TARGET.DASHBOARD },
 });
 
 export const isReminderSupported = () => Capacitor.isNativePlatform();
@@ -48,13 +61,7 @@ export async function enableReminder(hour, minute) {
     // Replace any previous schedule before creating the new one.
     await cancelPending();
     await LocalNotifications.schedule({
-      notifications: [{
-        id: NOTIFICATION_ID,
-        title: 'Resilient Path',
-        // Deliberately gentle: no streaks, no guilt — an invitation, not a demand.
-        body: 'A 30-second check-in, whenever you\u2019re ready. No pressure.',
-        schedule: { on: { hour, minute }, allowWhileIdle: true },
-      }, weeklySummaryNotification()],
+      notifications: [dailyNotification(hour, minute), weeklySummaryNotification()],
     });
     await storage.set(STORAGE_KEYS.REMINDER, { enabled: true, hour, minute });
     return { ok: true };
@@ -95,16 +102,33 @@ export async function ensureReminderScheduled() {
     const have = new Set((pending.notifications || []).map(n => n.id));
     const toSchedule = [];
     if (!have.has(NOTIFICATION_ID)) {
-      toSchedule.push({
-        id: NOTIFICATION_ID,
-        title: 'Resilient Path',
-        body: 'A 30-second check-in, whenever you\u2019re ready. No pressure.',
-        schedule: { on: { hour: pref.hour, minute: pref.minute }, allowWhileIdle: true },
-      });
+      toSchedule.push(dailyNotification(pref.hour, pref.minute));
     }
     if (!have.has(WEEKLY_SUMMARY_ID)) toSchedule.push(weeklySummaryNotification());
     if (toSchedule.length) await LocalNotifications.schedule({ notifications: toSchedule });
   } catch (e) {
     console.error('Reminder re-schedule failed', e);
+  }
+}
+
+/**
+ * Call `handler(target)` when the person taps one of our notifications.
+ * Capacitor holds a tap that cold-started the app until a listener is
+ * attached, so register this early. Returns an unsubscribe function.
+ * Older pending notifications have no `extra`, so fall back to the id.
+ */
+export async function onReminderTap(handler) {
+  if (!isReminderSupported()) return () => {};
+  try {
+    const sub = await LocalNotifications.addListener('localNotificationActionPerformed', ({ notification }) => {
+      const target = notification?.extra?.target ||
+        (notification?.id === NOTIFICATION_ID ? TAP_TARGET.CHECKIN
+          : notification?.id === WEEKLY_SUMMARY_ID ? TAP_TARGET.DASHBOARD : null);
+      if (target) handler(target);
+    });
+    return () => sub.remove();
+  } catch (e) {
+    console.error('Reminder tap listener failed', e);
+    return () => {};
   }
 }

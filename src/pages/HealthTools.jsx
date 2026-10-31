@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Pill, Stethoscope, ClipboardList, Activity, Share2, Printer, Plus, Trash2, Download, Check, LayoutDashboard, History } from 'lucide-react';
 import { Capacitor } from '@capacitor/core';
 import { Share } from '@capacitor/share';
@@ -6,7 +7,6 @@ import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import storage, { STORAGE_KEYS } from '../services/storage';
 import SymptomDashboard from '../components/SymptomDashboard';
 import ReminderCard from '../components/ReminderCard';
-import { ensureReminderScheduled } from '../services/reminders';
 import { STARTER_FOODS, PRACTICES, getRecentFoods, analyzeFoodTriggers, analyzePractices, validEntries, toNum } from '../services/symptomAnalysis';
 import { FileText, FileDown, Loader2 } from 'lucide-react';
 import { saveAndShareVisitPacket } from '../services/pdfReport';
@@ -150,6 +150,29 @@ const HealthTools = () => {
   // Track initial load so we don't overwrite saved data with defaults.
   const [loaded, setLoaded] = useState(false);
 
+  // Open today's check-in pre-filled with anything already logged today, so
+  // re-logging updates the entry instead of blanking its fields.
+  const prefillToday = (list) => {
+    const existing = (list || []).find(e => e.date === todayStr());
+    if (existing) setQuickEntry({ ...emptySymptomEntry, ...existing, foods: existing.foods || [], practices: existing.practices || [] });
+  };
+
+  // Deep links, e.g. from a tapped reminder: ?tab=symptoms&view=checkin
+  // (adjusted during render so a new link works while this page is open).
+  const [searchParams] = useSearchParams();
+  const linkKey = searchParams.toString();
+  const [handledLink, setHandledLink] = useState('');
+  if (linkKey !== handledLink) {
+    setHandledLink(linkKey);
+    const tab = searchParams.get('tab');
+    const view = searchParams.get('view');
+    if (TABS.some(t => t.id === tab)) setActiveTab(tab);
+    if (['dashboard', 'checkin', 'history'].includes(view)) {
+      if (view === 'checkin' && loaded) prefillToday(symptoms);
+      setSymptomView(view);
+    }
+  }
+
   // Load from durable storage on mount (auto-migrates old localStorage data).
   useEffect(() => {
     (async () => {
@@ -160,6 +183,10 @@ const HealthTools = () => {
           if (data.doctors?.length) setDoctors(data.doctors);
           if (data.history) setHistory(prev => ({ ...prev, ...data.history }));
           if (data.symptoms?.length) setSymptoms(data.symptoms);
+          // Opened straight into the check-in (reminder tap) before data loaded.
+          if (new URLSearchParams(window.location.hash.split('?')[1] || '').get('view') === 'checkin') {
+            prefillToday(data.symptoms);
+          }
         }
         const flareLog = await storage.get(STORAGE_KEYS.FLARES);
         if (Array.isArray(flareLog)) setFlares(flareLog);
@@ -168,7 +195,6 @@ const HealthTools = () => {
       } finally {
         setLoaded(true);
       }
-      ensureReminderScheduled();
     })();
   }, []);
 
@@ -767,8 +793,7 @@ const HealthTools = () => {
             {(() => {
               const goCheckin = () => {
                 // Prefill from today's entry if it already exists
-                const existing = symptoms.find(e => e.date === todayStr());
-                if (existing) setQuickEntry({ ...emptySymptomEntry, ...existing, foods: existing.foods || [], practices: existing.practices || [] });
+                prefillToday(symptoms);
                 setSymptomView('checkin');
               };
               const sub = (id, label, icon) => (
@@ -799,8 +824,7 @@ const HealthTools = () => {
                 medications={medications}
                 flares={flares}
                 onLogToday={() => {
-                  const existing = symptoms.find(e => e.date === todayStr());
-                  if (existing) setQuickEntry({ ...emptySymptomEntry, ...existing, foods: existing.foods || [], practices: existing.practices || [] });
+                  prefillToday(symptoms);
                   setSymptomView('checkin');
                 }}
                 onViewHistory={() => setSymptomView('history')}

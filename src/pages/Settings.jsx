@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { TEXT_SIZES, getSettings, saveSettings, applyTextSize } from '../utils/settings';
+import ReminderCard from '../components/ReminderCard';
 
 const Settings = () => {
   const [settings, setSettings] = useState(() => getSettings());
@@ -65,10 +66,13 @@ const Settings = () => {
         </Link>
       </section>
 
+      {/* Optional, off by default. Permission is only requested when switched on. */}
+      <ReminderCard />
+
       <section className="bg-white p-5 rounded-2xl shadow-sm border border-secondary-100">
-        <h3 className="font-bold text-primary-900 mb-1">Backup and reminders</h3>
+        <h3 className="font-bold text-primary-900 mb-1">Backup</h3>
         <p className="text-sm text-secondary-600">
-          Back up your workbook and health information, and set your daily reminder, from{' '}
+          Back up your workbook and health information from{' '}
           <Link to="/health-tools" className="text-primary-700 underline">My Health Tools</Link>.
         </p>
       </section>

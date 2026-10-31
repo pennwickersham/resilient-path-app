@@ -13,6 +13,7 @@ import Conversations from './pages/Conversations';
 import Onboarding from './pages/Onboarding';
 import DisclaimerPopup from './components/DisclaimerPopup';
 import BackButtonHandler from './components/BackButtonHandler';
+import NotificationHandler from './components/NotificationHandler';
 import ScrollToTop from './components/ScrollToTop';
 import Settings from './pages/Settings';
 
@@ -21,6 +22,7 @@ function App() {
     <SubscriptionProvider>
       <Router>
         <BackButtonHandler />
+        <NotificationHandler />
         <ScrollToTop />
         <DisclaimerPopup />
         <Routes>

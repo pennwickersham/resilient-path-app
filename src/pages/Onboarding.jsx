@@ -65,7 +65,7 @@ const Onboarding = () => {
   const [condition, setCondition] = useState('');
   const [goal, setGoal] = useState('');
   const [reminderHour, setReminderHour] = useState(19);
-  const [wantsReminder, setWantsReminder] = useState(true);
+  const [wantsReminder, setWantsReminder] = useState(false); // opt-in: off unless a time is picked
   const [saving, setSaving] = useState(false);
 
   const finish = async ({ skipped = false } = {}) => {
