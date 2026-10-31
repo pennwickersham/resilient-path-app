@@ -7,7 +7,9 @@
  *   2. 30-day symptom picture with a drawn trend chart
  *   3. Possible food triggers / what's been helping (from the diary analysis)
  *   4. Current medications (with start dates when recorded)
- *   5. Care team, key history
+ *   5. Care team, key history and notes
+ *   6. Labs / tests / imaging the user attached (list, plus the photos
+ *      embedded at the end; attached PDFs are listed — jsPDF can't merge them)
  *
  * Output handling:
  *   - Native: written to Documents via Filesystem (base64), then the system
@@ -23,6 +25,7 @@ import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { validEntries, toNum, analyzeFoodTriggers, analyzePractices } from './symptomAnalysis';
 import { localDateStr, daysAgoStr, dateKeyTs } from '../utils/dates';
+import { listDocuments, getDocumentDataUrl, isImage, isPdf } from './healthDocuments';
 
 /* Palette — matches the app's teal primary and slate secondaries. */
 const TEAL = [13, 148, 136];
@@ -38,9 +41,68 @@ const PAGE_W = 210, PAGE_H = 297; // A4 mm
 const MARGIN = 18;
 const CONTENT_W = PAGE_W - 2 * MARGIN;
 
-export async function generateVisitPacket({ medications, doctors, history, symptoms }) {
+/** Decode an image data URL and re-encode it as a modest JPEG (keeps the PDF small). */
+function loadImageForPdf(dataUrl, maxPx = 1600) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, maxPx / Math.max(img.naturalWidth, img.naturalHeight));
+      const w = Math.max(1, Math.round(img.naturalWidth * scale));
+      const h = Math.max(1, Math.round(img.naturalHeight * scale));
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, w, h);
+      ctx.drawImage(img, 0, 0, w, h);
+      resolve({ data: canvas.toDataURL('image/jpeg', 0.82), w, h });
+    };
+    img.onerror = () => resolve(null); // e.g. a format this WebView can't decode
+    img.src = dataUrl;
+  });
+}
+
+const fmtDate = (key) => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(key || '')) return key || '';
+  return new Date(dateKeyTs(key)).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+};
+
+export async function generateVisitPacket({ medications, doctors, history, symptoms, flares, documents }) {
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
   let y = 0;
+
+  /** Simple table: teal header row + zebra rows (no plugin dependency). */
+  const table = (cols, rows) => {
+    const drawHeader = () => {
+      let tx = MARGIN;
+      doc.setFillColor(...TEAL);
+      doc.rect(MARGIN, y, CONTENT_W, 6, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      doc.setTextColor(255, 255, 255);
+      cols.forEach(c => { doc.text(c.label, tx + 1.5, y + 4.2); tx += c.w; });
+      y += 6;
+      doc.setFont('helvetica', 'normal');
+    };
+    ensureSpace(14);
+    drawHeader();
+    rows.forEach((r, i) => {
+      doc.setFontSize(8);
+      const cellLines = cols.map(c => doc.splitTextToSize(String(c.get(r) ?? ''), c.w - 3));
+      const rowH = Math.max(...cellLines.map(l => l.length)) * 3.6 + 2.6;
+      if (y + rowH > PAGE_H - 16) { doc.addPage(); y = MARGIN; drawHeader(); }
+      if (i % 2 === 0) {
+        doc.setFillColor(248, 250, 252);
+        doc.rect(MARGIN, y, CONTENT_W, rowH, 'F');
+      }
+      let cx = MARGIN;
+      doc.setFontSize(8);
+      doc.setTextColor(...SLATE_DARK);
+      cols.forEach((c, ci) => { doc.text(cellLines[ci], cx + 1.5, y + 3.6); cx += c.w; });
+      y += rowH;
+    });
+    y += 3;
+  };
 
   const ensureSpace = (needed) => {
     if (y + needed > PAGE_H - 16) {
@@ -214,6 +276,34 @@ export async function generateVisitPacket({ medications, doctors, history, sympt
     }
   }
 
+  /* ── Recent check-ins (the raw entries behind the averages) ── */
+  const recent = [...sorted].sort((a, b) => (b.date || '').localeCompare(a.date || '')).slice(0, 14);
+  if (recent.length) {
+    sectionHeader(`Recent Check-ins (last ${recent.length})`);
+    const score = (v) => (toNum(v) === null ? '' : String(toNum(v)));
+    const noteFor = (e) => [
+      e.triggers && `Triggers: ${e.triggers}`,
+      e.notes,
+      e.practices?.length && `Helped: ${e.practices.join(', ')}`,
+    ].filter(Boolean).join(' \u2014 ');
+    table([
+      { label: 'Date', w: 26, get: e => fmtDate(e.date) },
+      { label: 'Pain', w: 12, get: e => score(e.pain) },
+      { label: 'Fatigue', w: 15, get: e => score(e.fatigue) },
+      { label: 'Sleep', w: 13, get: e => score(e.sleep) },
+      { label: 'Mood', w: 26, get: e => e.mood || '' },
+      { label: 'Notes', w: CONTENT_W - 26 - 12 - 15 - 13 - 26, get: noteFor },
+    ], recent);
+  }
+
+  const recentFlares = (flares || []).filter(f => f?.date && f.date >= cutoffStr);
+  if (recentFlares.length) {
+    bodyText(
+      `Flare days logged in the last 30 days: ${recentFlares.length} (${recentFlares.map(f => fmtDate(f.date)).join(', ')})`,
+      { size: 8.5 }
+    );
+  }
+
   /* ── 3. Patterns from tracking ── */
   const fa = analyzeFoodTriggers(symptoms || []);
   const suspects = fa.ready ? fa.results.filter(r => r.delta >= 1).slice(0, 4) : [];
@@ -302,10 +392,54 @@ export async function generateVisitPacket({ medications, doctors, history, sympt
   }
 
   /* ── 6. Key history ── */
-  if (history?.conditions || history?.allergies) {
+  if (history?.conditions || history?.allergies || history?.surgeries || history?.familyHistory) {
     sectionHeader('Key History');
     if (history.conditions) bodyText(`Conditions: ${history.conditions}`);
     if (history.allergies) bodyText(`Allergies: ${history.allergies}`);
+    if (history.surgeries) bodyText(`Surgeries / procedures: ${history.surgeries}`);
+    if (history.familyHistory) bodyText(`Family history: ${history.familyHistory}`);
+  }
+  if (history?.otherNotes?.trim()) {
+    sectionHeader('Notes');
+    bodyText(history.otherNotes.trim());
+  }
+
+  /* ── 7. Labs, tests & imaging ── */
+  const docsList = (documents || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  if (docsList.length) {
+    sectionHeader('Labs, Tests & Imaging');
+    table([
+      { label: 'Date', w: 28, get: d => fmtDate(d.date) },
+      { label: 'Type', w: 22, get: d => d.type || '' },
+      { label: 'Title', w: CONTENT_W - 28 - 22 - 34, get: d => d.title || '' },
+      { label: 'File', w: 34, get: d => (isPdf(d) ? 'PDF (in app)' : isImage(d) ? 'Image (attached below)' : '') },
+    ], docsList);
+    if (docsList.some(isPdf)) {
+      bodyText('PDF reports are kept in the app and can be shared separately from Health Tools > Labs & Imaging.', { size: 7.5, color: SLATE_LIGHT });
+    }
+
+    // Embed attached photos, each scaled to fit the page width.
+    for (const d of docsList.filter(isImage)) {
+      const dataUrl = await getDocumentDataUrl(d);
+      const img = dataUrl ? await loadImageForPdf(dataUrl) : null;
+      const caption = `${d.type || ''}: ${d.title || ''}${d.date ? ` (${fmtDate(d.date)})` : ''}`;
+      if (!img) {
+        bodyText(`${caption} \u2014 image could not be included.`, { size: 8 });
+        continue;
+      }
+      const maxH = PAGE_H - 2 * MARGIN - 24;
+      let w = CONTENT_W;
+      let h = (img.h / img.w) * w;
+      if (h > maxH) { h = maxH; w = (img.w / img.h) * h; }
+      ensureSpace(h + 12);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.setTextColor(...SLATE_DARK);
+      doc.text(doc.splitTextToSize(caption, CONTENT_W)[0], MARGIN, y + 3);
+      y += 6;
+      doc.addImage(img.data, 'JPEG', MARGIN, y, w, h);
+      y += h + 6;
+    }
   }
 
   /* ── Footer on every page ── */
@@ -327,7 +461,8 @@ export async function generateVisitPacket({ medications, doctors, history, sympt
 
 /** Generate, save, and (on native) open the share sheet. Returns filename. */
 export async function saveAndShareVisitPacket(data) {
-  const doc = await generateVisitPacket(data);
+  const documents = data.documents || await listDocuments().catch(() => []);
+  const doc = await generateVisitPacket({ ...data, documents });
   const filename = `Resilient_Path_Visit_Packet_${localDateStr()}.pdf`;
 
   if (Capacitor.isNativePlatform()) {

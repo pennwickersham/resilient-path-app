@@ -389,7 +389,7 @@ const HealthTools = () => {
     if (pdfBusy) return;
     setPdfBusy(true);
     try {
-      const filename = await saveAndShareVisitPacket({ medications, doctors, history, symptoms });
+      const filename = await saveAndShareVisitPacket({ medications, doctors, history, symptoms, flares });
       setSaveStatus(Capacitor.isNativePlatform() ? `PDF saved to Documents: ${filename}` : `Downloaded ${filename}`);
       setTimeout(() => setSaveStatus(''), 5000);
     } catch (e) {
@@ -591,7 +591,7 @@ const HealthTools = () => {
         <div className="min-w-0 flex-1">
           <p className="text-sm font-bold text-secondary-900 leading-tight">Preparing for an appointment?</p>
           <p className="text-xs text-secondary-500 leading-snug">
-            One-page summary: your questions, meds, 30-day trends, and what your tracking has found.
+            Export a PDF for your doctor: your questions, meds, recent check-ins and pain trends, notes, and your labs, tests &amp; imaging.
           </p>
         </div>
         <div className="flex flex-col gap-1.5 shrink-0">
@@ -601,7 +601,7 @@ const HealthTools = () => {
             className="flex items-center gap-1 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-60"
           >
             {pdfBusy ? <Loader2 size={12} className="animate-spin" /> : <FileDown size={12} />}
-            PDF Packet
+            Export PDF
           </button>
           <button
             onClick={() => handleShare('visit')}
