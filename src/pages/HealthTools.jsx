@@ -1,12 +1,13 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Pill, Stethoscope, ClipboardList, Activity, Share2, Printer, Plus, Trash2, Download, Check, LayoutDashboard, History } from 'lucide-react';
+import { Pill, Stethoscope, ClipboardList, Activity, Share2, Printer, Plus, Trash2, Download, Check, LayoutDashboard, History, Microscope } from 'lucide-react';
 import { Capacitor } from '@capacitor/core';
 import { Share } from '@capacitor/share';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import storage, { STORAGE_KEYS } from '../services/storage';
 import SymptomDashboard from '../components/SymptomDashboard';
 import ReminderCard from '../components/ReminderCard';
+import HealthDocuments from '../components/HealthDocuments';
 import { STARTER_FOODS, PRACTICES, getRecentFoods, analyzeFoodTriggers, analyzePractices, validEntries, toNum } from '../services/symptomAnalysis';
 import { FileText, FileDown, Loader2 } from 'lucide-react';
 import { saveAndShareVisitPacket } from '../services/pdfReport';
@@ -47,6 +48,7 @@ const TABS = [
   { id: 'doctors', label: 'Doctors', icon: Stethoscope },
   { id: 'history', label: 'History', icon: ClipboardList },
   { id: 'symptoms', label: 'Symptoms', icon: Activity },
+  { id: 'documents', label: 'Labs & Imaging', icon: Microscope },
 ];
 
 const emptyMedication = { name: '', dose: '', frequency: '', doctor: '', purpose: '', sideEffects: '', startDate: '' };
@@ -736,6 +738,9 @@ const HealthTools = () => {
             </button>
           </div>
         )}
+
+        {/* ─── LABS, TESTS & IMAGING TAB ─── */}
+        {activeTab === 'documents' && <HealthDocuments />}
 
         {/* ─── MEDICAL HISTORY TAB ─── */}
         {activeTab === 'history' && (

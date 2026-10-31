@@ -44,6 +44,7 @@ export const STORAGE_KEYS = {
   DAILY: 'resilientPathDaily',             // morning energy check-in + tiny wins, by date
   FLARE_MESSAGES: 'resilientPathFlareMessages', // pre-written texts sent from Flare Mode
   SCRIPTS: 'resilientPathScripts',         // saved Hard Conversations scripts
+  DOCUMENTS: 'resilientPathDocuments',     // labs/tests/imaging list (files themselves: healthDocuments.js)
 };
 
 // Last-known subscription entitlement (see SubscriptionContext). Kept out of
