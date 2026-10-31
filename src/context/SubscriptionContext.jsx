@@ -8,12 +8,47 @@ import {
   purchasePackage,
   purchaseStoreProduct,
   restorePurchases,
-  getProductInfoFromOfferings
+  getProductInfoFromOfferings,
+  statusFromCustomerInfo,
 } from '../services/subscriptionService';
+import storage, { SUBSCRIPTION_CACHE_KEY } from '../services/storage';
 
 const SubscriptionContext = createContext(null);
 
 const PRODUCT_ID = 'com.resilient-path-app.monthly';
+
+// Store renewals can lag a few days (billing retry, offline phone), so a
+// remembered entitlement stays usable briefly past its expiration date.
+const RENEWAL_GRACE_MS = 3 * 86400000;
+
+/** Remember a definite RevenueCat answer on the device (never errors). */
+function rememberEntitlement(status) {
+  if (!status || status.error) return;
+  const write = status.isActive
+    ? storage.set(SUBSCRIPTION_CACHE_KEY, {
+        active: true,
+        isTrialing: !!status.isTrialing,
+        expirationDate: status.expirationDate || null,
+        checkedAt: new Date().toISOString(),
+      })
+    : storage.remove(SUBSCRIPTION_CACHE_KEY);
+  write.catch(e => console.warn('[SubscriptionContext] Could not remember entitlement', e));
+}
+
+/** Last confirmed entitlement if it is still within its paid period. */
+async function readRememberedEntitlement() {
+  try {
+    const c = await storage.get(SUBSCRIPTION_CACHE_KEY);
+    if (!c || c.active !== true) return null;
+    if (c.expirationDate) {
+      const exp = Date.parse(c.expirationDate);
+      if (Number.isFinite(exp) && exp + RENEWAL_GRACE_MS < Date.now()) return null;
+    }
+    return c;
+  } catch {
+    return null;
+  }
+}
 
 export function SubscriptionProvider({ children }) {
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -25,45 +60,83 @@ export function SubscriptionProvider({ children }) {
   const [showPaywall, setShowPaywall] = useState(false);
   const [purchaseInProgress, setPurchaseInProgress] = useState(false);
 
-  // Initialize RevenueCat and check status on mount
+  // Initialize RevenueCat and check status on mount.
+  //
+  // ROOT-CAUSE FIX (repeated "please subscribe / restore / sign in"):
+  // entitlement used to live only in memory and start as `false` on every
+  // launch. If RevenueCat was slow (>15s timeout) its eventual answer was
+  // DISCARDED for the whole session, any network error was treated as
+  // "not subscribed", and the CustomerInfo listener was registered before
+  // the SDK was configured (so it failed silently and could never correct
+  // things). Paying users therefore hit the paywall again and again, had
+  // to "Restore Purchase" (an App Store / Google sign-in prompt), and their
+  // Health Tools data was hidden behind the paywall until they did.
+  //
+  // Now: the last confirmed entitlement is remembered on the device and
+  // used immediately on launch; a late RevenueCat answer is always applied;
+  // "couldn't check" never downgrades a known subscriber; and the listener
+  // is registered after configure(). New installs (no remembered
+  // entitlement) still fail closed, so App Review always sees the paywall.
   useEffect(() => {
-    let didTimeout = false;
+    let cancelled = false;
+    let confirmed = false; // RevenueCat has given a definite answer
+    let removeListener = () => {};
 
-    // BUILD 55: Timeout guard — FAIL-CLOSED instead of fail-open.
-    // Previous builds set isSubscribed=true on timeout, which made Apple
-    // reviewers appear "already subscribed" in the slow sandbox environment.
-    // Apple rejected because "no purchase flow appeared" — the reviewer
-    // was never shown the paywall.
-    // Now we fail-closed: if init is slow, the user sees the paywall and
-    // can attempt a purchase. Real subscribers are detected once SDK loads.
     const timeoutId = setTimeout(() => {
-      didTimeout = true;
-      console.warn('[SubscriptionContext] Init timed out — failing closed (paywall visible)');
-      setIsSubscribed(false);
+      if (cancelled || confirmed) return;
+      console.warn('[SubscriptionContext] Init slow — showing last-known status; will update when RevenueCat answers');
       setIsLoading(false);
     }, 15000);
+
+    // 1. Last-known entitlement → unlock instantly (works offline too).
+    readRememberedEntitlement().then((remembered) => {
+      if (cancelled || confirmed || !remembered) return;
+      setIsSubscribed(true);
+      setIsTrialing(!!remembered.isTrialing);
+      setIsLoading(false);
+    });
 
     async function init() {
       try {
         await initializeRevenueCat();
-        if (didTimeout) return; // timeout already fired
+        if (cancelled) return;
 
         const status = await checkSubscriptionStatus();
-        if (didTimeout) return;
-        setIsSubscribed(status.isActive);
-        setIsTrialing(status.isTrialing);
+        if (cancelled) return;
+        if (!status.error) {
+          confirmed = true;
+          setIsSubscribed(status.isActive);
+          setIsTrialing(status.isTrialing);
+          rememberEntitlement(status);
+        }
+
+        // BUILD 51: CustomerInfo listener — detects purchases whose bridge
+        // callback is dropped. Registered only after configure() so it
+        // actually attaches.
+        removeListener = await setupCustomerInfoListener((info) => {
+          console.log('[SubscriptionContext] CustomerInfo listener update: isActive =', info.isActive);
+          confirmed = true;
+          setIsSubscribed(info.isActive);
+          setIsTrialing(info.isTrialing);
+          rememberEntitlement(info);
+          if (info.isActive) {
+            // Auto-close paywall and stop purchase state when subscription detected via listener
+            setShowPaywall(false);
+            setPurchaseInProgress(false);
+          }
+        });
+        if (cancelled) { removeListener(); return; }
 
         // Pre-fetch offerings for the paywall (don't block on this)
         setOfferingsLoading(true);
-        fetchOfferingsWithRetry(didTimeout);
+        fetchOfferingsWithRetry();
       } catch (err) {
+        // BUILD 55: Fail-closed for unknown users — the remembered
+        // entitlement (if any) stays in effect.
         console.error('[SubscriptionContext] Init error:', err);
-        // BUILD 55: Fail-closed on error — show paywall so reviewer can test IAP.
-        // Real subscribers will be detected when SDK eventually initializes.
-        if (!didTimeout) setIsSubscribed(false);
       } finally {
         clearTimeout(timeoutId);
-        if (!didTimeout) setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     }
 
@@ -71,7 +144,7 @@ export function SubscriptionProvider({ children }) {
      * Fetch offerings with a secondary retry if the first attempt returns null.
      * Sandbox environments often need extra time for offerings to become available.
      */
-    function fetchOfferingsWithRetry(cancelled) {
+    function fetchOfferingsWithRetry() {
       getOfferings()
         .then(o => {
           if (cancelled) return;
@@ -105,31 +178,11 @@ export function SubscriptionProvider({ children }) {
 
     init();
 
-    return () => clearTimeout(timeoutId);
-  }, []);
-
-  // BUILD 51: Register CustomerInfo listener — the RECOMMENDED way to detect
-  // purchases that complete on StoreKit but whose Capacitor bridge callback is dropped.
-  // This listener fires in real-time when customer info changes, unlike polling.
-  useEffect(() => {
-    let cleanup = () => {};
-
-    async function registerListener() {
-      cleanup = await setupCustomerInfoListener(({ isActive, isTrialing: trial }) => {
-        console.log('[SubscriptionContext] CustomerInfo listener update: isActive =', isActive);
-        setIsSubscribed(isActive);
-        setIsTrialing(trial);
-        if (isActive) {
-          // Auto-close paywall and stop purchase state when subscription detected via listener
-          // This is the PRIMARY detection mechanism for the fire-and-forget architecture.
-          setShowPaywall(false);
-          setPurchaseInProgress(false);
-        }
-      });
-    }
-
-    registerListener();
-    return () => cleanup();
+    return () => {
+      cancelled = true;
+      clearTimeout(timeoutId);
+      removeListener();
+    };
   }, []);
 
   // Allow Paywall to trigger a re-fetch of offerings
@@ -173,6 +226,7 @@ export function SubscriptionProvider({ children }) {
       const result = await purchasePackage(pkg);
       console.log('[SubscriptionContext] Purchase resolved:', result.success);
       if (result.success) {
+        rememberEntitlement(statusFromCustomerInfo(result.customerInfo));
         setIsSubscribed(true);
         setShowPaywall(false);
         setPurchaseInProgress(false);
@@ -205,6 +259,7 @@ export function SubscriptionProvider({ children }) {
       const result = await purchaseStoreProduct(PRODUCT_ID);
       console.log('[SubscriptionContext] Fallback purchase resolved:', result.success);
       if (result.success) {
+        rememberEntitlement(statusFromCustomerInfo(result.customerInfo));
         setIsSubscribed(true);
         setShowPaywall(false);
         setPurchaseInProgress(false);
@@ -233,6 +288,7 @@ export function SubscriptionProvider({ children }) {
   const restore = useCallback(async () => {
     const result = await restorePurchases();
     if (result.isActive) {
+      rememberEntitlement(result);
       setIsSubscribed(true);
       setShowPaywall(false);
     }
@@ -241,8 +297,10 @@ export function SubscriptionProvider({ children }) {
 
   const refreshStatus = useCallback(async () => {
     const status = await checkSubscriptionStatus();
+    if (status.error) return; // couldn't check — keep what we know
     setIsSubscribed(status.isActive);
     setIsTrialing(status.isTrialing);
+    rememberEntitlement(status);
   }, []);
 
   // BUILD 53: Aggressive refresh that invalidates cache before checking status.
@@ -251,8 +309,10 @@ export function SubscriptionProvider({ children }) {
   // NOTE: syncPurchases was removed from this path in Build 53.
   const refreshStatusWithSync = useCallback(async () => {
     const status = await invalidateAndCheckStatus();
+    if (status.error) return status; // couldn't check — keep what we know
     setIsSubscribed(status.isActive);
     setIsTrialing(status.isTrialing);
+    rememberEntitlement(status);
     if (status.isActive && purchaseInProgress) {
       // Purchase detected via polling — stop purchase state
       console.log('[SubscriptionContext] Subscription detected via polling — ending purchase state');

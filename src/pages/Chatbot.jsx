@@ -32,6 +32,9 @@ const Chatbot = () => {
   const [aiConsent, setAiConsent] = useState(null); // null = loading
   const [personalize, setPersonalize] = useState(false);
   const [showCrisisBanner, setShowCrisisBanner] = useState(false);
+  // Saved conversation has been read — until then, never persist (the
+  // initial [GREETING] state would overwrite the saved history with []).
+  const [historyLoaded, setHistoryLoaded] = useState(false);
   const { isSubscribed, setShowPaywall } = useSubscription();
   const [freeLeft, setFreeLeft] = useState(() => freeChatsLeft());
 
@@ -49,6 +52,7 @@ const Chatbot = () => {
       setAiConsent(consent === true || consent === 'true');
       setPersonalize(pers === true);
       if (Array.isArray(saved) && saved.length > 0) setMessages([GREETING, ...saved]);
+      setHistoryLoaded(true);
     })();
     warmRetrievalIndex().catch(err => console.error('Retrieval index failed to load:', err));
     return () => abortRef.current?.abort();
@@ -56,9 +60,10 @@ const Chatbot = () => {
 
   // Persist the conversation (excluding greeting and transient errors).
   useEffect(() => {
+    if (!historyLoaded) return;
     const toSave = messages.slice(1).filter(m => !m.isError).slice(-60);
     storage.set(STORAGE_KEYS.CHAT_HISTORY, toSave);
-  }, [messages]);
+  }, [historyLoaded, messages]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

@@ -46,6 +46,11 @@ export const STORAGE_KEYS = {
   SCRIPTS: 'resilientPathScripts',         // saved Hard Conversations scripts
 };
 
+// Last-known subscription entitlement (see SubscriptionContext). Kept out of
+// STORAGE_KEYS on purpose so it is never exported into, or restored from, a
+// backup file.
+export const SUBSCRIPTION_CACHE_KEY = 'resilientPathSubscription';
+
 const fileFor = (key) => `${FILE_PREFIX}${key}.json`;
 
 // In-memory cache so repeated reads don't hit the filesystem.
@@ -100,7 +105,16 @@ export const storage = {
       return null;
     }
     let value;
-    try { value = JSON.parse(raw); } catch { value = raw; } // tolerate legacy plain strings
+    try {
+      value = JSON.parse(raw);
+    } catch {
+      // A file cut short (e.g. the app was killed mid-write) must not be
+      // handed to a screen as "no data" — it would then save empty
+      // defaults over the user's records. Fall back to the localStorage
+      // mirror, which every set() also writes.
+      const mirror = isNative ? localStorage.getItem(key) : null;
+      try { value = mirror !== null ? JSON.parse(mirror) : raw; } catch { value = raw; } // tolerate legacy plain strings
+    }
     cache.set(key, value);
     return value;
   },

@@ -33,6 +33,19 @@ function isPurchaseCancelled(err) {
 }
 
 /**
+ * Map a RevenueCat CustomerInfo to { isActive, isTrialing, expirationDate }.
+ */
+export function statusFromCustomerInfo(customerInfo) {
+  const active = Object.values(customerInfo?.entitlements?.active || {});
+  const first = active[0];
+  return {
+    isActive: active.length > 0,
+    isTrialing: first?.periodType === 'TRIAL',
+    expirationDate: first?.expirationDate || null,
+  };
+}
+
+/**
  * Initialize RevenueCat SDK. Call once on app startup.
  */
 export async function initializeRevenueCat() {
@@ -86,12 +99,14 @@ export async function setupCustomerInfoListener(onUpdate) {
         const entitlements = customerInfo?.entitlements?.active || {};
         const hasActive = Object.keys(entitlements).length > 0;
         let isTrialing = false;
+        let expirationDate = null;
         if (hasActive) {
           const first = Object.values(entitlements)[0];
           isTrialing = first?.periodType === 'TRIAL';
+          expirationDate = first?.expirationDate || null;
         }
         console.log('[SubscriptionService] Listener: isActive =', hasActive, ', isTrialing =', isTrialing);
-        onUpdate({ isActive: hasActive, isTrialing });
+        onUpdate({ isActive: hasActive, isTrialing, expirationDate });
       }
     );
     console.log('[SubscriptionService] CustomerInfo listener registered ✓');
@@ -169,7 +184,9 @@ export async function checkSubscriptionStatus() {
     return { isActive: hasActive, isTrialing, expirationDate };
   } catch (err) {
     console.error('[SubscriptionService] Status check failed:', err);
-    return { isActive: false, isTrialing: false, expirationDate: null };
+    // `error: true` = "we couldn't find out", NOT "not subscribed". Callers
+    // keep the last-known entitlement instead of locking a paying user out.
+    return { isActive: false, isTrialing: false, expirationDate: null, error: true };
   }
 }
 
@@ -201,7 +218,7 @@ export async function invalidateAndCheckStatus() {
     return { isActive: hasActive, isTrialing, expirationDate };
   } catch (err) {
     console.error('[SubscriptionService] invalidateAndCheckStatus failed:', err);
-    return { isActive: false, isTrialing: false, expirationDate: null };
+    return { isActive: false, isTrialing: false, expirationDate: null, error: true };
   }
 }
 
@@ -338,10 +355,15 @@ export async function restorePurchases() {
 
   try {
     const { customerInfo } = await Purchases.restorePurchases();
-    const hasActive = Object.keys(customerInfo.entitlements.active).length > 0;
-    return { isActive: hasActive };
+    const active = Object.values(customerInfo.entitlements.active || {});
+    const first = active[0];
+    return {
+      isActive: active.length > 0,
+      isTrialing: first?.periodType === 'TRIAL',
+      expirationDate: first?.expirationDate || null,
+    };
   } catch (err) {
     console.error('[SubscriptionService] Restore failed:', err);
-    return { isActive: false };
+    return { isActive: false, error: true };
   }
 }

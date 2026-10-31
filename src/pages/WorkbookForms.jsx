@@ -16,6 +16,9 @@ const WorkbookForms = () => {
   const { isSubscribed, isLoading: subLoading, setShowPaywall } = useSubscription();
   const isLocked = (moduleId) => !isSubscribed && moduleId !== FREE_WORKBOOK_MODULE;
   const [answers, setAnswers] = useState({});
+  // Saved answers have been read. Edits before that would save a nearly
+  // empty object over everything the user has written.
+  const loadedRef = useRef(false);
   const [searchParams] = useSearchParams();
   // Deep link support: /workbook?module=17 opens that module directly
   // (used by the tracker dashboard's "Suggested for You" card).
@@ -34,6 +37,7 @@ const WorkbookForms = () => {
       try {
         const saved = await storage.get(STORAGE_KEYS.WORKBOOK);
         if (saved && typeof saved === 'object') setAnswers(saved);
+        loadedRef.current = true;
         const prog = await getProgress();
         setCompleted(prog.completed);
       } catch (e) {
@@ -53,6 +57,7 @@ const WorkbookForms = () => {
   };
 
   const handleChange = (id, value, type) => {
+    if (!loadedRef.current) return;
     let newValue = value;
     if (type === 'checkbox') {
         newValue = !answers[id];
@@ -131,7 +136,7 @@ const WorkbookForms = () => {
   };
 
   const handleClearModule = () => {
-    if (!currentModuleData) return;
+    if (!currentModuleData || !loadedRef.current) return;
     
     if (window.confirm('Are you sure you want to clear your answers for this module? This cannot be undone.')) {
       const newAnswers = { ...answers };

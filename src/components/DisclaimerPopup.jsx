@@ -1,36 +1,41 @@
 import { useState, useEffect } from 'react';
 import { AlertCircle, Bot, ShieldCheck, Heart } from 'lucide-react';
+import storage, { STORAGE_KEYS } from '../services/storage';
+
+// AI consent is read/written through durable storage (a file on native,
+// migrated automatically from the old localStorage value) so a WebView
+// storage purge can't make the app ask for it all over again.
+const hasAcceptedAI = (v) => v === true || v === 'true';
 
 const DisclaimerPopup = () => {
   const [step, setStep] = useState(null); // null = not ready, 'medical' | 'ai' | 'done'
+  const [aiAccepted, setAiAccepted] = useState(false);
 
   useEffect(() => {
-    const aiConsentAccepted = localStorage.getItem('aiConsentAccepted');
-    // Always show medical disclaimer on launch; show AI consent only on first install
-    if (aiConsentAccepted === 'true') {
-      setStep('medical'); // skip AI step on subsequent launches
-    } else {
-      setStep('medical'); // show medical first, then AI
-    }
+    let cancelled = false;
+    (async () => {
+      let consent = null;
+      try { consent = await storage.get(STORAGE_KEYS.AI_CONSENT); } catch { /* treat as not yet asked */ }
+      if (cancelled) return;
+      // Always show medical disclaimer on launch; show AI consent only until answered "yes"
+      setAiAccepted(hasAcceptedAI(consent));
+      setStep('medical');
+    })();
+    return () => { cancelled = true; };
   }, []);
 
   const handleAcceptMedical = () => {
-    const aiConsentAccepted = localStorage.getItem('aiConsentAccepted');
-    if (aiConsentAccepted === 'true') {
-      setStep('done');
-    } else {
-      setStep('ai');
-    }
+    setStep(aiAccepted ? 'done' : 'ai');
   };
 
   const handleAcceptAI = () => {
-    localStorage.setItem('aiConsentAccepted', 'true');
+    storage.set(STORAGE_KEYS.AI_CONSENT, true);
     setStep('done');
   };
 
   const handleDeclineAI = () => {
     // User declined AI data sharing — store explicit refusal
-    localStorage.setItem('aiConsentAccepted', 'false');
+    storage.set(STORAGE_KEYS.AI_CONSENT, false);
     setStep('done');
   };
 
