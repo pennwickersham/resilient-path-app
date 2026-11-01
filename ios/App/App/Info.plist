@@ -51,5 +51,9 @@
     <string>Dictate workbook answers and notes instead of typing.</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>The microphone is used only when you tap the dictation button.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Take a photo of a lab result, test or imaging report to keep it in Labs &amp; Imaging on your device.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Choose a photo of a lab result, test or imaging report to keep it in Labs &amp; Imaging on your device.</string>
 </dict>
 </plist>
