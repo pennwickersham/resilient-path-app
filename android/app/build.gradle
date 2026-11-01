@@ -16,17 +16,33 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    // Release signing values come from android/keystore.properties (git-ignored; copy
+    // keystore.properties.example) or from environment variables, never from this file.
+    // Without them, release builds come out unsigned instead of failing.
+    def signingProps = new Properties()
+    def signingPropsFile = rootProject.file('keystore.properties')
+    if (signingPropsFile.exists()) {
+        signingPropsFile.withInputStream { signingProps.load(it) }
+    }
+    def signingValue = { String key, String env -> signingProps.getProperty(key) ?: System.getenv(env) }
+    def releaseStoreFile = signingValue('storeFile', 'TRP_KEYSTORE_FILE')
+    def releaseStorePassword = signingValue('storePassword', 'TRP_KEYSTORE_PASSWORD')
+
     signingConfigs {
         release {
-            storeFile file('resilient-path-release.keystore')
-            storePassword 'ResilientPath2026'
-            keyAlias 'resilient-path'
-            keyPassword 'ResilientPath2026'
+            if (releaseStoreFile && releaseStorePassword) {
+                storeFile file(releaseStoreFile)
+                storePassword releaseStorePassword
+                keyAlias signingValue('keyAlias', 'TRP_KEY_ALIAS') ?: 'resilient-path'
+                keyPassword signingValue('keyPassword', 'TRP_KEY_PASSWORD') ?: releaseStorePassword
+            }
         }
     }
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            if (releaseStoreFile && releaseStorePassword) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

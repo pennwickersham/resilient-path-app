@@ -61,3 +61,9 @@ Managing Life with Chronic Pain*.jpeg
 .env
 .env.*
 !.env.example
+android/keystore.properties
+keystore.properties
+
+# Browser profiles used by screenshot tooling hold cookies and saved logins
+.edge-screenshot-profile/
+screenshots/.edge-screenshot-profile/
