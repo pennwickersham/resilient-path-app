@@ -19,11 +19,18 @@
  *      e.g. 30 requests / 1 minute per IP on this worker's route.
  *   4. MODEL ALLOWLIST — only the models the app actually uses can be
  *      called, so a leaked token can't run expensive models on your key.
+ *      Keep in sync with `modelQueue` in src/pages/Chatbot.jsx.
+ *   5. TOKEN GRACE PERIOD — while the plain-text variable TOKEN_GRACE is
+ *      "true", requests with a missing or wrong token are still served (and
+ *      logged as `token-grace:` in Workers Logs), so app versions released
+ *      before the token was added keep working. Delete TOKEN_GRACE to
+ *      enforce the token.
  *
  * DEPLOYMENT:
  *   1. Workers & Pages → your worker → Settings → Variables & Secrets:
  *        Secret  GEMINI_API_KEY = <your Gemini key>
  *        Secret  APP_TOKEN      = <long random string, e.g. `openssl rand -hex 32`>
+ *        Text    TOKEN_GRACE    = true   (only during rollout)
  *   2. Paste this file into the editor and Deploy.
  *   3. In the app builds, set:
  *        VITE_PROXY_URL  = https://<worker>.workers.dev
@@ -101,7 +108,13 @@ export default {
     }
     const token = request.headers.get('X-App-Token');
     if (token !== env.APP_TOKEN) {
-      return json({ error: 'Unauthorized' }, 401, origin);
+      // Grace period: let builds that predate the token (or were built
+      // without VITE_APP_TOKEN) keep working while users update. The value
+      // is never logged — only whether it was missing or wrong.
+      if (env.TOKEN_GRACE !== 'true') {
+        return json({ error: 'Unauthorized' }, 401, origin);
+      }
+      console.log(`token-grace: allowed request with ${token ? 'wrong' : 'missing'} X-App-Token`);
     }
 
     // --- Rate limit ---
